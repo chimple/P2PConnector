@@ -1,0 +1,281 @@
+package p2p.chimple.org.p2pconnector.sync;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pGroup;
+import android.net.wifi.p2p.WifiP2pInfo;
+import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
+import android.os.Handler;
+import android.util.Log;
+
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
+
+import static p2p.chimple.org.p2pconnector.sync.SyncUtils.HandShakeportToUse;
+import static p2p.chimple.org.p2pconnector.sync.SyncUtils.SERVICE_TYPE;
+
+public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager.ConnectionInfoListener, WifiP2pManager.GroupInfoListener {
+
+    private static final String TAG = P2PAccessPoint.class.getSimpleName();
+    private P2PAccessPoint that = this;
+
+    private Context context;
+    private WifiP2pManager wifiP2pManager;
+    private WifiP2pManager.Channel channel;
+
+    private WifiConnectionUpdateCallBack callBack;
+    private Handler mHandler = null;
+
+    String mNetworkName = "";
+    String mPassphrase = "";
+    String mInetAddress = "";
+
+    int lastError = -1;
+
+    // Receivers
+    private P2PAccessPointReceiver receiver;
+
+    // Handlers
+    private HandShakeListenerThread mHandShakeListenerThread = null;
+
+    public P2PAccessPoint(Context Context, WifiP2pManager Manager, WifiP2pManager.Channel Channel, WifiConnectionUpdateCallBack callBack) {
+        this.context = Context;
+        this.wifiP2pManager = Manager;
+        this.channel = Channel;
+        this.callBack = callBack;
+        this.mHandler = new Handler(this.context.getMainLooper());
+        this.initialize();
+    }
+
+    public int GetLastError() {
+        return lastError;
+    }
+
+
+    private void initialize() {
+        this.registerP2PAccessPointReceiver();
+        this.reStartHandShakeListening();
+
+        wifiP2pManager.createGroup(channel, new WifiP2pManager.ActionListener() {
+            public void onSuccess() {
+                lastError = -1;
+                Log.i(TAG, "Creating Local Group ");
+            }
+
+            public void onFailure(int reason) {
+                lastError = reason;
+                Log.i(TAG, "Local Group failed, error code " + reason);
+            }
+        });
+    }
+
+    private void registerP2PAccessPointReceiver() {
+        receiver = new P2PAccessPointReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        this.context.registerReceiver((receiver), intentFilter);
+    }
+
+    private void unregisterP2PAccessPointReceiver() {
+        if (receiver != null) {
+            this.context.unregisterReceiver(receiver);
+            receiver = null;
+        }
+
+    }
+
+
+    @Override
+    public void onConnectionInfoAvailable(WifiP2pInfo info) {
+        try {
+            if (info.isGroupOwner) {
+                mInetAddress = info.groupOwnerAddress.getHostAddress();
+                wifiP2pManager.requestGroupInfo(channel, this);
+            } else {
+                Log.i(TAG, "we are client !! group owner address is: " + info.groupOwnerAddress.getHostAddress());
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "onConnectionInfoAvailable, error: " + e.toString());
+        }
+    }
+
+    @Override
+    public void onGroupInfoAvailable(WifiP2pGroup group) {
+        try {
+            this.callBack.GroupInfoAvailable(group);
+
+            if (mNetworkName.equals(group.getNetworkName()) && mPassphrase.equals(group.getPassphrase())) {
+                Log.i(TAG, "Already have local service for " + mNetworkName + " ," + mPassphrase);
+            } else {
+                mNetworkName = group.getNetworkName();
+                mPassphrase = group.getPassphrase();
+                startLocalService("NI:" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "onGroupInfoAvailable, error: " + e.toString());
+        }
+    }
+
+
+    public void cleanUp() {
+        Log.i(TAG, "Stop WifiAccessPoint");
+        this.unregisterP2PAccessPointReceiver();
+        if (mHandShakeListenerThread != null) {
+            mHandShakeListenerThread.cleanUp();
+            mHandShakeListenerThread = null;
+        }
+        stopLocalServices();
+        removeGroup();
+        removePersistentGroups();
+    }
+
+    public void removeGroup() {
+        if (wifiP2pManager != null && channel != null) {
+            Log.i(TAG, "Calling removeGroup");
+            wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    lastError = -1;
+                    Log.i(TAG, "removeGroup onSuccess -");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                    lastError = reason;
+                    Log.i(TAG, "removeGroup onFailure -" + reason);
+                }
+            });
+        }
+    }
+
+    /**
+     * Removes persistent/remembered groups
+     * <p>
+     * Source: https://android.googlesource.com/platform/cts/+/jb-mr1-dev%5E1%5E2..jb-mr1-dev%5E1/
+     * Author: Nick  Kralevich <nnk@google.com>
+     * <p>
+     * WifiP2pManager.java has a method deletePersistentGroup(), but it is not accessible in the
+     * SDK. According to Vinit Deshpande <vinitd@google.com>, it is a common Android paradigm to
+     * expose certain APIs in the SDK and hide others. This allows Android to maintain stability and
+     * security. As a workaround, this removePersistentGroups() method uses Java reflection to call
+     * the hidden method. We can list all the methods in WifiP2pManager and invoke "deletePersistentGroup"
+     * if it exists. This is used to remove all possible persistent/remembered groups.
+     */
+    public void removePersistentGroups() {
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Remove any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(wifiP2pManager, channel, netid, null);
+                        Log.i(TAG, "deletePersistentGroup groups netid:" + netid);
+                    }
+                }
+            }
+            Log.i(TAG, "Persistent groups removed");
+        } catch (Exception e) {
+            Log.e(TAG, "Failure removing persistent groups: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    private void startLocalService(String instance) {
+
+        Map<String, String> record = new HashMap<String, String>();
+        record.put("available", "visible");
+        record.put("discoverUserId", "1");
+
+        WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(instance, SERVICE_TYPE, record);
+
+        Log.i(TAG, "Add local service :" + instance);
+        wifiP2pManager.addLocalService(channel, service, new WifiP2pManager.ActionListener() {
+            public void onSuccess() {
+                lastError = -1;
+                Log.i(TAG,"Added local service");
+            }
+
+            public void onFailure(int reason) {
+                lastError = reason;
+                Log.i(TAG,"Adding local service failed, error code " + reason);
+            }
+        });
+    }
+
+    private void stopLocalServices() {
+
+        mNetworkName = "";
+        mPassphrase = "";
+
+        wifiP2pManager.clearLocalServices(channel, new WifiP2pManager.ActionListener() {
+            public void onSuccess() {
+                lastError = -1;
+                Log.i(TAG,"Cleared local services");
+            }
+
+            public void onFailure(int reason) {
+                lastError = reason;
+                Log.i(TAG,"Clearing local services failed, error code " + reason);
+            }
+        });
+    }
+
+    @Override
+    public void GotConnection(InetAddress remote, InetAddress local) {
+        final InetAddress remoteTmp = remote;
+        final InetAddress localTmp = local;
+        Log.i(TAG, "GotConnection remote" + remote);
+        Log.i(TAG, "GotConnection local" + local);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                reStartHandShakeListening();
+                that.callBack.Connected(remoteTmp, true);
+            }
+        });
+    }
+
+    @Override
+    public void ListeningFailed(String reason) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                reStartHandShakeListening();
+            }
+        });
+    }
+
+
+    private void reStartHandShakeListening() {
+        if (mHandShakeListenerThread != null) {
+            mHandShakeListenerThread.cleanUp();
+            mHandShakeListenerThread = null;
+        }
+
+        mHandShakeListenerThread = new HandShakeListenerThread(that, HandShakeportToUse);
+        mHandShakeListenerThread.start();
+    }
+
+    private class P2PAccessPointReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+                if (networkInfo.isConnected()) {
+                    Log.i(TAG,"We are connected, will check info now");
+                    wifiP2pManager.requestConnectionInfo(channel, that);
+                } else {
+                    Log.i(TAG,"We are DIS-connected");
+                }
+            }
+        }
+    }
+}
