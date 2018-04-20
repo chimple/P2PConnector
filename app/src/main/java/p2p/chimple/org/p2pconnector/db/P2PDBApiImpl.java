@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
+import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfoDeserializer;
+import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessage;
+import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessageDeserializer;
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 
@@ -53,17 +56,23 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "inserted data" + info);
     }
 
-    public String buildInitialHandShakingMessage() {
+    public String serializeHandShakingMessage() {
         List<HandShakingInfo> handShakingInfos = new ArrayList<HandShakingInfo>();
         P2PLatestInfoByUserAndDevice[] infos = db.p2pSyncDao().getLatestInfoAvailableByUserIdAndDeviceId();
         for (P2PLatestInfoByUserAndDevice info : infos) {
             handShakingInfos.add(new HandShakingInfo(info.userId, info.deviceId, info.sequence));
         }
-        return this.convertHandshakingInformationToJson(handShakingInfos);
+
+        Gson gson = this.registerHandShakingMessageBuilder();
+
+        HandShakingMessage message = new HandShakingMessage("handshaking", handShakingInfos);
+        Type handShakingType = new TypeToken<HandShakingMessage>() {}.getType();
+        String json = gson.toJson(message, handShakingType);
+        return json;
     }
 
-    public String buildAllSyncMessages(String json) {
-        List<P2PSyncInfo> output = this.buildSyncInformation(buildHandshakingInformationFromJson(json));
+    public String buildAllSyncMessages(List<HandShakingInfo> infos) {
+        List<P2PSyncInfo> output = this.buildSyncInformation(infos);
         return this.convertP2PSyncInfoToJson(output);
     }
 
@@ -76,15 +85,13 @@ public class P2PDBApiImpl implements P2PDBApi {
         return handShakingInfos;
     }
 
-    public List<HandShakingInfo> buildHandshakingInformationFromJson(String json) {
-        Type collectionType = new TypeToken<List<HandShakingInfo>>() {
-        }.getType();
+
+    private Gson registerHandShakingMessageBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(HandShakingInfo.class, new HandShakingInfoDeserializer());
+        gsonBuilder.registerTypeAdapter(HandShakingMessage.class, new HandShakingMessageDeserializer());
         Gson gson = gsonBuilder.create();
-        List<HandShakingInfo> handShakingInfos = gson.fromJson(json, collectionType);
-        this.buildSyncInformation(handShakingInfos);
-        return handShakingInfos;
+        return gson;
     }
 
     public String convertP2PSyncInfoToJson(List<P2PSyncInfo> infos) {
@@ -97,15 +104,15 @@ public class P2PDBApiImpl implements P2PDBApi {
         return json;
     }
 
-
-    public String convertHandshakingInformationToJson(List<HandShakingInfo> infos) {
-        Type collectionType = new TypeToken<List<HandShakingInfo>>() {
+    public List<HandShakingInfo> deSerializeHandShakingInformationFromJson(String handShakingJson) {
+        Gson gson = this.registerHandShakingMessageBuilder();
+        Type handShakingMessageType = new TypeToken<HandShakingMessage>() {
         }.getType();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(HandShakingInfo.class, new HandShakingInfoDeserializer());
-        Gson gson = gsonBuilder.create();
-        String json = gson.toJson(infos, collectionType);
-        return json;
+        HandShakingMessage message = gson.fromJson(handShakingJson, handShakingMessageType);
+        if (message != null) {
+            return message.getInfos();
+        }
+        return null;
     }
 
 
@@ -214,36 +221,6 @@ public class P2PDBApiImpl implements P2PDBApi {
     }
 }
 
-class HandShakingInfoDeserializer implements JsonDeserializer<HandShakingInfo> {
-    @Override
-    public HandShakingInfo deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-            throws JsonParseException {
-
-        final JsonObject jsonObject = json.getAsJsonObject();
-        String userId = "unknown";
-        final JsonElement jsonUserId = jsonObject.get("user_id");
-        if (jsonUserId != null) {
-            userId = jsonUserId.getAsString();
-        }
-
-        final JsonElement jsonDeviceId = jsonObject.get("device_id");
-        String deviceId = "unknown";
-        if (jsonDeviceId != null) {
-            deviceId = jsonDeviceId.getAsString();
-        }
-
-        Long sequence = 0L;
-        final JsonElement jsonSequence = jsonObject.get("sequence");
-        if (jsonSequence != null) {
-            sequence = jsonSequence.getAsLong();
-        }
-
-
-        final HandShakingInfo handShakingInfo = new HandShakingInfo(userId, deviceId, sequence);
-        return handShakingInfo;
-    }
-}
-
 
 class P2PSyncInfoDeserializer implements JsonDeserializer<P2PSyncInfo> {
     @Override
@@ -261,10 +238,10 @@ class P2PSyncInfoDeserializer implements JsonDeserializer<P2PSyncInfo> {
         final JsonElement jsonSequence = jsonObject.get("sequence");
         final Long sequence = jsonSequence.getAsLong();
 
-        final JsonElement jsonMessageType = jsonObject.get("messageType");
+        final JsonElement jsonMessageType = jsonObject.get("message_type");
         final String messageType = jsonMessageType.getAsString();
 
-        final JsonElement jsonReceipientType = jsonObject.get("recipientUserId");
+        final JsonElement jsonReceipientType = jsonObject.get("recipient_user_id");
         final String receipientUserId = jsonReceipientType.getAsString();
 
 

@@ -1,5 +1,11 @@
 package p2p.chimple.org.p2pconnector.db.entity;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -7,6 +13,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.comparators.ComparatorChain;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,15 +22,19 @@ import java.util.List;
 
 public class HandShakingInfo {
 
+    @Expose(serialize = true, deserialize = true)
     @SerializedName("user_id")
     private String userId;
 
+    @Expose(serialize = true, deserialize = true)
     @SerializedName("device_id")
     private String deviceId;
 
+    @Expose(serialize = true, deserialize = true)
     @SerializedName("sequence")
     private Long sequence;
 
+    @Expose(serialize = false, deserialize = false)
     private Long startingSequence;
 
     public HandShakingInfo() {

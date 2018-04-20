@@ -2,7 +2,6 @@ package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
@@ -24,7 +23,7 @@ public class DataBaseReaderTask extends AsyncTask<String, Void, String> {
         String result = null;
         switch (command) {
             case "initialHandShakingMessage":
-                result = this.api.buildInitialHandShakingMessage();
+                result = this.api.serializeHandShakingMessage();
                 break;
 
         }

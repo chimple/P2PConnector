@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 
 @Entity(indices = {
@@ -23,26 +25,31 @@ public class P2PSyncInfo {
     @PrimaryKey(autoGenerate = true)
     public Long id; // auto generated primary key
 
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="user_id")
     public String userId; //current logged-in user
 
-
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="device_id")
     public String deviceId;
 
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="sequence")
     public Long sequence;
 
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="message_type")
     public String messageType;
 
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="recipient_user_id")
     public String recipientUserId;
 
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="message")
     public String message;
 
-
+    @Expose(serialize = true, deserialize = true)
     @ColumnInfo(name="file_name")
     public String fileName;
 

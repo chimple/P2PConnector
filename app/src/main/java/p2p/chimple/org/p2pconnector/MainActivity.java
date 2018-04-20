@@ -17,12 +17,10 @@ import android.widget.TextView;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import p2p.chimple.org.p2pconnector.application.P2PApplication;
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
-import p2p.chimple.org.p2pconnector.db.DataBaseReaderTask;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
+import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
 import p2p.chimple.org.p2pconnector.sync.CommunicationCallBack;
 import p2p.chimple.org.p2pconnector.sync.CommunicationThread;
 import p2p.chimple.org.p2pconnector.sync.ConnectToThread;
@@ -41,9 +39,12 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     private ConnectToThread mTestConnectToThread = null;
     private ConnectedThread mTestConnectedThread = null;
     final private int TestChatPortNumber = 8768;
-    private boolean handshakingInformationReceived = false;
+    private boolean handShakingInformationReceived = false;
+    private boolean handShakingInformationSent = false;
     private boolean allSyncInformationSent = false;
+    private boolean allSyncInformationReceived = false;
     private Handler mHandler = new Handler((Handler.Callback) this);
+    List<HandShakingInfo> handShakingReceivedInfos = null;
 
     //Status
     private int mInterval = 1000; // 1 second by default, can be changed later
@@ -71,23 +72,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             case ConnectedThread.MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
-
-                if (handshakingInformationReceived && allSyncInformationSent) {
-                    updateStatus(TAG, "we got Ack message back, so lets disconnect.");
-                    // we got Ack message back, so lets disconnect
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            updateStatus(TAG + "CHAT", "disconnect disabled");
-                            goToNextClientWaiting();
-                        }
-                    }, 1000);
-                } else {
-                    // got first message
-                    updateStatus(TAG + "HandShaking information received:", readMessage);
-                    sendAllSyncInformation(readMessage);
-
-                }
+                this.processSyncMessages(readMessage);
                 break;
             case ConnectedThread.SOCKET_DISCONNEDTED: {
                 updateStatus(TAG + "CHAT", "WE are Disconnected now.");
@@ -97,6 +82,40 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         }
         return true;
     }
+
+    @SuppressLint("LongLogTag")
+    private void processSyncMessages(String readMessage) {
+        if (!handShakingInformationReceived) {
+            handShakingInformationReceived = true;
+            if (mTestConnectedThread != null) {
+                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+                handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
+                updateStatus(TAG, "handShakingInformationReceived" + readMessage);
+                if (!handShakingInformationSent) {
+                    sendInitialHandShakingInformation();
+                } else if (!allSyncInformationSent) {
+                    sendAllSyncInformation(handShakingReceivedInfos);
+                }
+            }
+        } else if (!allSyncInformationReceived) {
+            updateStatus(TAG + "allSyncInformationReceived:", readMessage);
+            allSyncInformationReceived = true;
+            if (!allSyncInformationSent) {
+                sendAllSyncInformation(handShakingReceivedInfos);
+            }
+        } else {
+            updateStatus(TAG, "we got Ack message back, so lets disconnect.");
+            // we got Ack message back, so lets disconnect
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    updateStatus(TAG + "CHAT", "disconnect disabled");
+                    goToNextClientWaiting();
+                }
+            }, 1000);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,13 +282,14 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     }
 
     @SuppressLint("LongLogTag")
-    private void sendAllSyncInformation(String initialMessage) {
+    private void sendAllSyncInformation(List<HandShakingInfo> infos) {
         if (mTestConnectedThread != null) {
             // generate initial JSON
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-            String updatedMessage = new P2PDBApiImpl(db, getApplicationContext()).buildAllSyncMessages(initialMessage);
+            String updatedMessage = new P2PDBApiImpl(db, getApplicationContext()).buildAllSyncMessages(infos);
             Log.i(TAG + "sendAllSyncInformation:", updatedMessage);
             mTestConnectedThread.write(updatedMessage.getBytes());
+            allSyncInformationSent = true;
         }
     }
 
@@ -277,14 +297,12 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     @SuppressLint("LongLogTag")
     private void sendInitialHandShakingInformation() {
         if (mTestConnectedThread != null) {
-//            DataBaseReaderTask dbTask = new DataBaseReaderTask(getApplicationContext());
-//            dbTask.execute("initialHandShakingMessage");
-            // generate initial JSON
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-            String initialMessage = new P2PDBApiImpl(db, getApplicationContext()).buildInitialHandShakingMessage();
-            Log.i(TAG  + "sendInitialHandShakingInformation:", initialMessage);
+            String initialMessage = new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
+            Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
             mTestConnectedThread.write(initialMessage.getBytes());
-            handshakingInformationReceived = true;
+            handShakingInformationSent = true;
+
         }
     }
 

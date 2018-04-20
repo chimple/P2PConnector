@@ -10,9 +10,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-
-import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
 
 
 public class DatabaseInitializer {
@@ -56,6 +53,8 @@ public class DatabaseInitializer {
                 new P2PDBApiImpl(db, context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
             }
             db.setTransactionSuccessful();
+            String json = new P2PDBApiImpl(db, context).serializeHandShakingMessage();
+            new P2PDBApiImpl(db, context).deSerializeHandShakingInformationFromJson(json);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -78,13 +77,6 @@ public class DatabaseInitializer {
         @Override
         protected Void doInBackground(final Void... params) {
             populateWithTestData(mDb, this.context);
-//            List<HandShakingInfo> infos = this.api.buildInitialHandShakingMessage();
-//            String json = api.convertHandshakingInformationToJson(infos);
-//            List<HandShakingInfo> l = api.buildHandshakingInformationFromJson(json);
-//            Log.i(TAG, json);
-//
-//            api.buildSyncInformation(null);
-
             return null;
         }
 
