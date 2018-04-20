@@ -21,6 +21,7 @@ import java.util.Random;
 
 import p2p.chimple.org.p2pconnector.application.P2PApplication;
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
+import p2p.chimple.org.p2pconnector.db.DataBaseReaderTask;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.sync.CommunicationCallBack;
 import p2p.chimple.org.p2pconnector.sync.CommunicationThread;
@@ -267,18 +268,21 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             // generate initial JSON
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
             String updatedMessage = new P2PDBApiImpl(db, getApplicationContext()).buildAllSyncMessages(initialMessage);
-            Log.i(TAG, "sendAllSyncInformation" + updatedMessage);
+            Log.i(TAG + "sendAllSyncInformation:", updatedMessage);
             mTestConnectedThread.write(updatedMessage.getBytes());
         }
     }
 
 
+    @SuppressLint("LongLogTag")
     private void sendInitialHandShakingInformation() {
         if (mTestConnectedThread != null) {
+//            DataBaseReaderTask dbTask = new DataBaseReaderTask(getApplicationContext());
+//            dbTask.execute("initialHandShakingMessage");
             // generate initial JSON
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
             String initialMessage = new P2PDBApiImpl(db, getApplicationContext()).buildInitialHandShakingMessage();
-            Log.i(TAG, initialMessage);
+            Log.i(TAG  + "sendInitialHandShakingInformation:", initialMessage);
             mTestConnectedThread.write(initialMessage.getBytes());
             handshakingInformationReceived = true;
         }

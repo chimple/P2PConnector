@@ -220,15 +220,23 @@ class HandShakingInfoDeserializer implements JsonDeserializer<HandShakingInfo> {
             throws JsonParseException {
 
         final JsonObject jsonObject = json.getAsJsonObject();
-
+        String userId = "unknown";
         final JsonElement jsonUserId = jsonObject.get("user_id");
-        final String userId = jsonUserId.getAsString();
+        if (jsonUserId != null) {
+            userId = jsonUserId.getAsString();
+        }
 
         final JsonElement jsonDeviceId = jsonObject.get("device_id");
-        final String deviceId = jsonDeviceId.getAsString();
+        String deviceId = "unknown";
+        if (jsonDeviceId != null) {
+            deviceId = jsonDeviceId.getAsString();
+        }
 
+        Long sequence = 0L;
         final JsonElement jsonSequence = jsonObject.get("sequence");
-        final Long sequence = jsonSequence.getAsLong();
+        if (jsonSequence != null) {
+            sequence = jsonSequence.getAsLong();
+        }
 
 
         final HandShakingInfo handShakingInfo = new HandShakingInfo(userId, deviceId, sequence);
@@ -262,7 +270,6 @@ class P2PSyncInfoDeserializer implements JsonDeserializer<P2PSyncInfo> {
 
         final JsonElement jsonMessage = jsonObject.get("message");
         final String message = jsonMessage.getAsString();
-
 
 
         final P2PSyncInfo p2PSyncInfo = new P2PSyncInfo(userId, deviceId, sequence, receipientUserId, message, messageType);

@@ -1,0 +1,39 @@
+package p2p.chimple.org.p2pconnector.db;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import java.lang.ref.WeakReference;
+
+public class DataBaseReaderTask extends AsyncTask<String, Void, String> {
+    public DataBaseReaderResponse delegate = null;
+    private final WeakReference<Context> ctx;
+    private final AppDatabase db;
+    private P2PDBApi api;
+
+    public DataBaseReaderTask(Context ctx) {
+        this.ctx = new WeakReference<Context>(ctx);
+        this.db = AppDatabase.getInstance(ctx);
+        this.api = new P2PDBApiImpl(db, this.ctx.get());
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+        String command = params[0];
+        String result = null;
+        switch (command) {
+            case "initialHandShakingMessage":
+                result = this.api.buildInitialHandShakingMessage();
+                break;
+
+        }
+        return result;
+
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        delegate.processDBResponse(result);
+    }
+}

@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class CommunicationThread extends Thread {
-    private static final String TAG = ConnectedThread.class.getSimpleName();
+    private static final String TAG = CommunicationThread.class.getSimpleName();
 
     private CommunicationCallBack callBack;
     private final ServerSocket mSocket;
