@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         if (!handShakingInformationReceived) {
             handShakingInformationReceived = true;
             if (mTestConnectedThread != null) {
-                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-                handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
+                //AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+                //handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
                 updateStatus(TAG, "handShakingInformationReceived" + readMessage);
                 if (!handShakingInformationSent) {
                     sendInitialHandShakingInformation();
@@ -101,29 +101,38 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         } else if (!allSyncInformationReceived) {
             updateStatus(TAG + "allSyncInformationReceived:", readMessage);
             allSyncInformationReceived = true;
-//            if(readMessage != null) {
-//                persistAllSyncInformation(readMessage);
-//            }
+            if(readMessage != null) {
+                persistAllSyncInformation(readMessage);
+                disconnectFrom();
+            }
             if (!allSyncInformationSent) {
                 sendAllSyncInformation(handShakingReceivedInfos);
             }
         } else {
-            updateStatus(TAG, "we got Ack message back, so lets disconnect.");
-            // we got Ack message back, so lets disconnect
-            this.handShakingInformationReceived = false;
-            this.handShakingInformationSent = false;
-            this.allSyncInformationSent = false;
-            this.allSyncInformationReceived = false;
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    updateStatus(TAG + "CHAT", "disconnect disabled");
-                    goToNextClientWaiting();
-                }
-            }, 1000);
+            //disconnectFrom();
         }
     }
 
+    //reset commnication flag on next time process starts
+
+    private void resetAllP2PCommunicationFlags() {
+        this.handShakingInformationReceived = false;
+        this.handShakingInformationSent = false;
+        this.allSyncInformationSent = false;
+        this.allSyncInformationReceived = false;
+    }
+
+    private void disconnectFrom() {
+        updateStatus(TAG, "we got Ack message back, so lets disconnect.");
+        // we got Ack message back, so lets disconnect
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                updateStatus(TAG + "CHAT", "disconnect disabled");
+                goToNextClientWaiting();
+            }
+        }, 1000);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,19 +300,20 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 
     private void persistAllSyncInformation(String message) {
         Log.i(TAG, "sync message:" + message);
-        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-        new P2PDBApiImpl(db, getApplicationContext()).persistP2PSyncInfos(message);
+        //AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+        //new P2PDBApiImpl(db, getApplicationContsayAckext()).persistP2PSyncInfos(message);
     }
 
     @SuppressLint("LongLogTag")
     private void sendAllSyncInformation(List<HandShakingInfo> infos) {
         if (mTestConnectedThread != null) {
             // generate initial JSON
-            AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-            String updatedMessage = new P2PDBApiImpl(db, getApplicationContext()).buildAllSyncMessages(infos);
+            //AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+            //String updatedMessage = new P2PDBApiImpl(db, getApplicationContext()).buildAllSyncMessages(infos);
+            String updatedMessage = "Send from device AAAAAAAA";
             Log.i(TAG + "sendAllSyncInformation:", updatedMessage);
             mTestConnectedThread.write(updatedMessage.getBytes());
-            mTestConnectedThread.write("END:sendAllSyncInformation".getBytes());
+//            mTestConnectedThread.write("END:sendAllSyncInformation".getBytes());
             allSyncInformationSent = true;
         }
     }
@@ -316,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             String initialMessage = new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
             Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
             mTestConnectedThread.write(initialMessage.getBytes());
-            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
+//            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
             handShakingInformationSent = true;
 
         }
@@ -351,6 +361,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 
     @Override
     public void Connected(String address, boolean isGroupOwner) {
+        resetAllP2PCommunicationFlags();
         if (isGroupOwner) {
             clientIPAddressList.add(address);
 

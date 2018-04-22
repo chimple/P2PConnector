@@ -19,7 +19,6 @@ public class ConnectedThread extends Thread {
     public static final int MESSAGE_READ = 0x11;
     public static final int MESSAGE_WRITE = 0x22;
     public static final int SOCKET_DISCONNEDTED = 0x33;
-    public static final int MESSAGE_COMPLETED = 0x44;
 
     private final Socket mmSocket;
     private final InputStream mmInStream;
