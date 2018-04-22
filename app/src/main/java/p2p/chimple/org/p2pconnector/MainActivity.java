@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             case ConnectedThread.MESSAGE_WRITE:
                 byte[] writeBuf = (byte[]) msg.obj;// construct a string from the buffer
                 String writeMessage = new String(writeBuf);
-                updateStatus(TAG + "CHAT", "Wrote: " + writeMessage);
+//                updateStatus(TAG + "CHAT", "Wrote: " + writeMessage);
                 break;
             case ConnectedThread.MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         } else if (!allSyncInformationReceived) {
             updateStatus(TAG + "allSyncInformationReceived:", readMessage);
             allSyncInformationReceived = true;
+//            if(readMessage != null) {
+//                persistAllSyncInformation(readMessage);
+//            }
             if (!allSyncInformationSent) {
                 sendAllSyncInformation(handShakingReceivedInfos);
             }
@@ -281,6 +284,12 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         }
     }
 
+    private void persistAllSyncInformation(String message) {
+        Log.i(TAG, "sync message:" + message);
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+        new P2PDBApiImpl(db, getApplicationContext()).persistP2PSyncInfos(message);
+    }
+
     @SuppressLint("LongLogTag")
     private void sendAllSyncInformation(List<HandShakingInfo> infos) {
         if (mTestConnectedThread != null) {
@@ -289,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             String updatedMessage = new P2PDBApiImpl(db, getApplicationContext()).buildAllSyncMessages(infos);
             Log.i(TAG + "sendAllSyncInformation:", updatedMessage);
             mTestConnectedThread.write(updatedMessage.getBytes());
+            mTestConnectedThread.write("END:sendAllSyncInformation".getBytes());
             allSyncInformationSent = true;
         }
     }
@@ -301,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             String initialMessage = new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
             Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
             mTestConnectedThread.write(initialMessage.getBytes());
+            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
             handShakingInformationSent = true;
 
         }

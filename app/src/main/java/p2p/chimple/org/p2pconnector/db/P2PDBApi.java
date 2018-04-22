@@ -10,5 +10,5 @@ public interface P2PDBApi {
 
     public String serializeHandShakingMessage();
 
-    public List<P2PSyncInfo> buildSyncInformation(List<HandShakingInfo> infos);
+    public void persistP2PSyncInfos(String p2pSyncJson);
 }

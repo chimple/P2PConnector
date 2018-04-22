@@ -1,6 +1,7 @@
 package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,6 +18,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.Predicate;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +61,26 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "inserted data" + info);
     }
 
+    private void persistP2PSyncMessage(P2PSyncInfo message) {
+        db.p2pSyncDao().insertP2PSyncInfo(message);
+        Log.i(TAG, "inserted data" + message);
+    }
+
+    public void persistP2PSyncInfos(String p2pSyncJson) {
+        List<P2PSyncInfo> infos = this.deSerializeP2PSyncInfoFromJson(p2pSyncJson);
+        db.beginTransaction();
+        try {
+            for (P2PSyncInfo info : infos) {
+                this.persistP2PSyncMessage(info);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public String serializeHandShakingMessage() {
         List<HandShakingInfo> handShakingInfos = new ArrayList<HandShakingInfo>();
         P2PLatestInfoByUserAndDevice[] infos = db.p2pSyncDao().getLatestInfoAvailableByUserIdAndDeviceId();
@@ -66,7 +91,8 @@ public class P2PDBApiImpl implements P2PDBApi {
         Gson gson = this.registerHandShakingMessageBuilder();
 
         HandShakingMessage message = new HandShakingMessage("handshaking", handShakingInfos);
-        Type handShakingType = new TypeToken<HandShakingMessage>() {}.getType();
+        Type handShakingType = new TypeToken<HandShakingMessage>() {
+        }.getType();
         String json = gson.toJson(message, handShakingType);
         return json;
     }
@@ -94,15 +120,30 @@ public class P2PDBApiImpl implements P2PDBApi {
         return gson;
     }
 
-    public String convertP2PSyncInfoToJson(List<P2PSyncInfo> infos) {
-        Type collectionType = new TypeToken<List<P2PSyncInfo>>() {
-        }.getType();
+    private Gson registerP2PSyncInfoBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(P2PSyncInfo.class, new P2PSyncInfoDeserializer());
         Gson gson = gsonBuilder.create();
+
+        return gson;
+    }
+
+    public String convertP2PSyncInfoToJson(List<P2PSyncInfo> infos) {
+        Type collectionType = new TypeToken<List<P2PSyncInfo>>() {
+        }.getType();
+        Gson gson = this.registerP2PSyncInfoBuilder();
         String json = gson.toJson(infos, collectionType);
         return json;
     }
+
+    private List<P2PSyncInfo> deSerializeP2PSyncInfoFromJson(String p2pSyncJson) {
+        Gson gson = this.registerP2PSyncInfoBuilder();
+        Type collectionType = new TypeToken<List<P2PSyncInfo>>() {
+        }.getType();
+        List<P2PSyncInfo> infos = gson.fromJson(p2pSyncJson, collectionType);
+        return infos;
+    }
+
 
     public List<HandShakingInfo> deSerializeHandShakingInformationFromJson(String handShakingJson) {
         Gson gson = this.registerHandShakingMessageBuilder();
@@ -116,7 +157,7 @@ public class P2PDBApiImpl implements P2PDBApi {
     }
 
 
-    public List<P2PSyncInfo> buildSyncInformation(final List<HandShakingInfo> otherHandShakeInfos) {
+    private List<P2PSyncInfo> buildSyncInformation(final List<HandShakingInfo> otherHandShakeInfos) {
         final List<HandShakingInfo> latestInfoFromCurrentDevice = this.queryInitialHandShakingMessage();
 
         Collections.sort(latestInfoFromCurrentDevice, new Comparator<HandShakingInfo>() {
@@ -229,19 +270,19 @@ class P2PSyncInfoDeserializer implements JsonDeserializer<P2PSyncInfo> {
 
         final JsonObject jsonObject = json.getAsJsonObject();
 
-        final JsonElement jsonUserId = jsonObject.get("user_id");
+        final JsonElement jsonUserId = jsonObject.get("userId");
         final String userId = jsonUserId.getAsString();
 
-        final JsonElement jsonDeviceId = jsonObject.get("device_id");
+        final JsonElement jsonDeviceId = jsonObject.get("deviceId");
         final String deviceId = jsonDeviceId.getAsString();
 
         final JsonElement jsonSequence = jsonObject.get("sequence");
         final Long sequence = jsonSequence.getAsLong();
 
-        final JsonElement jsonMessageType = jsonObject.get("message_type");
+        final JsonElement jsonMessageType = jsonObject.get("messageType");
         final String messageType = jsonMessageType.getAsString();
 
-        final JsonElement jsonReceipientType = jsonObject.get("recipient_user_id");
+        final JsonElement jsonReceipientType = jsonObject.get("recipientUserId");
         final String receipientUserId = jsonReceipientType.getAsString();
 
 

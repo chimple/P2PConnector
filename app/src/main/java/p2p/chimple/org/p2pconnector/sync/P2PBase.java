@@ -180,10 +180,11 @@ public class P2PBase implements WifiP2pManager.ChannelListener {
 
         } else if (available.size() > 0) {
             ret = available.get(0);
+            Log.i(TAG + "EEE", "selecting first available address:" + ret.getDeviceAddress() + " name:"  + ret.getDeviceName());
         }
         if (ret != null) {
             connectedDevices.add(ret);
-
+            Log.i(TAG + "EEE", "adding to connected devices address" + ret.getDeviceAddress() + " name:"  + ret.getDeviceName());
             // just to set upper limit for the amount of remembered contacts
             // when we have 101, we remove the oldest (that's the top one)
             // from the array
@@ -191,6 +192,7 @@ public class P2PBase implements WifiP2pManager.ChannelListener {
                 connectedDevices.remove(0);
             }
         }
+        Log.i(TAG + "EEE", "Chosed connected devices address" + ret.getDeviceAddress() + " name:"  + ret.getDeviceName());
         return ret;
     }
 }

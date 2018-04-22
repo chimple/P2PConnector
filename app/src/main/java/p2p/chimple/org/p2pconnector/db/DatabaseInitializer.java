@@ -10,6 +10,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
+
+import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 
 
 public class DatabaseInitializer {
@@ -53,12 +57,12 @@ public class DatabaseInitializer {
                 new P2PDBApiImpl(db, context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
             }
             db.setTransactionSuccessful();
-            String json = new P2PDBApiImpl(db, context).serializeHandShakingMessage();
-            new P2PDBApiImpl(db, context).deSerializeHandShakingInformationFromJson(json);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             db.endTransaction();
+            String json = new P2PDBApiImpl(db, context).serializeHandShakingMessage();
+            new P2PDBApiImpl(db, context).deSerializeHandShakingInformationFromJson(json);
         }
     }
 

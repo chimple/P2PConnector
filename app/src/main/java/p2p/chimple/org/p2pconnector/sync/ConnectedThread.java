@@ -4,6 +4,10 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +19,7 @@ public class ConnectedThread extends Thread {
     public static final int MESSAGE_READ = 0x11;
     public static final int MESSAGE_WRITE = 0x22;
     public static final int SOCKET_DISCONNEDTED = 0x33;
+    public static final int MESSAGE_COMPLETED = 0x44;
 
     private final Socket mmSocket;
     private final InputStream mmInStream;
@@ -30,6 +35,7 @@ public class ConnectedThread extends Thread {
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
+        BufferedOutputStream tmpBufferedOut = null;
         // Get the Socket input and output streams
         try {
             if (mmSocket != null) {
@@ -52,7 +58,7 @@ public class ConnectedThread extends Thread {
             try {
                 bytes = mmInStream.read(buffer);
                 if (bytes > 0) {
-                    //  Log.d(TAG, "TestConnectedThread read data: " + bytes + " bytes");
+                    Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } else {
                     Stop();

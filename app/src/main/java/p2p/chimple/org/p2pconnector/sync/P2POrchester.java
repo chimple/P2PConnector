@@ -237,10 +237,12 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                         //There are supposedly a possible race-condition bug with the service discovery
                         // thus to avoid it, we are delaying the service discovery start here
                         public void run() {
-                            Log.i(TAG + "shake:", "re shaking.");
-                            String address = mWifiConnection.retrieveInetAddress();
-                            setConnectionState(SyncUtils.ConnectionState.HandShaking);
-                            startHandShakerThread(address, (trialCountTmp + 1));
+                            if(mWifiConnection != null) {
+                                Log.i(TAG + "shake:", "re shaking.");
+                                String address = mWifiConnection.retrieveInetAddress();
+                                setConnectionState(SyncUtils.ConnectionState.HandShaking);
+                                startHandShakerThread(address, (trialCountTmp + 1));
+                            }
                         }
                     }, 2000);
                 } else {
@@ -327,7 +329,6 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                     Log.i(TAG, "No devices selected");
                 }
             }
-            Log.i(TAG, "gotServicesList disable for testing!!");
         }
     }
 

@@ -23,15 +23,12 @@ import java.util.List;
 public class HandShakingInfo {
 
     @Expose(serialize = true, deserialize = true)
-    @SerializedName("user_id")
     private String userId;
 
     @Expose(serialize = true, deserialize = true)
-    @SerializedName("device_id")
     private String deviceId;
 
     @Expose(serialize = true, deserialize = true)
-    @SerializedName("sequence")
     private Long sequence;
 
     @Expose(serialize = false, deserialize = false)
