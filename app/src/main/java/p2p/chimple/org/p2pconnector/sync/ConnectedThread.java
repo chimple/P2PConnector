@@ -65,7 +65,7 @@ public class ConnectedThread extends Thread {
                     mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "Disconnected").sendToTarget();
                 }
             } catch (IOException e) {
-                // Log.e(TAG, "ConnectedThread disconnected: ", e);
+                 Log.e(TAG, "ConnectedThread disconnected: ", e);
                 Stop();
                 mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, e).sendToTarget();
                 break;

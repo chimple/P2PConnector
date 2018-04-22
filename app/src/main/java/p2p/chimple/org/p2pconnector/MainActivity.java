@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             case ConnectedThread.MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
+                Log.i(TAG, "MESSAGE READ:" + readMessage);
                 this.processSyncMessages(readMessage);
                 break;
             case ConnectedThread.SOCKET_DISCONNEDTED: {
@@ -109,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         } else {
             updateStatus(TAG, "we got Ack message back, so lets disconnect.");
             // we got Ack message back, so lets disconnect
+            this.handShakingInformationReceived = false;
+            this.handShakingInformationSent = false;
+            this.allSyncInformationSent = false;
+            this.allSyncInformationReceived = false;
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
