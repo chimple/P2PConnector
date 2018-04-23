@@ -59,7 +59,6 @@ public class ConnectedThread extends Thread {
                     String whatGot = new String(buffer, 0, bytes);
                     Log.i(TAG, "whatGot:" + whatGot);
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-
                 } else {
                     DisConnect();
                     mHandler.obtainMessage(SOCKET_STOPPED, -1, -1, "Disconnected").sendToTarget();
@@ -102,6 +101,7 @@ public class ConnectedThread extends Thread {
         try {
             if (mmInStream != null) {
                 mmInStream.close();
+
             }
         } catch (IOException e) {
             Log.e(TAG, "ConnectedThread  mmInStream close failed: ", e);
@@ -113,7 +113,6 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "ConnectedThread  mmOutStream close failed: ", e);
         }
-
 
     }
 

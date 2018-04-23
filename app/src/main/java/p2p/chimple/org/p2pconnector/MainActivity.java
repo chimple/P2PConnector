@@ -356,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             mTestConnectedThread.write(initialMessage.getBytes()) ;
 //            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
             handShakingInformationSent = true;
+            mTestConnectedThread.DisConnect();
 
         }
     }
