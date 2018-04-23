@@ -17,6 +17,7 @@ public class ConnectedThread extends Thread {
     public static final int MESSAGE_READ = 0x11;
     public static final int MESSAGE_WRITE = 0x22;
     public static final int SOCKET_DISCONNEDTED = 0x33;
+    public static final int SOCKET_STOPPED = 0x44;
 
     private final Socket mmSocket;
     private final InputStream mmInStream;
@@ -60,18 +61,18 @@ public class ConnectedThread extends Thread {
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 
                 } else {
-                    Stop();
-                    mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "Disconnected").sendToTarget();
+                    DisConnect();
+                    mHandler.obtainMessage(SOCKET_STOPPED, -1, -1, "Disconnected").sendToTarget();
                 }
             } catch (IOException e) {
-                Log.e(TAG, "ConnectedThread disconnected: ", e);
+                Log.e(TAG, "ConnectedThread Stopped: ", e);
                 Stop();
                 mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, e).sendToTarget();
                 break;
             }
         }
 
-        Log.i(TAG, "BTConnectedThread exit now !");
+        Log.i(TAG, "BTConnectedThread disconnect now !");
     }
 
     /**
@@ -94,6 +95,26 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "ConnectedThread  write failed: ", e);
         }
+    }
+
+    public void DisConnect() {
+        mRunning = false;
+        try {
+            if (mmInStream != null) {
+                mmInStream.close();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "ConnectedThread  mmInStream close failed: ", e);
+        }
+        try {
+            if (mmOutStream != null) {
+                mmOutStream.close();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "ConnectedThread  mmOutStream close failed: ", e);
+        }
+
+
     }
 
     public void Stop() {

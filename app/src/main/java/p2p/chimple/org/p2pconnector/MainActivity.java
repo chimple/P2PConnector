@@ -74,34 +74,37 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
                 byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.i(TAG, "MESSAGE READ:" + readMessage);
-                if(readMessage.startsWith("START")) {
-                    sBuffer.setLength(0);
-                    readMessage = readMessage.replaceAll("START", "");
-                    if(readMessage.endsWith("END")) {
-                        sBuffer.append(readMessage);
-                        String finalMessage = sBuffer.toString();
-                        finalMessage = finalMessage.replaceAll("END", "");
-                        Log.i(TAG, "PRODESSING MESSAGE 111:" + finalMessage);
-                        this.processSyncMessages(finalMessage);
-                    } else  {
-                        sBuffer.append(readMessage);
-                    }
-
-                } else {
-                    if(!readMessage.endsWith("END")) {
-                        sBuffer.append(readMessage);
-                        Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
-                    } else {
-                        sBuffer.append(readMessage);
-                        String finalMessage = sBuffer.toString();
-                        finalMessage = finalMessage.replaceAll("END", "");
-                        Log.i(TAG, "PRODESSING MESSAGE 222:" + finalMessage);
-                        this.processSyncMessages(finalMessage);
-                    }
-                }
+//                if(readMessage.startsWith("START")) {
+//                    sBuffer.setLength(0);
+//                    readMessage = readMessage.replaceAll("START", "");
+//                    if(readMessage.endsWith("END")) {
+//                        sBuffer.append(readMessage);
+//                        String finalMessage = sBuffer.toString();
+//                        finalMessage = finalMessage.replaceAll("END", "");
+//                        Log.i(TAG, "PRODESSING MESSAGE 111:" + finalMessage);
+//                        this.processSyncMessages(finalMessage);
+//                    } else  {
+//                        sBuffer.append(readMessage);
+//                    }
+//
+//                } else {
+//                    if(!readMessage.endsWith("END")) {
+//                        sBuffer.append(readMessage);
+//                        Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
+//                    } else {
+//                        sBuffer.append(readMessage);
+//                        String finalMessage = sBuffer.toString();
+//                        finalMessage = finalMessage.replaceAll("END", "");
+//                        Log.i(TAG, "PRODESSING MESSAGE 222:" + finalMessage);
+//                        this.processSyncMessages(finalMessage);
+//                    }
+//                }
                 break;
-            case ConnectedThread.SOCKET_DISCONNEDTED: {
+            case ConnectedThread.SOCKET_STOPPED: {
                 updateStatus(TAG + "CHAT", "WE are Disconnected now.");
+            }
+            case ConnectedThread.SOCKET_DISCONNEDTED: {
+                updateStatus(TAG + "CHAT", "WE are Stopped now.");
                 stopConnectedThread();
             }
             break;
@@ -348,8 +351,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     private void sendInitialHandShakingInformation() {
         if (mTestConnectedThread != null) {
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-            String initialMessage = "START" + new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
-            initialMessage += "END";
+            String initialMessage = new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
             Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
             mTestConnectedThread.write(initialMessage.getBytes()) ;
 //            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
@@ -357,6 +359,20 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 
         }
     }
+
+//    @SuppressLint("LongLogTag")
+//    private void sendInitialHandShakingInformation() {
+//        if (mTestConnectedThread != null) {
+//            AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+//            String initialMessage = "START" + new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
+//            initialMessage += "END";
+//            Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
+//            mTestConnectedThread.write(initialMessage.getBytes()) ;
+////            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
+//            handShakingInformationSent = true;
+//
+//        }
+//    }
 
     @Override
     public void Connected(Socket socket) {

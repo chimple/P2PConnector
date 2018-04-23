@@ -193,16 +193,27 @@ public class P2PDBApiImpl implements P2PDBApi {
                 CollectionUtils.find(otherHandShakeInfos, new Predicate<HandShakingInfo>() {
                     @Override
                     public boolean evaluate(HandShakingInfo other) {
-                        // if element exists in both list
-                        if (input.getUserId().equals(other.getUserId())) {
-                            if (input.getSequence() > other.getSequence()) {
-                                validElementsFromOther.add(other);
-                            } else {
-                                removeElementsFromInput.add(input);
+                        // if element exists in both list for same device
+                        if (input.getDeviceId().equals(other.getDeviceId())) {
+                            if (input.getUserId().equals(other.getUserId())) {
+                                if (input.getSequence() > other.getSequence()) {
+                                    validElementsFromOther.add(other);
+                                } else {
+                                    removeElementsFromInput.add(input);
+                                }
                             }
                         } else {
-
+                            validElementsFromOther.add(other);
                         }
+//                        if (input.getUserId().equals(other.getUserId())) {
+//                            if (input.getSequence() > other.getSequence()) {
+//                                validElementsFromOther.add(other);
+//                            } else {
+//                                removeElementsFromInput.add(input);
+//                            }
+//                        } else {
+//
+//                        }
                         return false;
                     }
                 });
@@ -227,8 +238,9 @@ public class P2PDBApiImpl implements P2PDBApi {
                     @Override
                     public void execute(Object input) {
                         HandShakingInfo item = (HandShakingInfo) input;
-                        if (containsKey(item.getUserId())) {
-                            HandShakingInfo storedItem = get(item.getUserId());
+                        String key = item.getUserId() + "_" + item.getDeviceId();
+                        if (containsKey(key)) {
+                            HandShakingInfo storedItem = get(key);
                             if (storedItem.getSequence() > item.getSequence()) {
                                 storedItem.setStartingSequence(item.getSequence());
                             } else {
@@ -236,7 +248,7 @@ public class P2PDBApiImpl implements P2PDBApi {
                                 storedItem.setSequence(item.getSequence());
                             }
                         } else {
-                            put(item.getUserId(), item);
+                            put(key, item);
                         }
                     }
                 });
