@@ -63,6 +63,12 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     private void persistP2PSyncMessage(P2PSyncInfo message) {
         db.p2pSyncDao().insertP2PSyncInfo(message);
+        Log.i(TAG, "got Sync info:" +  message.deviceId);
+        Log.i(TAG, "got Sync info:" +  message.userId);
+        Log.i(TAG, "got Sync info:" +  message.message);
+        Log.i(TAG, "got Sync info:" +  message.messageType);
+        Log.i(TAG, "got Sync info:" +  message.sequence);
+        Log.i(TAG, "got Sync info:" +  message.recipientUserId);
         Log.i(TAG, "inserted data" + message);
     }
 

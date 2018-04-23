@@ -4,15 +4,10 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -37,8 +32,6 @@ public class ConnectedThread extends Thread {
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
-        ByteArrayOutputStream tmpByteArrayOut = null;
-        BufferedOutputStream tmpBufferedOut = null;
         // Get the Socket input and output streams
         try {
             if (mmSocket != null) {
