@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
                 byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.i(TAG, "MESSAGE READ:" + readMessage);
+                this.processSyncMessages(readMessage);
 //                if(readMessage.startsWith("START")) {
 //                    sBuffer.setLength(0);
 //                    readMessage = readMessage.replaceAll("START", "");
@@ -114,31 +115,33 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 
     @SuppressLint("LongLogTag")
     private void processSyncMessages(String readMessage) {
-        if (!handShakingInformationReceived) {
-            handShakingInformationReceived = true;
-            if (mTestConnectedThread != null) {
-                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-                handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
-                updateStatus(TAG, "handShakingInformationReceived" + readMessage);
-                if (!handShakingInformationSent) {
-                    sendInitialHandShakingInformation();
-                } else if (!allSyncInformationSent) {
-                    sendAllSyncInformation(handShakingReceivedInfos);
-                }
-            }
-        } else if (!allSyncInformationReceived) {
-            updateStatus(TAG + "allSyncInformationReceived:", readMessage);
-            allSyncInformationReceived = true;
-            if(readMessage != null) {
-                persistAllSyncInformation(readMessage);
-                disconnectFrom();
-            }
-            if (!allSyncInformationSent) {
-                sendAllSyncInformation(handShakingReceivedInfos);
-            }
-        } else {
-            //disconnectFrom();
-        }
+        updateStatus(TAG, "information received:" + readMessage);
+        disconnectFromSocket();
+//        if (!handShakingInformationReceived) {
+//            handShakingInformationReceived = true;
+//            if (mTestConnectedThread != null) {
+//                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+//                handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
+//                updateStatus(TAG, "handShakingInformationReceived" + readMessage);
+//                if (!handShakingInformationSent) {
+//                    sendInitialHandShakingInformation();
+//                } else if (!allSyncInformationSent) {
+//                    sendAllSyncInformation(handShakingReceivedInfos);
+//                }
+//            }
+//        } else if (!allSyncInformationReceived) {
+//            updateStatus(TAG + "allSyncInformationReceived:", readMessage);
+//            allSyncInformationReceived = true;
+//            if(readMessage != null) {
+//                persistAllSyncInformation(readMessage);
+//                disconnectFrom();
+//            }
+//            if (!allSyncInformationSent) {
+//                sendAllSyncInformation(handShakingReceivedInfos);
+//            }
+//        } else {
+//            //disconnectFrom();
+//        }
     }
 
     //reset commnication flag on next time process starts
@@ -148,6 +151,17 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         this.handShakingInformationSent = false;
         this.allSyncInformationSent = false;
         this.allSyncInformationReceived = false;
+    }
+
+    private void disconnectFromSocket() {
+        updateStatus(TAG, "we got Ack message back, so lets disconnect.");
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                updateStatus(TAG + "CHAT", "disconnect streams now...");
+                disConnectConnectedThread();
+            }
+        }, 1000);
     }
 
     private void disconnectFrom() {
@@ -281,6 +295,13 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     }
 
 
+    private void disConnectConnectedThread() {
+        if (mTestConnectedThread != null) {
+            mTestConnectedThread.DisConnect();
+        }
+    }
+
+
     private void stopConnectedThread() {
         if (mTestConnectedThread != null) {
             mTestConnectedThread.Stop();
@@ -356,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             mTestConnectedThread.write(initialMessage.getBytes()) ;
 //            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
             handShakingInformationSent = true;
-            mTestConnectedThread.DisConnect();
+            mTestConnectedThread.Stop();
 
         }
     }
