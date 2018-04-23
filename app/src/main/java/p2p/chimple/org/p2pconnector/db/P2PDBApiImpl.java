@@ -99,7 +99,9 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     public String buildAllSyncMessages(List<HandShakingInfo> infos) {
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
-        return this.convertP2PSyncInfoToJson(output);
+        String json = this.convertP2PSyncInfoToJson(output);
+        Log.i(TAG, "SYNC JSON:"+ json);
+        return json;
     }
 
     private List<HandShakingInfo> queryInitialHandShakingMessage() {
@@ -167,12 +169,6 @@ public class P2PDBApiImpl implements P2PDBApi {
             }
         });
 
-
-//        final List<HandShakingInfo> otherHandShakeInfos = new ArrayList<HandShakingInfo>();
-//        otherHandShakeInfos.add(new HandShakingInfo("1", "D", 2L));
-//        otherHandShakeInfos.add(new HandShakingInfo("3", "A", 5L));
-//        otherHandShakeInfos.add(new HandShakingInfo("4", "B", 2L));
-//        otherHandShakeInfos.add(new HandShakingInfo("5", "R", 2L));
 
         Collections.sort(otherHandShakeInfos, new Comparator<HandShakingInfo>() {
             @Override

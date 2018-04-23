@@ -7,9 +7,12 @@ import android.util.Log;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -34,6 +37,7 @@ public class ConnectedThread extends Thread {
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
+        ByteArrayOutputStream tmpByteArrayOut = null;
         BufferedOutputStream tmpBufferedOut = null;
         // Get the Socket input and output streams
         try {
@@ -58,13 +62,16 @@ public class ConnectedThread extends Thread {
                 bytes = mmInStream.read(buffer);
                 if (bytes > 0) {
                     Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
+                    String whatGot = new String(buffer, 0, bytes);
+                    Log.i(TAG, "whatGot:" + whatGot);
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
                 } else {
                     Stop();
                     mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "Disconnected").sendToTarget();
                 }
             } catch (IOException e) {
-                 Log.e(TAG, "ConnectedThread disconnected: ", e);
+                Log.e(TAG, "ConnectedThread disconnected: ", e);
                 Stop();
                 mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, e).sendToTarget();
                 break;
