@@ -30,8 +30,10 @@ public class HandShakerThread extends Thread {
             try {
                 mSocket.bind(null);
                 mSocket.connect(new InetSocketAddress(mAddress, mPort), 5000);
+                Log.i(TAG, "called connect on HandShakerThread socket");
                 //return success
                 callBack.Connected(mSocket.getInetAddress(), mSocket.getLocalAddress());
+                Log.i(TAG, "called connected on HandShakerThread callback");
             } catch (IOException e) {
                 Log.i(TAG, "socket connect failed: " + e.toString());
                 try {

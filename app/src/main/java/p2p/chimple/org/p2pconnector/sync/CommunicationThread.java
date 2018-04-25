@@ -19,6 +19,7 @@ public class CommunicationThread extends Thread {
 
         try {
             tmp = new ServerSocket(port);
+            Log.i(TAG, "CommunicationThread ServerSocket created....");
         } catch (IOException e) {
             Log.i(TAG, "new ServerSocket failed: " + e.toString());
         }
@@ -52,11 +53,12 @@ public class CommunicationThread extends Thread {
     }
 
     public void Stop() {
-        Log.i(TAG, "cancelled");
+        Log.i(TAG, "communication cancelled");
         mStopped = true;
         try {
             if (mSocket != null) {
                 mSocket.close();
+                Log.i(TAG, "communication socket closed");
             }
         } catch (IOException e) {
             Log.i(TAG, "closing socket failed: " + e.toString());

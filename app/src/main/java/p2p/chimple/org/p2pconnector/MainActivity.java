@@ -301,17 +301,19 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             clientIPAddressList.remove(0);
 
             updateStatus("Data state", "Will connect to " + Address);
+            Log.i(TAG, "Data state" + "Will connect to " + Address);
             mTestConnectToThread = new ConnectToThread(that, Address, TestChatPortNumber);
             mTestConnectToThread.start();
 
         } else {
             updateStatus("Data state", "All addresses connected, will start exit timer now.");
             // lets just see if we get more connections coming in before the timeout comes
+            Log.i(TAG, "Data state" + "All addresses connected, will start exit timer now.");
             this.disconnectGroupOwnerTimeOut.start();
         }
     }
 
-    public void startTestConnection(Socket socket, boolean outGoing) {
+    private void startTestConnection(Socket socket, boolean outGoing) {
         mTestConnectedThread = new ConnectedThread(socket, mHandler);
         mTestConnectedThread.start();
         Log.i(TAG, "Initial Connection established");
@@ -410,13 +412,14 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             clientIPAddressList.add(address);
 
             updateStatus("Connectec", "Connected From remote host: " + address + ", CTread : " + mTestConnectedThread + ", CtoTread: " + mTestConnectToThread);
-
+            Log.i(TAG, "Connectec" + "Connected From remote host: " + address + ", CTread : " + mTestConnectedThread + ", CtoTread: " + mTestConnectToThread);
             if (mTestConnectedThread == null
                     && mTestConnectToThread == null) {
                 goToNextClientWaiting();
             }
         } else {
             updateStatus("Connectec", "Connected to remote host: " + address);
+            Log.i(TAG, "Connectec" + "Connected to remote host: " + address);
         }
     }
 

@@ -20,6 +20,7 @@ public class HandShakeListenerThread extends Thread {
 
         try {
             tmp = new ServerSocket(port);
+            Log.i(TAG, "HandShakeListenerThread ServerSocket created...");
         } catch (Exception e) {
             Log.i(TAG, "new ServerSocket failed: " + e.toString());
         }
@@ -36,7 +37,7 @@ public class HandShakeListenerThread extends Thread {
                     socket = mSocket.accept();
                 }
                 if (socket != null) {
-                    Log.i(TAG, "we got incoming connection");
+                    Log.i(TAG, "handshaking connection established");
                     callBack.GotConnection(socket.getInetAddress(), socket.getLocalAddress());
                     OutputStream stream = socket.getOutputStream();
                     String hello = "shakeback";

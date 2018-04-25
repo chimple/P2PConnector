@@ -61,8 +61,6 @@ public class DatabaseInitializer {
             e.printStackTrace();
         } finally {
             db.endTransaction();
-            String json = new P2PDBApiImpl(db, context).serializeHandShakingMessage();
-            new P2PDBApiImpl(db, context).deSerializeHandShakingInformationFromJson(json);
         }
     }
 
