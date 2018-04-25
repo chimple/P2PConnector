@@ -59,8 +59,8 @@ public class ConnectedThread extends Thread {
                     Log.i(TAG, "whatGot:" + whatGot);
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } else {
-                    DisConnect();
-                    mHandler.obtainMessage(SOCKET_STOPPED, -1, -1, "Disconnected").sendToTarget();
+                    Stop();
+                    mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "Disconnected").sendToTarget();
                 }
             } catch (IOException e) {
                 Log.e(TAG, "ConnectedThread Stopped: ", e);
@@ -93,26 +93,6 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "ConnectedThread  write failed: ", e);
         }
-    }
-
-    public void DisConnect() {
-        mRunning = false;
-        try {
-            if (mmInStream != null) {
-                mmInStream.close();
-
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "ConnectedThread  mmInStream close failed: ", e);
-        }
-        try {
-            if (mmOutStream != null) {
-                mmOutStream.close();
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "ConnectedThread  mmOutStream close failed: ", e);
-        }
-
     }
 
     public void Stop() {

@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             case ConnectedThread.MESSAGE_WRITE:
                 byte[] writeBuf = (byte[]) msg.obj;// construct a string from the buffer
                 String writeMessage = new String(writeBuf);
-//                updateStatus(TAG + "CHAT", "Wrote: " + writeMessage);
+                updateStatus(TAG, "Wrote: " + writeMessage);
                 break;
             case ConnectedThread.MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
@@ -101,9 +101,6 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 //                    }
 //                }
                 break;
-            case ConnectedThread.SOCKET_STOPPED: {
-                updateStatus(TAG + "CHAT", "WE are Disconnected now.");
-            }
             case ConnectedThread.SOCKET_DISCONNEDTED: {
                 updateStatus(TAG + "CHAT", "WE are Stopped now.");
                 stopConnectedThread();
@@ -140,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 //                sendAllSyncInformation(handShakingReceivedInfos);
 //            }
 //        } else {
-//            //disconnectFrom();
+//            disconnectFrom();
 //        }
     }
 
@@ -159,19 +156,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         handler.postDelayed(new Runnable() {
             public void run() {
                 updateStatus(TAG + "CHAT", "disconnect streams now...");
-                disConnectConnectedThread();
-            }
-        }, 1000);
-    }
-
-    private void disconnectFrom() {
-        updateStatus(TAG, "we got Ack message back, so lets disconnect.");
-        // we got Ack message back, so lets disconnect
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                updateStatus(TAG + "CHAT", "disconnect disabled");
-                goToNextClientWaiting();
+                stopConnectToThread();
             }
         }, 1000);
     }
@@ -295,13 +280,6 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     }
 
 
-    private void disConnectConnectedThread() {
-        if (mTestConnectedThread != null) {
-            mTestConnectedThread.DisConnect();
-        }
-    }
-
-
     private void stopConnectedThread() {
         if (mTestConnectedThread != null) {
             mTestConnectedThread.Stop();
@@ -377,8 +355,6 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             mTestConnectedThread.write(initialMessage.getBytes()) ;
 //            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
             handShakingInformationSent = true;
-            mTestConnectedThread.Stop();
-
         }
     }
 
