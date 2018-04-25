@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     private boolean allSyncInformationReceived = false;
     private Handler mHandler = new Handler((Handler.Callback) this);
     List<HandShakingInfo> handShakingReceivedInfos = null;
-
+    private String currentConnectedAddress = null;
     StringBuffer sBuffer = new StringBuffer();
     //Status
     private int mInterval = 1000; // 1 second by default, can be changed later
@@ -159,8 +159,13 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
                 updateStatus(TAG + "CHAT", "disconnect streams now...");
                 stopConnectedThread();
                 stopConnectToThread();
+                canWeProcessNext();
             }
         }, 1000);
+    }
+
+    private void canWeProcessNext() {
+        goToClientWaiting(currentConnectedAddress);
     }
 
     @Override
@@ -289,6 +294,16 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         }
     }
 
+    private void goToClientWaiting(String address) {
+        stopConnectedThread();
+        stopConnectToThread();
+        this.disconnectGroupOwnerTimeOut.cancel();
+        updateStatus("Data state", "goToClientWaiting => Will connect to " + address);
+        Log.i(TAG, "Data state" + "goToClientWaiting => Will connect to " + address);
+        mTestConnectToThread = new ConnectToThread(that, address, TestChatPortNumber);
+        mTestConnectToThread.start();
+
+    }
 
     private void goToNextClientWaiting() {
         stopConnectedThread();
@@ -299,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
             //With this test we'll just handle each client one-by-one in order they got connected
             String Address = clientIPAddressList.get(0);
             clientIPAddressList.remove(0);
-
+            currentConnectedAddress = Address;
             updateStatus("Data state", "Will connect to " + Address);
             Log.i(TAG, "Data state" + "Will connect to " + Address);
             mTestConnectToThread = new ConnectToThread(that, Address, TestChatPortNumber);
