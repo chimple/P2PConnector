@@ -113,20 +113,20 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     @SuppressLint("LongLogTag")
     private void processSyncMessages(String readMessage) {
         updateStatus(TAG, "information received:" + readMessage);
-        disconnectFromSocket();
-//        if (!handShakingInformationReceived) {
-//            handShakingInformationReceived = true;
-//            if (mTestConnectedThread != null) {
-//                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-//                handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
-//                updateStatus(TAG, "handShakingInformationReceived" + readMessage);
-//                if (!handShakingInformationSent) {
-//                    sendInitialHandShakingInformation();
-//                } else if (!allSyncInformationSent) {
-//                    sendAllSyncInformation(handShakingReceivedInfos);
-//                }
-//            }
-//        } else if (!allSyncInformationReceived) {
+        if (!handShakingInformationReceived) {
+            handShakingInformationReceived = true;
+            if (mTestConnectedThread != null) {
+                AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+                handShakingReceivedInfos = new P2PDBApiImpl(db, getApplicationContext()).deSerializeHandShakingInformationFromJson(readMessage);
+                updateStatus(TAG, "handShakingInformationReceived" + readMessage);
+                if (!handShakingInformationSent) {
+                    sendInitialHandShakingInformation();
+                }
+            }
+        } else {
+            disconnectFromSocket();
+        }
+// else if (!allSyncInformationReceived) {
 //            updateStatus(TAG + "allSyncInformationReceived:", readMessage);
 //            allSyncInformationReceived = true;
 //            if(readMessage != null) {
@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
         handler.postDelayed(new Runnable() {
             public void run() {
                 updateStatus(TAG + "CHAT", "disconnect streams now...");
+                stopConnectedThread();
                 stopConnectToThread();
             }
         }, 1000);
@@ -312,8 +313,10 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
     public void startTestConnection(Socket socket, boolean outGoing) {
         mTestConnectedThread = new ConnectedThread(socket, mHandler);
         mTestConnectedThread.start();
+        Log.i(TAG, "Initial Connection established");
         sendInitialHandShakingInformation();
     }
+
 
 
     @SuppressLint("LongLogTag")
