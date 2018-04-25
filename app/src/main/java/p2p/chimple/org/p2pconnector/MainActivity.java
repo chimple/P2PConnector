@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
 
     @SuppressLint("LongLogTag")
     private void processSyncMessages(String readMessage) {
-        updateStatus(TAG, "information received:" + readMessage);
         if (!handShakingInformationReceived) {
             handShakingInformationReceived = true;
             if (mTestConnectedThread != null) {
@@ -121,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements P2POrchesterCallB
                 updateStatus(TAG, "handShakingInformationReceived" + readMessage);
                 if (!handShakingInformationSent) {
                     sendInitialHandShakingInformation();
+                } else {
+                    disconnectFromSocket();
                 }
             }
         } else {
