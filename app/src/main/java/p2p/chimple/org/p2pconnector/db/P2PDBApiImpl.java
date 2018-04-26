@@ -63,12 +63,12 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     private void persistP2PSyncMessage(P2PSyncInfo message) {
         db.p2pSyncDao().insertP2PSyncInfo(message);
-        Log.i(TAG, "got Sync info:" +  message.deviceId);
-        Log.i(TAG, "got Sync info:" +  message.userId);
-        Log.i(TAG, "got Sync info:" +  message.message);
-        Log.i(TAG, "got Sync info:" +  message.messageType);
-        Log.i(TAG, "got Sync info:" +  message.sequence);
-        Log.i(TAG, "got Sync info:" +  message.recipientUserId);
+        Log.i(TAG, "got Sync info:" + message.deviceId);
+        Log.i(TAG, "got Sync info:" + message.userId);
+        Log.i(TAG, "got Sync info:" + message.message);
+        Log.i(TAG, "got Sync info:" + message.messageType);
+        Log.i(TAG, "got Sync info:" + message.sequence);
+        Log.i(TAG, "got Sync info:" + message.recipientUserId);
         Log.i(TAG, "inserted data" + message);
     }
 
@@ -106,8 +106,8 @@ public class P2PDBApiImpl implements P2PDBApi {
     public String buildAllSyncMessages(String handShakeJson) {
         List<HandShakingInfo> infos = deSerializeHandShakingInformationFromJson(handShakeJson);
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
-        String json = this.convertP2PSyncInfoToJson(output);
-        Log.i(TAG, "SYNC JSON:"+ json);
+        String json = "START" + this.convertP2PSyncInfoToJson(output) + "END";
+        Log.i(TAG, "SYNC JSON:" + json);
         return json;
     }
 
