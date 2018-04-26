@@ -88,7 +88,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                         this.p2PStateFlow.processMessages(finalMessage);
                     }
                 }
-                this.p2PStateFlow.processMessages(readMessage);
                 break;
             case ConnectedThread.SOCKET_DISCONNEDTED: {
                 updateStatus(TAG + "CHAT", "WE are Stopped now.");
