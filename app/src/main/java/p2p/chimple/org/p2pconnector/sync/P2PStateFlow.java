@@ -67,7 +67,7 @@ public class P2PStateFlow {
     private P2PSyncManager manager;
     private static P2PStateFlow instance;
 
-    private Map<Transition, P2PState> allPossibleStates = new HashMap<Transition, P2PState>();
+    private Map<Transition, P2PState> allPossibleStates = null;
 
     private P2PState currentState;
 
@@ -99,6 +99,7 @@ public class P2PStateFlow {
     }
 
     private void initializeAllP2PStates() {
+        allPossibleStates = new HashMap<Transition, P2PState>();
         allPossibleStates.put(NONE, new NoneState());
         allPossibleStates.put(SEND_HANDSHAKING_INFORMATION, new SendInitialHandShakingMessageState());
         allPossibleStates.put(RECEIVE_HANDSHAKING_INFORMATION, new ReceiveInitialHandShakingMessageState());
