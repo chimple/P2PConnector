@@ -103,7 +103,8 @@ public class P2PDBApiImpl implements P2PDBApi {
         return json;
     }
 
-    public String buildAllSyncMessages(List<HandShakingInfo> infos) {
+    public String buildAllSyncMessages(String handShakeJson) {
+        List<HandShakingInfo> infos = deSerializeHandShakingInformationFromJson(handShakeJson);
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
         String json = this.convertP2PSyncInfoToJson(output);
         Log.i(TAG, "SYNC JSON:"+ json);
