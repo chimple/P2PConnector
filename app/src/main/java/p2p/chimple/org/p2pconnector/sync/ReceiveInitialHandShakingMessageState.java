@@ -55,7 +55,6 @@ public class ReceiveInitialHandShakingMessageState implements P2PState {
                 newTransition = SEND_DB_SYNC_INFORMATION;
                 break;
             }
-
             case SEND_HANDSHAKING_INFORMATION: {
                 newTransition = SEND_HANDSHAKING_INFORMATION;
                 break;

@@ -33,10 +33,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private ConnectToThread mTestConnectToThread = null;
     private ConnectedThread mTestConnectedThread = null;
     final private int TestChatPortNumber = 8768;
-    private boolean handShakingInformationReceived = false;
-    private boolean handShakingInformationSent = false;
-    private boolean allSyncInformationSent = false;
-    private boolean allSyncInformationReceived = false;
     private Handler mHandler = new Handler((Handler.Callback) this);
 
     private P2PStateFlow p2PStateFlow = null;
@@ -68,31 +64,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.i(TAG, "MESSAGE READ:" + readMessage);
                 this.p2PStateFlow.processMessages(readMessage);
-//                if(readMessage.startsWith("START")) {
-//                    sBuffer.setLength(0);
-//                    readMessage = readMessage.replaceAll("START", "");
-//                    if(readMessage.endsWith("END")) {
-//                        sBuffer.append(readMessage);
-//                        String finalMessage = sBuffer.toString();
-//                        finalMessage = finalMessage.replaceAll("END", "");
-//                        Log.i(TAG, "PRODESSING MESSAGE 111:" + finalMessage);
-//                        this.processSyncMessages(finalMessage);
-//                    } else  {
-//                        sBuffer.append(readMessage);
-//                    }
-//
-//                } else {
-//                    if(!readMessage.endsWith("END")) {
-//                        sBuffer.append(readMessage);
-//                        Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
-//                    } else {
-//                        sBuffer.append(readMessage);
-//                        String finalMessage = sBuffer.toString();
-//                        finalMessage = finalMessage.replaceAll("END", "");
-//                        Log.i(TAG, "PRODESSING MESSAGE 222:" + finalMessage);
-//                        this.processSyncMessages(finalMessage);
-//                    }
-//                }
                 break;
             case ConnectedThread.SOCKET_DISCONNEDTED: {
                 updateStatus(TAG + "CHAT", "WE are Stopped now.");
@@ -101,37 +72,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             break;
         }
         return true;
-    }
-
-//    @SuppressLint("LongLogTag")
-//    private void processSyncMessages(String readMessage) {
-//        if (!handShakingInformationReceived) {
-//            handShakingInformationReceived = true;
-//        } else {
-//            goToNextClientWaiting();
-//        }
-// else if (!allSyncInformationReceived) {
-//            updateStatus(TAG + "allSyncInformationReceived:", readMessage);
-//            allSyncInformationReceived = true;
-//            if(readMessage != null) {
-//                persistAllSyncInformation(readMessage);
-//                disconnectFrom();
-//            }
-//            if (!allSyncInformationSent) {
-//                sendAllSyncInformation(handShakingReceivedInfos);
-//            }
-//        } else {
-//            disconnectFrom();
-//        }
-//    }
-
-    //reset commnication flag on next time process starts
-
-    private void resetAllP2PCommunicationFlags() {
-        this.handShakingInformationReceived = false;
-        this.handShakingInformationSent = false;
-        this.allSyncInformationSent = false;
-        this.allSyncInformationReceived = false;
     }
 
     public void execute() {
@@ -237,7 +177,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     }
 
-    private void goToNextClientWaiting() {
+    public void goToNextClientWaiting() {
         stopConnectedThread();
         stopConnectToThread();
         this.disconnectGroupOwnerTimeOut.cancel();
@@ -298,38 +238,14 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 //    }
 
 
-    @SuppressLint("LongLogTag")
-    private void sendInitialHandShakingInformation() {
-        if (mTestConnectedThread != null) {
-            AppDatabase db = AppDatabase.getInstance(this.context);
-            String initialMessage = new P2PDBApiImpl(db, this.context).serializeHandShakingMessage();
-            Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
-            mTestConnectedThread.write(initialMessage.getBytes());
-//            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
-            handShakingInformationSent = true;
-        }
-    }
 
-//    @SuppressLint("LongLogTag")
-//    private void sendInitialHandShakingInformation() {
-//        if (mTestConnectedThread != null) {
-//            AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-//            String initialMessage = "START" + new P2PDBApiImpl(db, getApplicationContext()).serializeHandShakingMessage();
-//            initialMessage += "END";
-//            Log.i(TAG + "sendInitialHandShakingInformation:", initialMessage);
-//            mTestConnectedThread.write(initialMessage.getBytes()) ;
-////            mTestConnectedThread.write("END:sendInitialHandShakingInformation".getBytes());
-//            handShakingInformationSent = true;
-//
-//        }
-//    }
 
     @Override
     public void Connected(Socket socket) {
         Log.i(TAG, "Connected to ");
         final Socket socketTmp = socket;
         mTestConnectToThread = null;
-        this.p2PStateFlow.reset();
+        this.p2PStateFlow.resetAllStates();
         startTestConnection(socketTmp);
     }
 
@@ -339,7 +255,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         final Socket socketTmp = socket;
         startListenerThread();
         mTestConnectToThread = null;
-        this.p2PStateFlow.reset();
+        this.p2PStateFlow.resetAllStates();
         startTestConnection(socketTmp);
     }
 
@@ -355,7 +271,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     @Override
     public void Connected(String address, boolean isGroupOwner) {
-        resetAllP2PCommunicationFlags();
         if (isGroupOwner) {
             clientIPAddressList.add(address);
 

@@ -49,7 +49,7 @@ import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_HAN
 
 public class P2PStateFlow {
 
-    public static enum Transition {
+    public enum Transition {
         RECEIVE_HANDSHAKING_INFORMATION,
         SEND_HANDSHAKING_INFORMATION,
         RECEIVE_DB_SYNC_INFORMATION,
@@ -110,15 +110,6 @@ public class P2PStateFlow {
         this.currentState = initialState;
     }
 
-
-    public void reset() {
-        synchronized (P2PStateFlow.class) {
-            if (instance != null) {
-                instance.setInitialState(new NoneState());
-            }
-        }
-    }
-
     public void processMessages(String receivedMessage) {
         if (receivedMessage != null) {
             if (!handShakingInformationReceived) {
@@ -129,8 +120,25 @@ public class P2PStateFlow {
         }
     }
 
+    public void resetAllStates() {
+        synchronized (P2PStateFlow.class) {
+            if (instance != null) {
+                this.setHandShakingInformationSent(false);
+                this.setHandShakingInformationReceived(false);
+                this.setAllSyncInformationSent(false);
+                this.setAllSyncInformationReceived(false);
+                allPossibleStates = null;
+                instance.initializeAllP2PStates();
+                instance.setInitialState(new NoneState());
+            }
+        }
+
+    }
+
     public void allMessagesExchanged() {
         Log.i(TAG, "all messages exchanged");
+        this.resetAllStates();
+        manager.goToNextClientWaiting();
     }
 
     public void transit(Transition command, String message) {
