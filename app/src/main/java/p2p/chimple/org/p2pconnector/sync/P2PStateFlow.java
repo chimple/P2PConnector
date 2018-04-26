@@ -143,6 +143,7 @@ public class P2PStateFlow {
             if (allPossibleStates.containsKey(transitionTo)) {
                 P2PState nextState = allPossibleStates.get(transitionTo);
                 if (nextState != null) {
+                    this.currentState = nextState;
                     nextState.onEnter(instance, manager, message);
                 }
             }

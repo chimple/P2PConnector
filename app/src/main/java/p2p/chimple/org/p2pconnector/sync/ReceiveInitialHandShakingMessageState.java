@@ -1,10 +1,13 @@
 package p2p.chimple.org.p2pconnector.sync;
 
+import android.util.Log;
+
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION;
+import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION;
 
 public class ReceiveInitialHandShakingMessageState implements P2PState {
-
+    private static final String TAG = ReceiveInitialHandShakingMessageState.class.getSimpleName();
     private P2PStateFlow.Transition cTransition;
 
     private String outcome = null;
@@ -18,10 +21,13 @@ public class ReceiveInitialHandShakingMessageState implements P2PState {
     public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String readMessage) {
         if (manager.getConnectedThread() != null) {
             this.outcome = readMessage;
+            Log.i(TAG, "handShakingInformationReceived" + this.outcome);
             manager.updateStatus("handShakingInformationReceived", this.outcome);
             p2PStateFlow.setHandShakingInformationReceived(true);
             if (!p2PStateFlow.isHandShakingInformationSent()) {
                 p2PStateFlow.transit(SEND_HANDSHAKING_INFORMATION, this.outcome);
+            } else {
+                p2PStateFlow.transit(SEND_DB_SYNC_INFORMATION, null);
             }
         }
 
@@ -45,6 +51,11 @@ public class ReceiveInitialHandShakingMessageState implements P2PState {
     public P2PStateFlow.Transition process(P2PStateFlow.Transition transition) {
         P2PStateFlow.Transition newTransition = null;
         switch (transition) {
+            case SEND_DB_SYNC_INFORMATION: {
+                newTransition = SEND_DB_SYNC_INFORMATION;
+                break;
+            }
+
             case SEND_HANDSHAKING_INFORMATION: {
                 newTransition = SEND_HANDSHAKING_INFORMATION;
                 break;
