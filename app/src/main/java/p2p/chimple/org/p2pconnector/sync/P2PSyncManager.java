@@ -223,11 +223,13 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         }
     }
 
-    private void startTestConnection(Socket socket) {
+    private void startTestConnection(Socket socket, boolean shouldInitiate) {
         Log.i(TAG, "Initial Connection established");
         mTestConnectedThread = new ConnectedThread(socket, mHandler);
         mTestConnectedThread.start();
-        this.p2PStateFlow.transit(P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION, null);
+        if(shouldInitiate) {
+            this.p2PStateFlow.transit(P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION, null);
+        }
     }
 
 
@@ -252,7 +254,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         final Socket socketTmp = socket;
         mTestConnectToThread = null;
         this.p2PStateFlow.resetAllStates();
-        startTestConnection(socketTmp);
+        startTestConnection(socketTmp, true);
     }
 
     @Override
@@ -262,7 +264,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         startListenerThread();
         mTestConnectToThread = null;
         this.p2PStateFlow.resetAllStates();
-        startTestConnection(socketTmp);
+        startTestConnection(socketTmp, false);
     }
 
     @Override

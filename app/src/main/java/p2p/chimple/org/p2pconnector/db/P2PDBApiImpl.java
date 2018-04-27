@@ -146,6 +146,7 @@ public class P2PDBApiImpl implements P2PDBApi {
     }
 
     private List<P2PSyncInfo> deSerializeP2PSyncInfoFromJson(String p2pSyncJson) {
+        Log.i(TAG, "P2P Sync Info received" + p2pSyncJson);
         Gson gson = this.registerP2PSyncInfoBuilder();
         Type collectionType = new TypeToken<List<P2PSyncInfo>>() {
         }.getType();
