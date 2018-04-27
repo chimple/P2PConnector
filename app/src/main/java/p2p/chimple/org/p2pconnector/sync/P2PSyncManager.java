@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.os.CountDownTimer;
@@ -16,6 +17,7 @@ import android.util.Log;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
@@ -37,6 +39,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     StringBuffer sBuffer = new StringBuffer();
 
     public static final String customStatusUpdateEvent = "custom-status-update-event";
+    public static final String P2P_SHARED_PREF = "p2pShardPref";
 
     public P2PSyncManager(Context context) {
         this.context = context;
@@ -44,6 +47,18 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.handlerThread.start();
         this.mHandler = new Handler(this.handlerThread.getLooper(), this);
         this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
+
+        this.createShardProfilePreferences();
+
+
+    }
+
+    private void createShardProfilePreferences() {
+        SharedPreferences pref = this.getContext().getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("USER_ID", UUID.randomUUID().toString());
+        editor.putString("DEVICE_ID", UUID.randomUUID().toString());
+        editor.commit(); // commit changes
     }
 
 

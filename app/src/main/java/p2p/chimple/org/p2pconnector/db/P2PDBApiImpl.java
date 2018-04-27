@@ -1,6 +1,7 @@
 package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -38,6 +39,8 @@ import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessage;
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessageDeserializer;
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 public class P2PDBApiImpl implements P2PDBApi {
     private static final String TAG = P2PDBApiImpl.class.getName();
@@ -88,19 +91,24 @@ public class P2PDBApiImpl implements P2PDBApi {
     }
 
     public String serializeHandShakingMessage() {
-        List<HandShakingInfo> handShakingInfos = new ArrayList<HandShakingInfo>();
-        P2PLatestInfoByUserAndDevice[] infos = db.p2pSyncDao().getLatestInfoAvailableByUserIdAndDeviceId();
-        for (P2PLatestInfoByUserAndDevice info : infos) {
-            handShakingInfos.add(new HandShakingInfo(info.userId, info.deviceId, info.sequence));
+        try {
+            List<HandShakingInfo> handShakingInfos = new ArrayList<HandShakingInfo>();
+            P2PLatestInfoByUserAndDevice[] infos = db.p2pSyncDao().getLatestInfoAvailableByUserIdAndDeviceId();
+            for (P2PLatestInfoByUserAndDevice info : infos) {
+                handShakingInfos.add(new HandShakingInfo(info.userId, info.deviceId, info.sequence));
+            }
+
+            Gson gson = this.registerHandShakingMessageBuilder();
+
+            HandShakingMessage message = new HandShakingMessage("handshaking", handShakingInfos);
+            Type handShakingType = new TypeToken<HandShakingMessage>() {
+            }.getType();
+            String json = gson.toJson(message, handShakingType);
+            return json;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return null;
         }
-
-        Gson gson = this.registerHandShakingMessageBuilder();
-
-        HandShakingMessage message = new HandShakingMessage("handshaking", handShakingInfos);
-        Type handShakingType = new TypeToken<HandShakingMessage>() {
-        }.getType();
-        String json = gson.toJson(message, handShakingType);
-        return json;
     }
 
     public String buildAllSyncMessages(String handShakeJson) {
@@ -276,6 +284,81 @@ public class P2PDBApiImpl implements P2PDBApi {
 
         return results;
     }
+
+
+    public List<String> getUsers() {
+        return Arrays.asList(db.p2pSyncDao().fetchAllUsers());
+    }
+
+
+    public List<String> getNeighbours() {
+        return Arrays.asList(db.p2pSyncDao().fetchAllNeighours());
+    }
+
+    public List<P2PSyncInfo> fetchLatestMessagesByMessageType(String messageType, List<String> userIds) {
+        return null;
+    }
+
+    public boolean addMessage(String userId, String recipientId, String messageType, String message) {
+        try {
+            SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+            String deviceId = pref.getString("DEVICE_ID", null); // getting String
+
+            Long maxSequence = db.p2pSyncDao().getLatestSequenceAvailableByUserIdAndDeviceId(userId, deviceId);
+            if (maxSequence == null) {
+                maxSequence = 0L;
+            }
+
+            maxSequence++;
+            P2PSyncInfo info = new P2PSyncInfo(userId, deviceId, maxSequence, recipientId, message, messageType);
+            db.p2pSyncDao().insertP2PSyncInfo(info);
+            Log.i(TAG, "inserted data" + info);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean addMessage(String userId, String recipientId, String messageType, String message, Boolean status, String sessionId) {
+        try {
+            SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+            String deviceId = pref.getString("DEVICE_ID", null); // getting String
+
+            Long maxSequence = db.p2pSyncDao().getLatestSequenceAvailableByUserIdAndDeviceId(userId, deviceId);
+            if (maxSequence == null) {
+                maxSequence = 0L;
+            }
+            maxSequence++;
+
+            Long step = db.p2pSyncDao().getLatestStepForUserIdAndSessionId(userId, sessionId);
+            if (step == null) {
+                step = 0L;
+            }
+
+            step++;
+
+            P2PSyncInfo info = new P2PSyncInfo(userId, deviceId, maxSequence, recipientId, message, messageType);
+            info.setSessionId(sessionId);
+            info.setStatus(status);
+            info.setStep(step);
+            db.p2pSyncDao().insertP2PSyncInfo(info);
+            Log.i(TAG, "inserted data" + info);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+    }
+
+    public List<P2PSyncInfo> getConversations(String firstUserId, String secondUserId, String messageType) {
+        return db.p2pSyncDao().fetchConversations(firstUserId, secondUserId, messageType);
+    }
+
+    public List<P2PSyncInfo> getLatestConversations(String firstUserId, String secondUserId, String messageType) {
+        return db.p2pSyncDao().fetchLatestConversations(firstUserId, secondUserId, messageType);
+    }
+
 }
 
 
