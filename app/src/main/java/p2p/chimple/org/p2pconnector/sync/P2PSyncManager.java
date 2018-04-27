@@ -3,27 +3,25 @@ package p2p.chimple.org.p2pconnector.sync;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.lang.ref.WeakReference;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import p2p.chimple.org.p2pconnector.MainActivity;
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
-import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
 
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
     private static final String TAG = P2PSyncManager.class.getSimpleName();
-
-    private WeakReference<MainActivity> activity;
     private Context context;
 
     private CountDownTimer disconnectGroupOwnerTimeOut;
@@ -33,20 +31,18 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private ConnectToThread mTestConnectToThread = null;
     private ConnectedThread mTestConnectedThread = null;
     final private int TestChatPortNumber = 8768;
-    private Handler mHandler = new Handler((Handler.Callback) this);
-
-    private P2PStateFlow p2PStateFlow = null;
-    List<HandShakingInfo> handShakingReceivedInfos = null;
+    private Handler mHandler;
+    private HandlerThread handlerThread;
+    private P2PStateFlow p2PStateFlow;
     StringBuffer sBuffer = new StringBuffer();
-    //Status
-    private int mInterval = 1000; // 1 second by default, can be changed later
-    private Handler timeHandler;
-    private int timeCounter = 0;
 
+    public static final String customStatusUpdateEvent = "custom-status-update-event";
 
-    public P2PSyncManager(Context context, MainActivity activity) {
+    public P2PSyncManager(Context context) {
         this.context = context;
-        this.activity = new WeakReference<MainActivity>(activity);
+        this.handlerThread = new HandlerThread("P2PSyncManager");
+        this.handlerThread.start();
+        this.mHandler = new Handler(this.handlerThread.getLooper(), this);
         this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
     }
 
@@ -227,7 +223,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         Log.i(TAG, "Initial Connection established");
         mTestConnectedThread = new ConnectedThread(socket, mHandler);
         mTestConnectedThread.start();
-        if(shouldInitiate) {
+        if (shouldInitiate) {
             this.p2PStateFlow.transit(P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION, null);
         }
     }
@@ -313,7 +309,16 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void updateStatus(String who, String line) {
         final String logWho = who;
         final String status = line;
-        this.activity.get().updateStatus(who, line);
+        this.broadcastCustomStatusUpdateEvent(who, line);
+    }
+
+    private void broadcastCustomStatusUpdateEvent(String who, String line) {
+        Log.d("sender", "Broadcasting message customStatusUpdateEvent");
+        Intent intent = new Intent(customStatusUpdateEvent);
+        // You can also include some extra data.
+        intent.putExtra("who", who);
+        intent.putExtra("line", line);
+        LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
     }
 
     public void onDestroy() {

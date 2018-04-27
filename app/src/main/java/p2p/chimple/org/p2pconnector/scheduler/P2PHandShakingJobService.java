@@ -105,7 +105,6 @@ public class P2PHandShakingJobService extends JobService {
             JobParameters params = intent.getExtras().getParcelable(JOB_PARAMS);
             Log.i(TAG, "on finisned job: " + params.getJobId());
             jobFinished(params, false);
-
         }
     }
 }
