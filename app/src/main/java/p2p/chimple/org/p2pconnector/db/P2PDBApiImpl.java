@@ -3,6 +3,7 @@ package p2p.chimple.org.p2pconnector.db;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -18,11 +19,13 @@ import org.apache.commons.collections4.Closure;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +42,9 @@ import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessage;
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessageDeserializer;
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.ProfileMessage;
+import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
+import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
@@ -90,6 +96,29 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
+
+    public boolean persistProfileMessage(String photoJson) {
+        ProfileMessage message = this.deSerializeProfileMessageFromJson(photoJson);
+        String decodedMessage = null;
+        try {
+            byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
+            decodedMessage = new String(data, "UTF-8");
+
+            String fileName = "Photo" + message.getUserId() + ".txt";
+            P2PSyncManager.createProfilePhoto(fileName, decodedMessage.getBytes(), this.context);
+
+            db.beginTransaction();
+            this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
+            db.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public String serializeHandShakingMessage() {
         try {
             List<HandShakingInfo> handShakingInfos = new ArrayList<HandShakingInfo>();
@@ -111,10 +140,25 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
+    public String serializeProfileMessage(String userId, String deviceId, byte[] contents) {
+        try {
+            String photoContents = Base64.encodeToString(contents, Base64.DEFAULT);
+            Gson gson = this.registerProfileMessageBuilder();
+            ProfileMessage message = new ProfileMessage(userId, deviceId, "profileMessage", photoContents);
+            Type ProfileMessageType = new TypeToken<ProfileMessage>() {
+            }.getType();
+            String json = gson.toJson(message, ProfileMessageType);
+            return json;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return null;
+        }
+    }
+
     public String buildAllSyncMessages(String handShakeJson) {
         List<HandShakingInfo> infos = deSerializeHandShakingInformationFromJson(handShakeJson);
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
-        String json = "START" + this.convertP2PSyncInfoToJson(output) + "END";
+        String json = this.convertP2PSyncInfoToJson(output);
         Log.i(TAG, "SYNC JSON:" + json);
         return json;
     }
@@ -133,6 +177,13 @@ public class P2PDBApiImpl implements P2PDBApi {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(HandShakingInfo.class, new HandShakingInfoDeserializer());
         gsonBuilder.registerTypeAdapter(HandShakingMessage.class, new HandShakingMessageDeserializer());
+        Gson gson = gsonBuilder.create();
+        return gson;
+    }
+
+    private Gson registerProfileMessageBuilder() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(ProfileMessage.class, new ProfileMessageDeserializer());
         Gson gson = gsonBuilder.create();
         return gson;
     }
@@ -160,6 +211,15 @@ public class P2PDBApiImpl implements P2PDBApi {
         }.getType();
         List<P2PSyncInfo> infos = gson.fromJson(p2pSyncJson, collectionType);
         return infos;
+    }
+
+    private ProfileMessage deSerializeProfileMessageFromJson(String photoJson) {
+        Log.i(TAG, "P2P Photo Message received" + photoJson);
+        Gson gson = this.registerProfileMessageBuilder();
+        Type ProfileMessageType = new TypeToken<ProfileMessage>() {
+        }.getType();
+        ProfileMessage message = gson.fromJson(photoJson, ProfileMessageType);
+        return message;
     }
 
 
@@ -359,6 +419,75 @@ public class P2PDBApiImpl implements P2PDBApi {
         return db.p2pSyncDao().fetchLatestConversations(firstUserId, secondUserId, messageType);
     }
 
+    public String readProfilePhoto() {
+        SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+        String userId = pref.getString("USER_ID", null); // getting String
+        String deviceId = pref.getString("DEVICE_ID", null); // getting String
+        return db.p2pSyncDao().getProfilePhoto(userId, deviceId);
+    }
+
+    public boolean upsertProfile() {
+        try {
+            SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+            String fileName = pref.getString("PROFILE_PHOTO", null); // getting String
+            String userId = pref.getString("USER_ID", null); // getting String
+            String deviceId = pref.getString("DEVICE_ID", null); // getting String
+
+            Long maxSequence = db.p2pSyncDao().getLatestSequenceAvailableByUserIdAndDeviceId(userId, deviceId);
+            if (maxSequence == null) {
+                maxSequence = 0L;
+            }
+
+            maxSequence++;
+
+
+            P2PSyncInfo profileInfo = new P2PSyncInfo();
+            profileInfo.setUserId(userId);
+            profileInfo.setDeviceId(deviceId);
+            profileInfo.setSequence(maxSequence);
+            profileInfo.setMessage(fileName);
+            profileInfo.setMessageType(P2PSyncManager.MessageTypes.PHOTO.type());
+
+            db.p2pSyncDao().insertP2PSyncInfo(profileInfo);
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message) {
+        try {
+            P2PSyncInfo userInfo = db.p2pSyncDao().getProfileByUserId(userId, P2PSyncManager.MessageTypes.PHOTO.type());
+            if (userInfo != null) {
+                userInfo.setUserId(userId);
+                userInfo.setDeviceId(deviceId);
+                userInfo.setMessage(message);
+                userInfo.setMessageType(P2PSyncManager.MessageTypes.PHOTO.type());
+            } else {
+                userInfo = new P2PSyncInfo();
+                userInfo.setUserId(userId);
+                userInfo.setDeviceId(deviceId);
+
+                Long maxSequence = db.p2pSyncDao().getLatestSequenceAvailableByUserIdAndDeviceId(userId, deviceId);
+                if (maxSequence == null) {
+                    maxSequence = 0L;
+                }
+
+                maxSequence++;
+                userInfo.setSequence(maxSequence);
+                userInfo.setMessage(message);
+                userInfo.setMessageType(P2PSyncManager.MessageTypes.PHOTO.type());
+            }
+            db.p2pSyncDao().insertP2PSyncInfo(userInfo);
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+    }
 }
 
 

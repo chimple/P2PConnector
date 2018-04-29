@@ -1,51 +1,17 @@
 package p2p.chimple.org.p2pconnector.sync;
 
-
-//interface
-//processMessage
-//WaitingToReceiveHandShakingMessage
-//HandShhakingMessageSent - action - write
-//nextState -> WaitingToReceiveHandShakingMessage Or waitingToSendSyncInfo
-
-//NONE->HandShhakingMessagRECEIVED
-//HandShhakingMessagRECEIVED ->
-//        HandShhakingMessageSent
-//        SYNC MESSAGE SENT
-//
-//HandShhakingMessageSent->SYNC MESSAGE SENT
-//SYNC MESSAGE SENT->DONE
-//
-//None -> HandShhakingMessageSent
-//HandShhakingMessageSent ->
-//        HandShhakingMessagRECEIVED
-//        SYNC MESSAGE RECEIVED
-//
-//1ST
-//NONE -> HandShhakingMessageSent
-//CHANGESTATE
-//    - UPDATE STATE
-//    - DO ACTION (SEND MESSAGE)
-//
-//
-//MESSAGE:
-// - UPDATE STATE
-// - DO ACTION (SEND MESSAGE)
-
-
-import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.NONE;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION;
+import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_PROFILE_PHOTO;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION;
-
+import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_PROFILE_PHOTO;
 
 public class P2PStateFlow {
 
@@ -54,6 +20,8 @@ public class P2PStateFlow {
         SEND_HANDSHAKING_INFORMATION,
         RECEIVE_DB_SYNC_INFORMATION,
         SEND_DB_SYNC_INFORMATION,
+        SEND_PROFILE_PHOTO,
+        RECEIVE_PROFILE_PHOTO,
         NONE
     }
 
@@ -63,6 +31,8 @@ public class P2PStateFlow {
     private boolean allSyncInformationReceived = false;
     private boolean handShakingInformationSent = false;
     private boolean allSyncInformationSent = false;
+    private boolean profilePhotoReceived = false;
+    private boolean profilePhotoSent = false;
 
     private P2PSyncManager manager;
     private static P2PStateFlow instance;
@@ -105,6 +75,8 @@ public class P2PStateFlow {
         allPossibleStates.put(RECEIVE_HANDSHAKING_INFORMATION, new ReceiveInitialHandShakingMessageState());
         allPossibleStates.put(SEND_DB_SYNC_INFORMATION, new SendSyncInfoMessageState());
         allPossibleStates.put(RECEIVE_DB_SYNC_INFORMATION, new ReceiveSyncInfoMessageState());
+        allPossibleStates.put(SEND_PROFILE_PHOTO, new SendProfilePhotoState());
+        allPossibleStates.put(RECEIVE_PROFILE_PHOTO, new ReceiveProfilePhotoState());
     }
 
     private void setInitialState(P2PState initialState) {
@@ -114,9 +86,11 @@ public class P2PStateFlow {
     public void processMessages(String receivedMessage) {
         if (receivedMessage != null) {
             if (!handShakingInformationReceived) {
-                this.transit(Transition.RECEIVE_HANDSHAKING_INFORMATION, receivedMessage);
+                this.transit(RECEIVE_HANDSHAKING_INFORMATION, receivedMessage);
             } else if (!allSyncInformationReceived) {
-                this.transit(Transition.RECEIVE_DB_SYNC_INFORMATION, receivedMessage);
+                this.transit(RECEIVE_DB_SYNC_INFORMATION, receivedMessage);
+            } else if (!profilePhotoReceived) {
+                this.transit(RECEIVE_PROFILE_PHOTO, receivedMessage);
             }
         }
     }
@@ -128,6 +102,8 @@ public class P2PStateFlow {
                 this.setHandShakingInformationReceived(false);
                 this.setAllSyncInformationSent(false);
                 this.setAllSyncInformationReceived(false);
+                this.setProfilePhotoReceived(false);
+                this.setProfilePhotoSent(false);
                 allPossibleStates = null;
                 instance.initializeAllP2PStates();
                 instance.setInitialState(new NoneState());
@@ -197,5 +173,21 @@ public class P2PStateFlow {
 
     public void setAllSyncInformationSent(boolean allSyncInformationSent) {
         this.allSyncInformationSent = allSyncInformationSent;
+    }
+
+    public boolean isProfilePhotoReceived() {
+        return profilePhotoReceived;
+    }
+
+    public void setProfilePhotoReceived(boolean profilePhotoReceived) {
+        this.profilePhotoReceived = profilePhotoReceived;
+    }
+
+    public boolean isProfilePhotoSent() {
+        return profilePhotoSent;
+    }
+
+    public void setProfilePhotoSent(boolean profilePhotoSent) {
+        this.profilePhotoSent = profilePhotoSent;
     }
 }

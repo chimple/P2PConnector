@@ -1,8 +1,10 @@
 package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -10,11 +12,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
-import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
-import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 public class DatabaseInitializer {
 
@@ -27,6 +28,10 @@ public class DatabaseInitializer {
     }
 
     private static void populateWithTestData(AppDatabase db, Context context) {
+        SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
+        String generateUserId = pref.getString("USER_ID", null); // getting String
+        String fileName = P2PSyncManager.generateUserPhotoFileName(generateUserId);
+        P2PSyncManager.createProfilePhoto(fileName, "HEllo - welcome".getBytes(), context);
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = null;
         try {
@@ -56,7 +61,10 @@ public class DatabaseInitializer {
 
                 new P2PDBApiImpl(db, context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
             }
+
+            new P2PDBApiImpl(db, context).upsertProfile();
             db.setTransactionSuccessful();
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

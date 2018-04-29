@@ -7,6 +7,7 @@ import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION;
+import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_PROFILE_PHOTO;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION;
 
@@ -31,18 +32,16 @@ public class SendSyncInfoMessageState implements P2PState {
             String handShakingInformationReceived = p2PStateFlow.getStateResult(P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION);
             Log.i(TAG, "handShakingInformationReceived in SendSyncInfoMessageState" + handShakingInformationReceived);
             String syncInformation = new P2PDBApiImpl(db, manager.getContext()).buildAllSyncMessages(handShakingInformationReceived);
-            manager.getConnectedThread().write(syncInformation.getBytes());
+            final String updatedSyncInformation = "START" + syncInformation + "END";
+            manager.getConnectedThread().write(updatedSyncInformation.getBytes());
             Log.i(TAG, "syncInformation message sent" + syncInformation);
             p2PStateFlow.setAllSyncInformationSent(true);
-            if (p2PStateFlow.isAllSyncInformationReceived()) {
-                p2PStateFlow.allMessagesExchanged();
-            }
         }
     }
 
     @Override
     public void onExit(P2PStateFlow.Transition newTransition) {
-        Log.i(TAG, "EXIT SEND_HANDSHAKING_INFORMATION STATE to transition" + newTransition);
+        Log.i(TAG, "EXIT SEND_DB_SYNC_INFORMATION STATE to transition" + newTransition);
     }
 
     @Override
@@ -53,6 +52,11 @@ public class SendSyncInfoMessageState implements P2PState {
                 newTransition = RECEIVE_DB_SYNC_INFORMATION;
                 break;
             }
+            case RECEIVE_PROFILE_PHOTO: {
+                newTransition = RECEIVE_PROFILE_PHOTO;
+                break;
+            }
+
             default: {
                 newTransition = SEND_DB_SYNC_INFORMATION;
                 break;

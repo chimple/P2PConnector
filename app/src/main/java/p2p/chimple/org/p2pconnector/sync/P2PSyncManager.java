@@ -14,6 +14,14 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +29,7 @@ import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
+
 
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
     private static final String TAG = P2PSyncManager.class.getSimpleName();
@@ -38,8 +47,32 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private P2PStateFlow p2PStateFlow;
     StringBuffer sBuffer = new StringBuffer();
 
+    public static final String profileFileExtension = ".txt";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
+
+    public enum Strings {
+        Photo,
+        Chat,
+        Game
+    }
+
+    public enum MessageTypes {
+        PHOTO("Photo"),
+        CHAT("Chat"),
+        GAME("Game");
+
+        private String type;
+
+        MessageTypes(String type) {
+            this.type = type;
+        }
+
+        public String type() {
+            return type;
+        }
+    }
+
 
     public P2PSyncManager(Context context) {
         this.context = context;
@@ -339,6 +372,90 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void onDestroy() {
         this.disconnectGroupOwnerTimeOut.cancel();
         this.stopConnector();
+    }
+
+
+    // Manage photo
+
+    public static void createProfilePhoto(String fileName, byte[] contents, Context context) {
+        Boolean canWrite = false;
+        File pathDir = context.getExternalFilesDir(null);
+        if (null == pathDir) {
+            pathDir = context.getFilesDir();
+        }
+
+        canWrite = pathDir.canWrite();
+
+        if (canWrite) {
+            File file = new File(pathDir, fileName);
+
+            try {
+                // Make sure the Pictures directory exists.
+                if (!checkIfFileExists(fileName, context)) {
+                    file.mkdirs();
+                    file.createNewFile();
+                }
+                OutputStream os = new FileOutputStream(file);
+                os.write(contents);
+                os.close();
+
+                // update shared preferences
+                SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("PROFILE_PHOTO", file.getAbsolutePath());
+                editor.commit(); // commit changes
+
+
+            } catch (IOException e) {
+                // Unable to create file, likely because external storage is
+                // not currently mounted.
+                Log.w("ExternalStorage", "Error writing " + file, e);
+            }
+
+        } else {
+            Log.i(TAG, "could not write to external storage");
+        }
+
+    }
+
+
+    public static byte[] getProfilePhotoContents(String fileName, Context context) {
+        byte[] results = null;
+        try {
+            Boolean canRead = checkIfFileExists(fileName, context);
+            if (canRead) {
+                File pathDir = context.getExternalFilesDir(null);
+                if (null == pathDir) {
+                    pathDir = context.getFilesDir();
+                }
+                File file = new File(pathDir, fileName);
+                byte[] bytes = new byte[(int) file.length()];
+                BufferedInputStream bis;
+                bis = new BufferedInputStream(new FileInputStream(file));
+                bis.read(bytes, 0, bytes.length);
+                bis.close();
+
+                results = bytes;
+            }
+        } catch (IOException e) {
+            results = null;
+        }
+        return results;
+    }
+
+
+    public static boolean checkIfFileExists(String fileName, Context context) {
+        File pathDir = context.getExternalFilesDir(null);
+        if (null == pathDir) {
+            pathDir = context.getFilesDir();
+        }
+        File file = new File(pathDir, fileName);
+        return file.exists();
+    }
+
+
+    public static String generateUserPhotoFileName(String userId) {
+        return "profile-" + userId + profileFileExtension;
     }
 
 }

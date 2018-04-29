@@ -14,7 +14,7 @@ import java.util.Date;
         @Index("user_id"),
         @Index("device_id"),
         @Index("sequence"),
-        @Index("sessionId"),
+        @Index("session_id"),
         @Index("status")
 })
 public class P2PSyncInfo {
@@ -22,6 +22,18 @@ public class P2PSyncInfo {
     public P2PSyncInfo() {
 
     }
+
+    @Ignore
+    public P2PSyncInfo(String userId, String deviceId, Long sequence, String recipientUserId, String message, String messageType) {
+        this.userId = userId;
+        this.deviceId = deviceId;
+        this.sequence = sequence;
+        this.recipientUserId = recipientUserId;
+        this.message = message;
+        this.messageType = messageType;
+        this.loggedAt = new Date();
+    }
+
 
     @PrimaryKey(autoGenerate = true)
     public Long id; // auto generated primary key
@@ -64,16 +76,6 @@ public class P2PSyncInfo {
     public Date loggedAt;
 
 
-    @Ignore
-    public P2PSyncInfo(String userId, String deviceId, Long sequence, String receipientUserId, String message, String messageType) {
-        this.userId = userId;
-        this.deviceId = deviceId;
-        this.sequence = sequence;
-        this.recipientUserId = receipientUserId;
-        this.message = message;
-        this.messageType = messageType;
-        this.loggedAt = new Date();
-    }
 
     public void setStatus(Boolean status) {
         this.status = status;

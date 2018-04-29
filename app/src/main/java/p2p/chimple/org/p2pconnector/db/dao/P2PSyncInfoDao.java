@@ -5,12 +5,14 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.provider.ContactsContract;
 
 import java.util.List;
 
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
+import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 
 @Dao
@@ -20,6 +22,10 @@ public interface P2PSyncInfoDao {
 
     @Query("SELECT * FROM P2PSyncInfo WHERE user_id=:userId")
     public P2PSyncInfo[] getSyncInformationByUserId(String userId);
+
+    @Query("SELECT * FROM P2PSyncInfo WHERE user_id=:userId and message_type= :messageType")
+    public P2PSyncInfo getProfileByUserId(String userId, String messageType);
+
 
     @Query("SELECT MAX(sequence) FROM P2PSyncInfo WHERE user_id=:userId AND device_id=:deviceId GROUP BY user_id, device_id")
     public Long getLatestSequenceAvailableByUserIdAndDeviceId(String userId, String deviceId);
@@ -43,18 +49,18 @@ public interface P2PSyncInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long insertP2PSyncInfo(P2PSyncInfo info);
 
-    @Update
-    public void updateP2PSyncInfo(P2PSyncInfo updateP2PSyncInfo);
-
     @Query("SELECT distinct(user_id) from P2PSyncInfo")
     public String[] fetchAllUsers();
+
+    @Query("SELECT message from P2PSyncInfo where user_id = :userId AND device_id = :deviceId AND message_type = 'Photo' limit 1")
+    public String getProfilePhoto(String userId, String deviceId);
 
 
     @Query("SELECT distinct(user_id) from P2PSyncInfo")
     public String[] fetchAllNeighours();
 
     @Query("SELECT tmp.user_id, ps.message from (SELECT user_id, max(sequence) as sequence FROM P2PSyncInfo  WHERE message_type = :messageType AND user_id in (:userIds) group by user_id)  as tmp, P2PSyncInfo ps where ps.user_id = tmp.user_id and ps.sequence = tmp.sequence")
-    public List<P2PUserIdMessage> fetchLatestMessagesByMessageType1(String messageType, List<String> userIds);
+    public List<P2PUserIdMessage> fetchLatestMessagesByMessageType(String messageType, List<String> userIds);
 
     @Query("SELECT tmp.user_id, ps.message from (SELECT user_id, max(sequence) as sequence FROM P2PSyncInfo  WHERE message_type = :messageType group by user_id)  as tmp, P2PSyncInfo ps where ps.user_id = tmp.user_id and ps.sequence = tmp.sequence")
     public List<P2PUserIdMessage> fetchLatestMessagesByMessageType(String messageType);

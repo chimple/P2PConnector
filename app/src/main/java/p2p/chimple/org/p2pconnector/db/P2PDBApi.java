@@ -15,9 +15,9 @@ public interface P2PDBApi {
 
     List<P2PSyncInfo> fetchLatestMessagesByMessageType(String messageType, List<String> userIds);
 
-    public boolean addMessage(String userId, String receipientId, String messageType, String message);
+    public boolean addMessage(String userId, String recipientId, String messageType, String message);
 
-    public boolean addMessage(String userId, String receipientId, String messageType, String message, Boolean status, String sessionId);
+    public boolean addMessage(String userId, String recipientId, String messageType, String message, Boolean status, String sessionId);
 
     public List<P2PSyncInfo> getConversations(String firstUserId, String secondUserId, String messageType);
 
@@ -28,4 +28,6 @@ public interface P2PDBApi {
     public String serializeHandShakingMessage();
 
     public void persistP2PSyncInfos(String p2pSyncJson);
+
+    public boolean upsertProfile();
 }

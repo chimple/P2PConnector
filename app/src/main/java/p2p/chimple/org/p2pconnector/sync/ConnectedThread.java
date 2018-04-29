@@ -73,6 +73,24 @@ public class ConnectedThread extends Thread {
         Log.i(TAG, "BTConnectedThread disconnect now !");
     }
 
+
+    public void write(byte[] buffer, int from, int length) {
+        try {
+            int SDK_INT = android.os.Build.VERSION.SDK_INT;
+            if (SDK_INT > 8) {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                        .permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                if (mmOutStream != null) {
+                    mmOutStream.write(buffer, from , length);
+                    mHandler.obtainMessage(MESSAGE_WRITE, buffer.length, -1, buffer).sendToTarget();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "ConnectedThread  write failed: ", e);
+        }
+    }
+
     /**
      * Write to the connected OutStream.
      *
