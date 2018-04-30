@@ -56,20 +56,35 @@ public class ConnectedThread extends Thread {
                 if (bytes > 0) {
                     Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
                     String whatGot = new String(buffer, 0, bytes);
+                    String finalMessage = null;
                     if(whatGot != null) {
                         Log.i(TAG, "what we got" + whatGot);
-                        if(whatGot.startsWith("START"))
-                        {
+
+                        if (whatGot.startsWith("START")) {
                             sBuffer = new StringBuffer();
+                            Log.i(TAG, "MESSAGE READ:" + whatGot);
+                            if (whatGot.endsWith("END")) {
+                                sBuffer.append(whatGot);
+                                finalMessage = sBuffer.toString();
+                                sBuffer = null;
+                            } else {
+                                sBuffer.append(whatGot);
+                            }
+                        } else {
+                            if (!whatGot.endsWith("END")) {
+                                sBuffer.append(whatGot);
+                                Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
+                            } else {
+                                sBuffer.append(whatGot);
+                                finalMessage = sBuffer.toString();
+                                sBuffer = null;
+                            }
                         }
-                        do {
-                            sBuffer.append(whatGot);
-                        } while(!whatGot.endsWith("END"));
-                        String data = sBuffer.toString();
-                        data = data.replaceAll("START", "");
-                        data = data.replaceAll("END", "");
-                        Log.i(TAG, "final data to be processed: " + data);
-                        mHandler.obtainMessage(MESSAGE_READ, data.getBytes().length, -1, data.getBytes()).sendToTarget();
+
+                        finalMessage = finalMessage.replaceAll("START", "");
+                        finalMessage = finalMessage.replaceAll("END", "");
+                        Log.i(TAG, "final data to be processed: " + finalMessage);
+                        mHandler.obtainMessage(MESSAGE_READ, finalMessage.getBytes().length, -1, finalMessage.getBytes()).sendToTarget();
                     }
                 } else {
                     Stop();
