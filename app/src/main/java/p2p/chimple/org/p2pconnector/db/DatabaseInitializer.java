@@ -31,7 +31,7 @@ public class DatabaseInitializer {
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
         String generateUserId = pref.getString("USER_ID", null); // getting String
         String fileName = P2PSyncManager.generateUserPhotoFileName(generateUserId);
-        P2PSyncManager.createProfilePhoto(fileName, "HEllo - welcome".getBytes(), context);
+        P2PSyncManager.createProfilePhoto(fileName, "hello - welcome".getBytes(), context);
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = null;
         try {
