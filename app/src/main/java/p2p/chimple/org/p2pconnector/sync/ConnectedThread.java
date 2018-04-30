@@ -57,11 +57,12 @@ public class ConnectedThread extends Thread {
                     Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
                     String whatGot = new String(buffer, 0, bytes);
                     if(whatGot != null) {
+                        Log.i(TAG, "what we got" + whatGot);
+                        if(whatGot.startsWith("START"))
+                        {
+                            sBuffer = new StringBuffer();
+                        }
                         do {
-                            if(whatGot.startsWith("START"))
-                            {
-                                sBuffer = new StringBuffer();
-                            }
                             sBuffer.append(whatGot);
                         } while(!whatGot.endsWith("END"));
                         String data = sBuffer.toString();
