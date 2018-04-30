@@ -94,34 +94,36 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 {
                     byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    if (readMessage.startsWith("START")) {
-                        sBuffer = new StringBuffer();
-                        Log.i(TAG, "MESSAGE READ:" + readMessage);
-                        readMessage = readMessage.replaceAll("START", "");
-                        if (readMessage.endsWith("END")) {
-                            sBuffer.append(readMessage);
-                            String finalMessage = sBuffer.toString();
-                            sBuffer = null;
-                            finalMessage = finalMessage.replaceAll("END", "");
-                            Log.i(TAG, "PROCESSING MESSAGE 111:" + finalMessage);
-                            this.p2PStateFlow.processMessages(finalMessage);
-
-                        } else {
-                            sBuffer.append(readMessage);
-                        }
-                    } else {
-                        if (!readMessage.endsWith("END")) {
-                            sBuffer.append(readMessage);
-                            Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
-                        } else {
-                            sBuffer.append(readMessage);
-                            String finalMessage = sBuffer.toString();
-                            sBuffer = null;
-                            finalMessage = finalMessage.replaceAll("END", "");
-                            Log.i(TAG, "PROCESSING MESSAGE 222:" + finalMessage);
-                            this.p2PStateFlow.processMessages(finalMessage);
-                        }
-                    }
+                    Log.i(TAG, "MESSAGE READ:" + readMessage);
+                    this.p2PStateFlow.processMessages(readMessage);
+//                    if (readMessage.startsWith("START")) {
+//                        sBuffer = new StringBuffer();
+//                        Log.i(TAG, "MESSAGE READ:" + readMessage);
+//                        readMessage = readMessage.replaceAll("START", "");
+//                        if (readMessage.endsWith("END")) {
+//                            sBuffer.append(readMessage);
+//                            String finalMessage = sBuffer.toString();
+//                            sBuffer = null;
+//                            finalMessage = finalMessage.replaceAll("END", "");
+//                            Log.i(TAG, "PROCESSING MESSAGE 111:" + finalMessage);
+//                            this.p2PStateFlow.processMessages(finalMessage);
+//
+//                        } else {
+//                            sBuffer.append(readMessage);
+//                        }
+//                    } else {
+//                        if (!readMessage.endsWith("END")) {
+//                            sBuffer.append(readMessage);
+//                            Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
+//                        } else {
+//                            sBuffer.append(readMessage);
+//                            String finalMessage = sBuffer.toString();
+//                            sBuffer = null;
+//                            finalMessage = finalMessage.replaceAll("END", "");
+//                            Log.i(TAG, "PROCESSING MESSAGE 222:" + finalMessage);
+//                            this.p2PStateFlow.processMessages(finalMessage);
+//                        }
+//                    }
                 }
                 break;
             case ConnectedThread.SOCKET_DISCONNEDTED: {
