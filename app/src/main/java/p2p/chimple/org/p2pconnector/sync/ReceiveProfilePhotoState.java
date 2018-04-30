@@ -28,7 +28,6 @@ public class ReceiveProfilePhotoState implements P2PState {
         if (manager.getConnectedThread() != null) {
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
             new P2PDBApiImpl(db, manager.getContext()).persistProfileMessage(readMessage);
-
             p2PStateFlow.setProfilePhotoReceived(true);
             if (!p2PStateFlow.isProfilePhotoSent()) {
                 p2PStateFlow.transit(SEND_PROFILE_PHOTO, null);

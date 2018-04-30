@@ -95,24 +95,29 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     public boolean persistProfileMessage(String photoJson) {
         ProfileMessage message = this.deSerializeProfileMessageFromJson(photoJson);
-        String decodedMessage = null;
-        try {
-            byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
-            decodedMessage = new String(data, "UTF-8");
+        if(message != null) {
+            String decodedMessage = null;
+            try {
+                byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
+                decodedMessage = new String(data, "UTF-8");
 
-            String fileName = message.getFileName();
-            P2PSyncManager.createProfilePhoto(fileName, decodedMessage.getBytes(), this.context);
+                String fileName = message.getFileName();
+                P2PSyncManager.createProfilePhoto(fileName, decodedMessage.getBytes(), this.context);
 
-            db.beginTransaction();
-            this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
-            db.setTransactionSuccessful();
+                db.beginTransaction();
+                this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
+                db.setTransactionSuccessful();
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+                return false;
+            } finally {
+                db.endTransaction();
+            }
+        } else {
             return true;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            return false;
-        } finally {
-            db.endTransaction();
         }
+
     }
 
     public String serializeHandShakingMessage() {
