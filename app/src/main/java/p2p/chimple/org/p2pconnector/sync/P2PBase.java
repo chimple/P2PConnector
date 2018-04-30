@@ -10,7 +10,10 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class P2PBase implements WifiP2pManager.ChannelListener {
     private static final String TAG = P2PBase.class.getSimpleName();
@@ -139,60 +142,69 @@ public class P2PBase implements WifiP2pManager.ChannelListener {
     }
 
 
+    public List<WifiDirectService> connectedDevices() {
+        return this.connectedDevices;
+    }
+
+
     public WifiDirectService selectServiceToConnect(List<WifiDirectService> available) {
 
         WifiDirectService ret = null;
 
-        if (connectedDevices.size() > 0 && available.size() > 0) {
+        List<WifiDirectService> list = Collections.synchronizedList(this.connectedDevices);
 
-            int firstNewMatch = -1;
-            int firstOldMatch = -1;
+        synchronized (list) {
+            if (list.size() > 0 && available.size() > 0) {
 
-            for (int i = 0; i < available.size(); i++) {
-                if (firstNewMatch >= 0) {
-                    break;
-                }
-                for (int ii = 0; ii < connectedDevices.size(); ii++) {
-                    if (available.get(i).getDeviceAddress().equals(connectedDevices.get(ii).getDeviceAddress())) {
-                        if (firstOldMatch < 0 || firstOldMatch > ii) {
-                            //find oldest one available that we have connected previously
-                            firstOldMatch = ii;
-                        }
-                        firstNewMatch = -1;
+                int firstNewMatch = -1;
+                int firstOldMatch = -1;
+
+                for (int i = 0; i < available.size(); i++) {
+                    if (firstNewMatch >= 0) {
                         break;
-                    } else {
-                        if (firstNewMatch < 0) {
-                            firstNewMatch = i; // select first not connected device
+                    }
+                    for (int ii = 0; ii < list.size(); ii++) {
+                        if (available.get(i).getDeviceAddress().equals(list.get(ii).getDeviceAddress())) {
+                            if (firstOldMatch < 0 || firstOldMatch > ii) {
+                                //find oldest one available that we have connected previously
+                                firstOldMatch = ii;
+                            }
+                            firstNewMatch = -1;
+                            break;
+                        } else {
+                            if (firstNewMatch < 0) {
+                                firstNewMatch = i; // select first not connected device
+                            }
                         }
                     }
                 }
+
+                if (firstNewMatch >= 0) {
+                    ret = available.get(firstNewMatch);
+                } else if (firstOldMatch >= 0) {
+                    ret = list.get(firstOldMatch);
+                    // we move this to last position
+                    list.remove(firstOldMatch);
+                }
+
+                Log.i(TAG + "EEE", "firstNewMatch " + firstNewMatch + ", firstOldMatch: " + firstOldMatch);
+
+            } else if (available.size() > 0) {
+                ret = available.get(0);
+                Log.i(TAG + "EEE", "selecting first available address:" + ret.getDeviceAddress() + " name:" + ret.getDeviceName());
             }
-
-            if (firstNewMatch >= 0) {
-                ret = available.get(firstNewMatch);
-            } else if (firstOldMatch >= 0) {
-                ret = connectedDevices.get(firstOldMatch);
-                // we move this to last position
-                connectedDevices.remove(firstOldMatch);
+            if (ret != null) {
+                list.add(ret);
+                Log.i(TAG + "EEE", "adding to connected devices address" + ret.getDeviceAddress() + " name:" + ret.getDeviceName());
+                // just to set upper limit for the amount of remembered contacts
+                // when we have 101, we remove the oldest (that's the top one)
+                // from the array
+                if (list.size() > 100) {
+                    list.remove(0);
+                }
             }
-
-            Log.i(TAG + "EEE", "firstNewMatch " + firstNewMatch + ", firstOldMatch: " + firstOldMatch);
-
-        } else if (available.size() > 0) {
-            ret = available.get(0);
-            Log.i(TAG + "EEE", "selecting first available address:" + ret.getDeviceAddress() + " name:"  + ret.getDeviceName());
+            Log.i(TAG + "EEE", "Chosed connected devices address" + ret.getDeviceAddress() + " name:" + ret.getDeviceName());
+            return ret;
         }
-        if (ret != null) {
-            connectedDevices.add(ret);
-            Log.i(TAG + "EEE", "adding to connected devices address" + ret.getDeviceAddress() + " name:"  + ret.getDeviceName());
-            // just to set upper limit for the amount of remembered contacts
-            // when we have 101, we remove the oldest (that's the top one)
-            // from the array
-            if (connectedDevices.size() > 100) {
-                connectedDevices.remove(0);
-            }
-        }
-        Log.i(TAG + "EEE", "Chosed connected devices address" + ret.getDeviceAddress() + " name:"  + ret.getDeviceName());
-        return ret;
     }
 }

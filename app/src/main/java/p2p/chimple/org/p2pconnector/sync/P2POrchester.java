@@ -11,7 +11,11 @@ import android.util.Log;
 
 import java.net.InetAddress;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.HandShakeportToUse;
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.SERVICE_TYPE;
@@ -237,7 +241,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                         //There are supposedly a possible race-condition bug with the service discovery
                         // thus to avoid it, we are delaying the service discovery start here
                         public void run() {
-                            if(mWifiConnection != null) {
+                            if (mWifiConnection != null) {
                                 Log.i(TAG + "shake:", "re shaking.");
                                 String address = mWifiConnection.retrieveInetAddress();
                                 setConnectionState(SyncUtils.ConnectionState.HandShaking);
@@ -296,6 +300,24 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
         }
     }
 
+    @Override
+    public Map<String, WifiDirectService> foundNeighboursList(List<WifiDirectService> list) {
+        Map<String, WifiDirectService> neighbours = new HashMap<String, WifiDirectService>();
+        List<WifiDirectService> devices = Collections.synchronizedList(list);
+        synchronized (devices) {
+            if (devices != null && devices.size() > 0) {
+                for (WifiDirectService device : devices) {
+                    Log.i(TAG, "Selected device address: " + device.getInstanceName());
+                    String[] separated = device.getInstanceName().split(":");
+                    String userUUID = separated[0];
+                    Log.i(TAG + " SS:", "found User UUID:" + separated[0]);
+                    Log.i(TAG + " SS:", "found SSID:" + separated[1] + ", pwd:" + separated[2] + "IP: " + separated[3]);
+                    neighbours.put(userUUID, device);
+                }
+            }
+        }
+        return neighbours;
+    }
 
     @Override
     public void gotServicesList(List<WifiDirectService> list) {
@@ -309,6 +331,8 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
 
                     Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
                     String[] separated = selItem.getInstanceName().split(":");
+                    String userUUID = separated[0];
+                    Log.i(TAG + " SS:", "found User UUID:" + separated[0]);
                     Log.i(TAG + " SS:", "found SSID:" + separated[1] + ", pwd:" + separated[2] + "IP: " + separated[3]);
 
                     stopServiceSearcher();
@@ -380,7 +404,8 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
     }
 
     @Override
-    public void connectionStatusChanged(SyncUtils.SyncHandShakeState state, NetworkInfo.DetailedState detailedState, int Error) {
+    public void connectionStatusChanged(SyncUtils.SyncHandShakeState
+                                                state, NetworkInfo.DetailedState detailedState, int Error) {
         Log.i(TAG + " COM:", "State " + state + ", detailed state: " + detailedState + " , Error: " + Error);
 
         String conStatus = "";
@@ -460,5 +485,15 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
 
             }
         });
+    }
+
+
+    public void addHighPriorityConnection(WifiDirectService device) {
+        synchronized (this) {
+            if (mWifiServiceSearcher != null && mWifiBase != null && mWifiServiceSearcher.serviceList() != null) {
+                mWifiBase.connectedDevices().remove(device);
+                mWifiServiceSearcher.serviceList().add(0, device);
+            }
+        }
     }
 }

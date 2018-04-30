@@ -42,8 +42,6 @@ import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.Strings.Photo;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.profileFileExtension;
 
 public class P2PDBApiImpl implements P2PDBApi {
     private static final String TAG = P2PDBApiImpl.class.getName();
@@ -223,14 +221,20 @@ public class P2PDBApiImpl implements P2PDBApi {
 
 
     public List<HandShakingInfo> deSerializeHandShakingInformationFromJson(String handShakingJson) {
-        Gson gson = this.registerHandShakingMessageBuilder();
-        Type handShakingMessageType = new TypeToken<HandShakingMessage>() {
-        }.getType();
-        HandShakingMessage message = gson.fromJson(handShakingJson, handShakingMessageType);
-        if (message != null) {
-            return message.getInfos();
+        List result = new ArrayList();
+        try {
+            Gson gson = this.registerHandShakingMessageBuilder();
+            Type handShakingMessageType = new TypeToken<HandShakingMessage>() {
+            }.getType();
+            HandShakingMessage message = gson.fromJson(handShakingJson, handShakingMessageType);
+            if (message != null) {
+                result = message.getInfos();
+            }
+
+        } catch (Exception e) {
+            Log.i(TAG, "deSerializeHandShakingInformationFromJson exception" + e.getMessage());
         }
-        return null;
+        return result;
     }
 
 

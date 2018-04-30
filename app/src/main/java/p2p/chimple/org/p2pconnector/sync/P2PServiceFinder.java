@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.deviceToString;
 
@@ -172,6 +173,7 @@ public class P2PServiceFinder {
                 if (that.callBack != null) {
                     stopDiscovery();
                     that.callBack.gotServicesList(serviceList);
+                    that.callBack.foundNeighboursList(serviceList);
                 } else {
                     startPeerDiscovery();
                 }
@@ -197,10 +199,11 @@ public class P2PServiceFinder {
     }
 
 
+
+
     public List<WifiDirectService> serviceList() {
         return serviceList;
     }
-
 
     public void cleanUp() {
         this.unregisterP2PServiceFinderReceiver();
@@ -316,12 +319,13 @@ public class P2PServiceFinder {
 
         if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED) {
             status = status + "Stopped.";
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    startPeerDiscovery();
-                }
-            }, 30000);
+            startPeerDiscovery();
+//            final Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                public void run() {
+//                    startPeerDiscovery();
+//                }
+//            }, 1000);
         } else if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED) {
             status = status + "Started.";
         } else {
