@@ -57,7 +57,7 @@ public class ConnectedThread extends Thread {
                     Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
                     String whatGot = new String(buffer, 0, bytes);
                     String finalMessage = null;
-                    if(whatGot != null) {
+                    if (whatGot != null) {
                         Log.i(TAG, "what we got" + whatGot);
 
                         if (whatGot.startsWith("START")) {
@@ -81,10 +81,12 @@ public class ConnectedThread extends Thread {
                             }
                         }
 
-                        finalMessage = finalMessage.replaceAll("START", "");
-                        finalMessage = finalMessage.replaceAll("END", "");
-                        Log.i(TAG, "final data to be processed: " + finalMessage);
-                        mHandler.obtainMessage(MESSAGE_READ, finalMessage.getBytes().length, -1, finalMessage.getBytes()).sendToTarget();
+                        if (finalMessage != null) {
+                            finalMessage = finalMessage.replaceAll("START", "");
+                            finalMessage = finalMessage.replaceAll("END", "");
+                            Log.i(TAG, "final data to be processed: " + finalMessage);
+                            mHandler.obtainMessage(MESSAGE_READ, finalMessage.getBytes().length, -1, finalMessage.getBytes()).sendToTarget();
+                        }
                     }
                 } else {
                     Stop();
@@ -110,7 +112,7 @@ public class ConnectedThread extends Thread {
                         .permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 if (mmOutStream != null) {
-                    mmOutStream.write(buffer, from , length);
+                    mmOutStream.write(buffer, from, length);
                     mHandler.obtainMessage(MESSAGE_WRITE, buffer.length, -1, buffer).sendToTarget();
                 }
             }
