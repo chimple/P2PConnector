@@ -52,10 +52,6 @@ public interface P2PSyncInfoDao {
     @Query("SELECT distinct(user_id) from P2PSyncInfo")
     public String[] fetchAllUsers();
 
-    @Query("SELECT user_id from P2PSyncInfo where user_id = :userId AND device_id = :deviceId AND message_type = 'Photo' limit 1")
-    public String getProfilePhoto(String userId, String deviceId);
-
-
     @Query("SELECT distinct(user_id) from P2PSyncInfo")
     public String[] fetchAllNeighours();
 

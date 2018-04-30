@@ -297,7 +297,12 @@ public class P2PServiceFinder {
 
         if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED) {
             status = status + "Stopped.";
-            startPeerDiscovery();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    startPeerDiscovery();
+                }
+            }, 30000);
         } else if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED) {
             status = status + "Started.";
         } else {
