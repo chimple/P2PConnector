@@ -49,15 +49,24 @@ public class ConnectedThread extends Thread {
         Log.i(TAG, "BTConnectedThread started");
         byte[] buffer = new byte[1048576];
         int bytes;
-
+        StringBuffer sBuffer = null;
         while (mRunning) {
             try {
                 bytes = mmInStream.read(buffer);
                 if (bytes > 0) {
                     Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
                     String whatGot = new String(buffer, 0, bytes);
-                    Log.i(TAG, "whatGot:" + whatGot);
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    if(whatGot != null) {
+                        do {
+                            if(whatGot.startsWith("START"))
+                            {
+                                sBuffer = new StringBuffer();
+                            }
+                            sBuffer.append(whatGot);
+                        } while(!whatGot.endsWith("END"));
+                        Log.i(TAG, "whatGot:" + whatGot);
+                        mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    }
                 } else {
                     Stop();
                     mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "Disconnected").sendToTarget();
