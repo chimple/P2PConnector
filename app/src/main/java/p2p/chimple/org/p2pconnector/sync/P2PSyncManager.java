@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -77,18 +78,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.handlerThread = new HandlerThread("P2PSyncManager");
         this.handlerThread.start();
         this.mHandler = new Handler(this.handlerThread.getLooper(), this);
-        this.createShardProfilePreferences();
         this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
     }
-
-    private void createShardProfilePreferences() {
-        SharedPreferences pref = this.getContext().getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("USER_ID", UUID.randomUUID().toString());
-        editor.putString("DEVICE_ID", UUID.randomUUID().toString());
-        editor.commit(); // commit changes
-    }
-
 
     @Override
     public boolean handleMessage(Message msg) {
@@ -392,7 +383,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     file.createNewFile();
                 }
                 OutputStream os = new FileOutputStream(file);
-                Log.i(TAG, "created profile photo:" + fileName + " with contents" + contents);
+                String str = new String(contents, StandardCharsets.UTF_8);
+                Log.i(TAG, "created profile photo:" + fileName + " with contents" + str);
                 os.write(contents);
                 os.close();
 
@@ -428,7 +420,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             bis.read(bytes, 0, bytes.length);
             bis.close();
             results = bytes;
-            Log.i(TAG, "got photo contents" + new String(results));
         } catch (IOException e) {
             Log.i(TAG, e.getMessage());
             results = null;
@@ -450,5 +441,4 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static String generateUserPhotoFileName(String userId) {
         return "profile-" + userId + profileFileExtension;
     }
-
 }

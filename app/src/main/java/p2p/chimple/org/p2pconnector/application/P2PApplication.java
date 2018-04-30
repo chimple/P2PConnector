@@ -2,19 +2,26 @@ package p2p.chimple.org.p2pconnector.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.UUID;
+
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
+
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 public class P2PApplication extends Application {
     private static final String TAG = P2PApplication.class.getName();
     private static Context context;
+    private P2PApplication that;
 
     @Override
     public void onCreate() {
         super.onCreate();
         initialize();
         context = this;
+        that = this;
     }
 
     private void initialize() {
@@ -24,6 +31,7 @@ public class P2PApplication extends Application {
             @Override
             public void run() {
                 // Initialize all of the important frameworks and objects
+                that.createShardProfilePreferences();
                 P2PContext.getInstance().initialize(P2PApplication.this);
                 //TODO: for now force the creation here
                 AppDatabase.getInstance(P2PApplication.this);
@@ -34,6 +42,17 @@ public class P2PApplication extends Application {
 
         initializationThread.start();
     }
+
+    private void createShardProfilePreferences() {
+        SharedPreferences pref = this.getContext().getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        String USERID_UUID = UUID.randomUUID().toString();
+        Log.i(TAG, "created UUID User:" + USERID_UUID);
+        editor.putString("USER_ID", USERID_UUID);
+        editor.putString("DEVICE_ID", UUID.randomUUID().toString());
+        editor.commit(); // commit changes
+    }
+
 
     private void initializationComplete() {
         Log.i(TAG, "Initialization complete...");

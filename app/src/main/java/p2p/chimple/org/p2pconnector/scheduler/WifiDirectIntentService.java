@@ -65,7 +65,7 @@ public class WifiDirectIntentService extends Service {
         thread.start();
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
-        this.p2pSyncManager = new P2PSyncManager(this.getApplicationContext());
+        //this.p2pSyncManager = new P2PSyncManager(this.getApplicationContext());
     }
 
     @Override
