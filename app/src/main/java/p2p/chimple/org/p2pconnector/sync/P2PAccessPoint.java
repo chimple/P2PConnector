@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -17,6 +18,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.HandShakeportToUse;
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.SERVICE_TYPE;
 
@@ -115,7 +117,9 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
             } else {
                 mNetworkName = group.getNetworkName();
                 mPassphrase = group.getPassphrase();
-                startLocalService("NI:" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
+                SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+                String userId = pref.getString("USER_ID", null); // getting String
+                startLocalService(userId + ":" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
             }
         } catch (Exception e) {
             Log.i(TAG, "onGroupInfoAvailable, error: " + e.toString());
@@ -190,8 +194,12 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
     private void startLocalService(String instance) {
 
         Map<String, String> record = new HashMap<String, String>();
+
+        SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+        String userId = pref.getString("USER_ID", null); // getting String
+
         record.put("available", "visible");
-        record.put("discoverUserId", "1");
+        record.put("currentUserId", userId);
 
         WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(instance, SERVICE_TYPE, record);
 

@@ -49,15 +49,46 @@ public class ConnectedThread extends Thread {
         Log.i(TAG, "BTConnectedThread started");
         byte[] buffer = new byte[1048576];
         int bytes;
-
+        StringBuffer sBuffer = null;
         while (mRunning) {
             try {
                 bytes = mmInStream.read(buffer);
                 if (bytes > 0) {
                     Log.i(TAG, "ConnectedThread read data: " + bytes + " bytes");
                     String whatGot = new String(buffer, 0, bytes);
-                    Log.i(TAG, "whatGot:" + whatGot);
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    String finalMessage = null;
+                    if (whatGot != null) {
+                        Log.i(TAG, "what we got" + whatGot);
+
+                        if (whatGot.startsWith("START")) {
+                            sBuffer = new StringBuffer();
+                            Log.i(TAG, "MESSAGE READ:" + whatGot);
+                            if (whatGot.endsWith("END")) {
+                                sBuffer.append(whatGot);
+                                finalMessage = sBuffer.toString();
+                                sBuffer = null;
+                            } else {
+                                sBuffer.append(whatGot);
+                            }
+                        } else {
+                            if (!whatGot.endsWith("END")) {
+                                sBuffer.append(whatGot);
+                                Log.i(TAG, "APPEND TO BUFFER READ:" + sBuffer.toString());
+                            } else {
+                                sBuffer.append(whatGot);
+                                finalMessage = sBuffer.toString();
+                                sBuffer = null;
+                            }
+                        }
+
+                        if (finalMessage != null) {
+                            finalMessage = finalMessage.replaceAll("START", "");
+                            finalMessage = finalMessage.replaceAll("END", "");
+                            Log.i(TAG, "final data to be processed: " + finalMessage);
+                            mHandler.obtainMessage(MESSAGE_READ, finalMessage.getBytes().length, -1, finalMessage.getBytes()).sendToTarget();
+                            finalMessage = null;
+                        }
+                    }
                 } else {
                     Stop();
                     mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "Disconnected").sendToTarget();
@@ -82,7 +113,7 @@ public class ConnectedThread extends Thread {
                         .permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 if (mmOutStream != null) {
-                    mmOutStream.write(buffer, from , length);
+                    mmOutStream.write(buffer, from, length);
                     mHandler.obtainMessage(MESSAGE_WRITE, buffer.length, -1, buffer).sendToTarget();
                 }
             }
