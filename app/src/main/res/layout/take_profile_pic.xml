@@ -7,7 +7,7 @@
     android:padding="16dp"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context=".TakeProfilePic">
+    tools:context=".P2PActivity.TakeProfilePic">
 
     <ImageView
         android:layout_width="fill_parent"

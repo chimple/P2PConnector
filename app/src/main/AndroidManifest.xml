@@ -34,7 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TakeProfilePic"></activity>
+        <activity android:name=".P2PActivity.TakeProfilePic"></activity>
     </application>
 
 </manifest>

@@ -5,21 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
-
+import p2p.chimple.org.p2pconnector.P2PActivity.TakeProfilePic;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
@@ -38,15 +32,15 @@ public class MainActivity extends Activity {
     private int mInterval = 1000; // 1 second by default, can be changed later
     private Handler timeHandler;
     private int timeCounter = 0;
-//    Runnable mStatusChecker = new Runnable() {
-//        @Override
-//        public void run() {
-//            // call function to update timer
-//            timeCounter = timeCounter + 1;
-//            ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
-//            timeHandler.postDelayed(mStatusChecker, mInterval);
-//        }
-//    };
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            // call function to update timer
+            timeCounter = timeCounter + 1;
+            ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
+            timeHandler.postDelayed(mStatusChecker, mInterval);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +95,7 @@ public class MainActivity extends Activity {
 
     public void execute() {
         timeHandler = new Handler();
-//        mStatusChecker.run();
+        mStatusChecker.run();
         this.p2pSyncManager.execute();
     }
 

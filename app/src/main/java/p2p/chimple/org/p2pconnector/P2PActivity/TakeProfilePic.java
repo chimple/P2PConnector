@@ -1,4 +1,4 @@
-package p2p.chimple.org.p2pconnector;
+package p2p.chimple.org.p2pconnector.P2PActivity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,10 +17,15 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.IOException;
 
+import p2p.chimple.org.p2pconnector.R;
+import p2p.chimple.org.p2pconnector.db.P2PDBApi;
+
 public class TakeProfilePic extends Activity {
 
     Button button;
     ImageView imageView;
+
+    P2PDBApi p2pdbapi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,8 @@ public class TakeProfilePic extends Activity {
                 Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                File file = getTempFile(getApplicationContext(),"");
 //                camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
-                startActivityForResult(camera_intent,0);
+                startActivityForResult(camera_intent,1);
+                p2pdbapi.
 
             }
         });
@@ -46,8 +52,14 @@ public class TakeProfilePic extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("onActivityResult","requestCode:"+requestCode+"resultCode"+resultCode+"data"+data);
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-        imageView.setImageBitmap(bitmap);
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                imageView.setImageBitmap(bitmap);
+            }
+        }
     }
 }
