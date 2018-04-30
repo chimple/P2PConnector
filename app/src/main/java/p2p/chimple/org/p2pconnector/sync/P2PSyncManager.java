@@ -375,8 +375,9 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     // Manage photo
 
-    public static void createProfilePhoto(String fileName, byte[] contents, Context context) {
+    public static String createProfilePhoto(String generateUserId, byte[] contents, Context context) {
         Boolean canWrite = false;
+        String fileName = null;
         File pathDir = context.getExternalFilesDir(null);
         if (null == pathDir) {
             pathDir = context.getFilesDir();
@@ -385,12 +386,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         canWrite = pathDir.canWrite();
 
         if (canWrite) {
-            int lastIndexOf = fileName.lastIndexOf("/");
-            if (lastIndexOf != -1) {
-                fileName = fileName.substring(lastIndexOf);
-            }
+            fileName = P2PSyncManager.generateUserPhotoFileName(generateUserId);
             File file = new File(pathDir, fileName);
-
             try {
                 // Make sure the Pictures directory exists.
                 if (!checkIfFileExists(fileName, context)) {
@@ -398,16 +395,15 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     file.createNewFile();
                 }
                 OutputStream os = new FileOutputStream(file);
+                Log.i(TAG, "created profile photo:" + fileName + " with contents" + contents);
                 os.write(contents);
                 os.close();
 
                 // update shared preferences
                 SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
                 SharedPreferences.Editor editor = pref.edit();
-                editor.putString("PROFILE_PHOTO", file.getAbsolutePath());
+                editor.putString("PROFILE_PHOTO", generateUserId);
                 editor.commit(); // commit changes
-
-
             } catch (IOException e) {
                 // Unable to create file, likely because external storage is
                 // not currently mounted.
@@ -417,7 +413,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         } else {
             Log.i(TAG, "could not write to external storage");
         }
-
+        return fileName;
     }
 
 

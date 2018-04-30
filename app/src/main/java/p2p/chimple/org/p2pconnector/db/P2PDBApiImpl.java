@@ -100,10 +100,7 @@ public class P2PDBApiImpl implements P2PDBApi {
             try {
                 byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
                 decodedMessage = new String(data, "UTF-8");
-
-                String fileName = message.getFileName();
-                P2PSyncManager.createProfilePhoto(fileName, decodedMessage.getBytes(), this.context);
-
+                String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), decodedMessage.getBytes(), this.context);
                 db.beginTransaction();
                 this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
                 db.setTransactionSuccessful();
@@ -141,11 +138,11 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
-    public String serializeProfileMessage(String userId, String deviceId, String fileName, byte[] contents) {
+    public String serializeProfileMessage(String userId, String deviceId, byte[] contents) {
         try {
             String photoContents = Base64.encodeToString(contents, Base64.DEFAULT);
             Gson gson = this.registerProfileMessageBuilder();
-            ProfileMessage message = new ProfileMessage(userId, deviceId, "profileMessage", fileName, photoContents);
+            ProfileMessage message = new ProfileMessage(userId, deviceId, "profileMessage", photoContents);
             Type ProfileMessageType = new TypeToken<ProfileMessage>() {
             }.getType();
             String json = gson.toJson(message, ProfileMessageType);
