@@ -20,6 +20,7 @@ import org.apache.commons.collections4.Closure;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.Predicate;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +96,7 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     public boolean persistProfileMessage(String photoJson) {
         ProfileMessage message = this.deSerializeProfileMessageFromJson(photoJson);
-        if(message != null) {
+        if (message != null) {
             String decodedMessage = null;
             try {
                 byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
@@ -509,17 +510,19 @@ class P2PSyncInfoDeserializer implements JsonDeserializer<P2PSyncInfo> {
         final String messageType = jsonMessageType.getAsString();
 
         String recipientUserId = null;
-        final JsonElement jsonReceipientType = jsonObject.get("recipientUserId");
-        if(jsonReceipientType != null) {
-            recipientUserId = jsonReceipientType.getAsString();
+        final JsonElement jsonRecipientType = jsonObject.get("recipientUserId");
+        if (jsonRecipientType != null) {
+            recipientUserId = jsonRecipientType.getAsString();
         }
 
-
+        String message = null;
         final JsonElement jsonMessage = jsonObject.get("message");
-        final String message = jsonMessage.getAsString();
+        if (jsonMessage != null) {
+            message = jsonMessage.getAsString();
+        }
+        final String receivedMessage = message == null ? "" : message;
 
-
-        final P2PSyncInfo p2PSyncInfo = new P2PSyncInfo(userId, deviceId, sequence, recipientUserId, message, messageType);
+        final P2PSyncInfo p2PSyncInfo = new P2PSyncInfo(userId, deviceId, sequence, recipientUserId, receivedMessage, messageType);
         return p2PSyncInfo;
     }
 }
