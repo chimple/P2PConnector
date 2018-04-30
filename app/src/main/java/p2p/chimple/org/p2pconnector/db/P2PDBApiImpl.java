@@ -3,6 +3,7 @@ package p2p.chimple.org.p2pconnector.db;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
@@ -40,6 +41,8 @@ import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.Strings.Photo;
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.profileFileExtension;
 
 public class P2PDBApiImpl implements P2PDBApi {
     private static final String TAG = P2PDBApiImpl.class.getName();
@@ -97,7 +100,7 @@ public class P2PDBApiImpl implements P2PDBApi {
             byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
             decodedMessage = new String(data, "UTF-8");
 
-            String fileName = "Photo" + message.getUserId() + ".txt";
+            String fileName = message.getFileName();
             P2PSyncManager.createProfilePhoto(fileName, decodedMessage.getBytes(), this.context);
 
             db.beginTransaction();
@@ -133,11 +136,11 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
-    public String serializeProfileMessage(String userId, String deviceId, byte[] contents) {
+    public String serializeProfileMessage(String userId, String deviceId, String fileName, byte[] contents) {
         try {
             String photoContents = Base64.encodeToString(contents, Base64.DEFAULT);
             Gson gson = this.registerProfileMessageBuilder();
-            ProfileMessage message = new ProfileMessage(userId, deviceId, "profileMessage", photoContents);
+            ProfileMessage message = new ProfileMessage(userId, deviceId, "profileMessage", fileName, photoContents);
             Type ProfileMessageType = new TypeToken<ProfileMessage>() {
             }.getType();
             String json = gson.toJson(message, ProfileMessageType);

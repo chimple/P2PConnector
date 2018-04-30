@@ -14,8 +14,6 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -387,6 +385,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         canWrite = pathDir.canWrite();
 
         if (canWrite) {
+            int lastIndexOf = fileName.lastIndexOf("/");
+            if(lastIndexOf != -1) {
+                fileName = fileName.substring(lastIndexOf);
+            }
             File file = new File(pathDir, fileName);
 
             try {

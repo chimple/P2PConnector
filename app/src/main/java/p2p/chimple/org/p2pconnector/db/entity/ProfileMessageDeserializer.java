@@ -24,10 +24,14 @@ public class ProfileMessageDeserializer implements JsonDeserializer<ProfileMessa
         final JsonElement jsonUserIdType = jsonObject.get("user_id");
         final String userId = jsonUserIdType.getAsString();
 
+        final JsonElement jsonFileNameType = jsonObject.get("fileName");
+        final String fileName = jsonFileNameType.getAsString();
+
+
         final JsonElement jsonDataType = jsonObject.get("data");
         final String data = jsonDataType.getAsString();
 
-        final ProfileMessage profileMessage = new ProfileMessage(userId, deviceId, messageType, data);
+        final ProfileMessage profileMessage = new ProfileMessage(userId, deviceId, messageType, fileName, data);
         return profileMessage;
     }
 }
