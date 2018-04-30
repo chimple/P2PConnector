@@ -14,7 +14,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import static p2p.chimple.org.p2pconnector.sync.SyncUtils.deviceToString;
 
 public class P2PServiceFinder {
 
@@ -34,6 +37,7 @@ public class P2PServiceFinder {
     private WifiP2pManager wifiP2pManager;
     private WifiP2pManager.Channel channel;
     private WifiP2pManager.DnsSdServiceResponseListener serviceListener;
+    private WifiP2pManager.DnsSdTxtRecordListener txtListener;
     private WifiP2pManager.PeerListListener peerListListener;
     private WifiP2pDeviceList wifiP2pDeviceList;
 
@@ -96,6 +100,7 @@ public class P2PServiceFinder {
         };
     }
 
+    //Add current User id into DNS SD Record
     private void registerDnsSdServiceResponseListener() {
         serviceListener = new WifiP2pManager.DnsSdServiceResponseListener() {
 
@@ -124,8 +129,22 @@ public class P2PServiceFinder {
                 peerDiscoveryTimer.start();
             }
         };
+        txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
+            public void onDnsSdTxtRecordAvailable(String domain,
+                                                  Map<String, String> txtMap, WifiP2pDevice device) {
+                Log.i(TAG, "Discovered TXT record:");
+                Log.i(TAG, "\t" + deviceToString(device));
+                Log.i(TAG, "\t" + domain);
+                for (Map.Entry<String, String> e : txtMap.entrySet())
+                    Log.i(TAG, "\t" + e.getKey() + " = " + e.getValue());
+                if (domain.endsWith("." + SERVICE_TYPE + ".local.")) {
+                    String currentUserId = txtMap.get("currentUserId");
+                    Log.i(TAG, "currentUserId" + currentUserId);
+                }
+            }
+        };
 
-        wifiP2pManager.setDnsSdResponseListeners(channel, serviceListener, null);
+        wifiP2pManager.setDnsSdResponseListeners(channel, serviceListener, txtListener);
     }
 
     private void initTimers() {
