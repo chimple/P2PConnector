@@ -386,7 +386,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
         if (canWrite) {
             int lastIndexOf = fileName.lastIndexOf("/");
-            if(lastIndexOf != -1) {
+            if (lastIndexOf != -1) {
                 fileName = fileName.substring(lastIndexOf);
             }
             File file = new File(pathDir, fileName);
@@ -424,22 +424,17 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static byte[] getProfilePhotoContents(String fileName, Context context) {
         byte[] results = null;
         try {
-            Boolean canRead = checkIfFileExists(fileName, context);
-            if (canRead) {
-                File pathDir = context.getExternalFilesDir(null);
-                if (null == pathDir) {
-                    pathDir = context.getFilesDir();
-                }
-                File file = new File(pathDir, fileName);
-                byte[] bytes = new byte[(int) file.length()];
-                BufferedInputStream bis;
-                bis = new BufferedInputStream(new FileInputStream(file));
-                bis.read(bytes, 0, bytes.length);
-                bis.close();
+            File file = new File(fileName);
+            byte[] bytes = new byte[(int) file.length()];
+            BufferedInputStream bis;
+            bis = new BufferedInputStream(new FileInputStream(file));
+            bis.read(bytes, 0, bytes.length);
+            bis.close();
 
-                results = bytes;
-            }
+            results = bytes;
+            Log.i(TAG, "got photo contents" + new String(results));
         } catch (IOException e) {
+            Log.i(TAG, e.getMessage());
             results = null;
         }
         return results;
