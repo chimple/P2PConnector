@@ -65,6 +65,8 @@ public class ConnectedThread extends Thread {
                             sBuffer.append(whatGot);
                         } while(!whatGot.endsWith("END"));
                         String data = sBuffer.toString();
+                        data = data.replaceAll("START", "");
+                        data = data.replaceAll("END", "");
                         Log.i(TAG, "final data to be processed: " + data);
                         mHandler.obtainMessage(MESSAGE_READ, data.getBytes().length, -1, data.getBytes()).sendToTarget();
                     }
