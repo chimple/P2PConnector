@@ -77,11 +77,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.handlerThread = new HandlerThread("P2PSyncManager");
         this.handlerThread.start();
         this.mHandler = new Handler(this.handlerThread.getLooper(), this);
-        this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
-
         this.createShardProfilePreferences();
-
-
+        this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
     }
 
     private void createShardProfilePreferences() {

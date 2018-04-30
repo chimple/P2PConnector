@@ -30,7 +30,9 @@ public class DatabaseInitializer {
     private static void populateWithTestData(AppDatabase db, Context context) {
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
         String generateUserId = pref.getString("USER_ID", null); // getting String
+        Log.i(TAG, "generateUserId" + generateUserId);
         P2PSyncManager.createProfilePhoto(generateUserId, "hello - welcome".getBytes(), context);
+        Log.i(TAG, "generateUserId" + generateUserId);
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = null;
         try {
