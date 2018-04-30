@@ -1,40 +1,52 @@
 package p2p.chimple.org.p2pconnector;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
 
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private P2PSyncManager p2pSyncManager;
     private MainActivity that = this;
+
+    ImageView imageView;
+
+    static final int CAM_REQUEST=1;
+
     //Status
     private int mInterval = 1000; // 1 second by default, can be changed later
     private Handler timeHandler;
     private int timeCounter = 0;
-    Runnable mStatusChecker = new Runnable() {
-        @Override
-        public void run() {
-            // call function to update timer
-            timeCounter = timeCounter + 1;
-            ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
-            timeHandler.postDelayed(mStatusChecker, mInterval);
-        }
-    };
+//    Runnable mStatusChecker = new Runnable() {
+//        @Override
+//        public void run() {
+//            // call function to update timer
+//            timeCounter = timeCounter + 1;
+//            ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
+//            timeHandler.postDelayed(mStatusChecker, mInterval);
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        imageView=(ImageView) findViewById(R.id.image_view);
 
 
         Button showIPButton = (Button) findViewById(R.id.button3);
@@ -71,13 +85,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button buttonAdd = (Button) findViewById(R.id.buttonAdd);
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent camera = new Intent(getApplicationContext(),TakeProfilePic.class);
+                startActivity(camera);
+            }
+        });
 
         this.execute();
     }
 
     public void execute() {
         timeHandler = new Handler();
-        mStatusChecker.run();
+//        mStatusChecker.run();
         this.p2pSyncManager.execute();
     }
 
@@ -110,5 +134,7 @@ public class MainActivity extends AppCompatActivity {
             that.updateStatus(who, line);
         }
     };
+
+
 
 }
