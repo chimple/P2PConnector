@@ -422,8 +422,8 @@ public class P2PDBApiImpl implements P2PDBApi {
         SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
         String userId = pref.getString("USER_ID", null); // getting String
         String deviceId = pref.getString("DEVICE_ID", null); // getting String
-        String fileName =  db.p2pSyncDao().getProfilePhoto(userId, deviceId) + profileFileExtension;
-        return fileName;
+        String generatedUserId =  db.p2pSyncDao().getProfilePhoto(userId, deviceId);
+        return P2PSyncManager.generateUserPhotoFileName(generatedUserId);
     }
 
     public boolean upsertProfile() {
