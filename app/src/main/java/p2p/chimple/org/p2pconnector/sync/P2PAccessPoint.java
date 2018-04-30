@@ -119,7 +119,7 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
                 mPassphrase = group.getPassphrase();
                 SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
                 String userId = pref.getString("USER_ID", null); // getting String
-                startLocalService(userId + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
+                startLocalService(userId + ":" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
             }
         } catch (Exception e) {
             Log.i(TAG, "onGroupInfoAvailable, error: " + e.toString());
