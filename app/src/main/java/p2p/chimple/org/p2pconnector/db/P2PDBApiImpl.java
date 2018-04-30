@@ -510,15 +510,18 @@ class P2PSyncInfoDeserializer implements JsonDeserializer<P2PSyncInfo> {
         final JsonElement jsonMessageType = jsonObject.get("messageType");
         final String messageType = jsonMessageType.getAsString();
 
+        String recipientUserId = null;
         final JsonElement jsonReceipientType = jsonObject.get("recipientUserId");
-        final String receipientUserId = jsonReceipientType.getAsString();
+        if(jsonReceipientType != null) {
+            recipientUserId = jsonReceipientType.getAsString();
+        }
 
 
         final JsonElement jsonMessage = jsonObject.get("message");
         final String message = jsonMessage.getAsString();
 
 
-        final P2PSyncInfo p2PSyncInfo = new P2PSyncInfo(userId, deviceId, sequence, receipientUserId, message, messageType);
+        final P2PSyncInfo p2PSyncInfo = new P2PSyncInfo(userId, deviceId, sequence, recipientUserId, message, messageType);
         return p2PSyncInfo;
     }
 }

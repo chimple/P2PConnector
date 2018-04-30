@@ -392,7 +392,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             try {
                 // Make sure the Pictures directory exists.
                 if (!checkIfFileExists(fileName, context)) {
-                    file.mkdirs();
+                    file.getParentFile().mkdirs();
                     file.createNewFile();
                 }
                 OutputStream os = new FileOutputStream(file);
