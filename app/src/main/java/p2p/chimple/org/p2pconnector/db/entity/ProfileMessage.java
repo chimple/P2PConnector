@@ -22,16 +22,11 @@ public class ProfileMessage {
     @SerializedName("data")
     String data;
 
-    @Expose(serialize = true, deserialize = true)
-    @SerializedName("fileName")
-    String fileName;
-
-    public ProfileMessage(String userId, String deviceId, String messageType, String fileName, String data) {
+    public ProfileMessage(String userId, String deviceId, String messageType, String data) {
         this.messageType = messageType;
         this.data = data;
         this.userId = userId;
         this.deviceId = deviceId;
-        this.fileName = fileName;
     }
 
     @Override
@@ -43,14 +38,14 @@ public class ProfileMessage {
         if (this == info) {
             return true;
         } else {
-            return (this.messageType.equals(info.messageType) && this.userId.equals(info.userId) && this.data.equals(info.data) && this.deviceId.equals(info.deviceId) && this.fileName.equals(info.fileName));
+            return (this.messageType.equals(info.messageType) && this.userId.equals(info.userId) && this.data.equals(info.data) && this.deviceId.equals(info.deviceId));
         }
     }
 
     @Override
     public int hashCode() {
         int hashno = 7;
-        hashno = 13 * hashno + (messageType == null ? 0 : messageType.hashCode()) + (data == null ? 0 : data.hashCode() + (userId == null ? 0 : userId.hashCode()) + (deviceId == null ? 0 : deviceId.hashCode()) + (fileName == null ? 0 : fileName.hashCode()));
+        hashno = 13 * hashno + (messageType == null ? 0 : messageType.hashCode()) + (data == null ? 0 : data.hashCode() + (userId == null ? 0 : userId.hashCode()) + (deviceId == null ? 0 : deviceId.hashCode()));
         return hashno;
     }
 
@@ -77,13 +72,5 @@ public class ProfileMessage {
 
     public String getData() {
         return data;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 }
