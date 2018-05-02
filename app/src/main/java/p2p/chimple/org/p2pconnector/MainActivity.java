@@ -8,12 +8,14 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import p2p.chimple.org.p2pconnector.P2PActivity.TakeProfilePic;
+import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
@@ -25,7 +27,7 @@ public class MainActivity extends Activity {
     private MainActivity that = this;
 
     ImageView imageView;
-
+    P2PDBApi p2pdbapi;
     static final int CAM_REQUEST=1;
 
     //Status
@@ -87,6 +89,28 @@ public class MainActivity extends Activity {
 
                 Intent camera = new Intent(getApplicationContext(),TakeProfilePic.class);
                 startActivity(camera);
+            }
+        });
+
+        Button buttonAllUsers = (Button) findViewById(R.id.buttonAllUsers);
+
+        buttonAllUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Object obj = new Object();
+                obj= p2pdbapi.getUsers();
+                Log.i("buttonNeighbour",obj.toString());
+            }
+        });
+
+        Button buttonNeighbour = (Button) findViewById(R.id.buttonNeighbour);
+
+        buttonNeighbour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Object obj = new Object();
+                obj= p2pdbapi.getNeighbours();
+                Log.i("buttonNeighbour",obj.toString());
             }
         });
 

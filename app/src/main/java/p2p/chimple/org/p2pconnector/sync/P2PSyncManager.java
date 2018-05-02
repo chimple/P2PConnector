@@ -136,7 +136,9 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     public void execute() {
-        disconnectGroupOwnerTimeOut = new CountDownTimer(30000, 4000) {
+        //changing the time and its interval
+//        disconnectGroupOwnerTimeOut = new CountDownTimer(30000, 4000) {
+        disconnectGroupOwnerTimeOut = new CountDownTimer(20000, 2000) {
             public void onTick(long millisUntilFinished) {
                 // not using
             }

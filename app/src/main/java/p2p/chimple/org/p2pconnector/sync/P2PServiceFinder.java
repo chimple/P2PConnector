@@ -149,8 +149,10 @@ public class P2PServiceFinder {
     }
 
     private void initTimers() {
+//changing the timer
 
-        this.discoverServiceTimeOutTimer = new CountDownTimer(60000, 1000) {
+//        this.discoverServiceTimeOutTimer = new CountDownTimer(60000, 1000) {
+        this.discoverServiceTimeOutTimer = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 // not using
             }
@@ -325,7 +327,7 @@ public class P2PServiceFinder {
 //                public void run() {
 //                    startPeerDiscovery();
 //                }
-//            }, 1000);
+//            }, 30000);
         } else if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED) {
             status = status + "Started.";
         } else {

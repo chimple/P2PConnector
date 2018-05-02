@@ -42,7 +42,7 @@ public class TakeProfilePic extends Activity {
 //                File file = getTempFile(getApplicationContext(),"");
 //                camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
                 startActivityForResult(camera_intent,1);
-                p2pdbapi.
+
 
             }
         });
@@ -59,6 +59,7 @@ public class TakeProfilePic extends Activity {
             if (resultCode == RESULT_OK) {
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 imageView.setImageBitmap(bitmap);
+
             }
         }
     }
