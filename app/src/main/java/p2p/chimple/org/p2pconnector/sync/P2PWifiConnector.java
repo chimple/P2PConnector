@@ -15,6 +15,7 @@ public class P2PWifiConnector {
 
     private static final String TAG = P2PWifiConnector.class.getSimpleName();
     private boolean hadConnected = false;
+    private WifiDirectService currentlyTryingToConnectService = null;
 
     // Context
     private Context context;
@@ -74,7 +75,8 @@ public class P2PWifiConnector {
             public void onFinish() {
                 Log.i(TAG, "Cancelling the connection with timeout");
                 mConectionState = SyncUtils.SyncHandShakeState.Disconnected;
-                that.callBack.connectionStatusChanged(mConectionState, null, 0);
+                that.setCurrentlyTryingToConnectService(null);
+                that.callBack.connectionStatusChanged(mConectionState, null, 0, null);
             }
         };
     }
@@ -144,7 +146,7 @@ public class P2PWifiConnector {
                         mConectionState = SyncUtils.SyncHandShakeState.PreConnecting;
                     }
                 }
-                this.callBack.connectionStatusChanged(mConectionState, info.getDetailedState(), 0);
+                this.callBack.connectionStatusChanged(mConectionState, info.getDetailedState(), 0, this.getCurrentlyTryingToConnectService() );
 
             }
 
@@ -159,4 +161,11 @@ public class P2PWifiConnector {
         }
     }
 
+    public WifiDirectService getCurrentlyTryingToConnectService() {
+        return currentlyTryingToConnectService;
+    }
+
+    public void setCurrentlyTryingToConnectService(WifiDirectService currentlyTryingToConnectService) {
+        this.currentlyTryingToConnectService = currentlyTryingToConnectService;
+    }
 }

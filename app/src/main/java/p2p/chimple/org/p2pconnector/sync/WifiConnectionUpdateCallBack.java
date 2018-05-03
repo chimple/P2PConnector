@@ -22,7 +22,7 @@ public interface WifiConnectionUpdateCallBack {
 
     public void GroupInfoAvailable(WifiP2pGroup group);
 
-    public void connectionStatusChanged(SyncUtils.SyncHandShakeState state, NetworkInfo.DetailedState detailedState, int Error);
+    public void connectionStatusChanged(SyncUtils.SyncHandShakeState state, NetworkInfo.DetailedState detailedState, int Error, WifiDirectService currentDevice);
 
     public void Connected(InetAddress remote, boolean ListeningStill);
 

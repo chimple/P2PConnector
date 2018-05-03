@@ -1,5 +1,7 @@
 package p2p.chimple.org.p2pconnector.sync;
 
+import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
+
 public class WifiDirectService {
     private String instanceName;
     private String serviceType;
@@ -47,7 +49,26 @@ public class WifiDirectService {
     }
 
     public String print() {
-        return "instanceName:" + instanceName + " serviceType:" + serviceType + " deviceAddress:" + deviceAddress + " deviceName:" + deviceName;
+        return "instanceName: " + instanceName + " serviceType: " + serviceType + " deviceAddress: " + deviceAddress + " deviceName: " + deviceName;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        final WifiDirectService info = (WifiDirectService) obj;
+        if (this == info) {
+            return true;
+        } else {
+            return (this.instanceName.equals(info.instanceName) && this.serviceType == info.serviceType && this.deviceAddress == info.deviceAddress && this.deviceName == info.deviceName);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int hashno = 7;
+        hashno = 13 * hashno + (instanceName == null ? 0 : instanceName.hashCode()) + (serviceType == null ? 0 : serviceType.hashCode()) + (deviceAddress == null ? 0 : deviceAddress.hashCode() + (deviceName == null ? 0 : deviceName.hashCode()));
+        return hashno;
+    }
 }

@@ -254,7 +254,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                         }
                     }, 2000);
                 } else {
-                    connectionStatusChanged(SyncUtils.SyncHandShakeState.ConnectingFailed, null, 123456);
+                    connectionStatusChanged(SyncUtils.SyncHandShakeState.ConnectingFailed, null, 123456, null);
                 }
             }
         });
@@ -338,7 +338,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
             if (mWifiConnection != null) {
                 Log.i(TAG, "Already connecting !!");
             } else {
-                WifiDirectService selItem = mWifiBase.selectServiceToConnect(list);
+                WifiDirectService selItem = mWifiBase.selectServiceToConnect(list, mWifiServiceSearcher.getHighPriorityServiceList());
                 if (selItem != null) {
 
                     Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
@@ -356,6 +356,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
 
                     Log.i(TAG, "Starting to connect now.");
                     mWifiConnection = new P2PWifiConnector(that.context, that);
+                    mWifiConnection.setCurrentlyTryingToConnectService(selItem);
                     mWifiConnection.updateInetAddress(ipAddress);
                     mWifiConnection.initialize(networkSSID, networkPass);
 
@@ -363,6 +364,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                     // we'll get discovery stopped event soon enough
                     // and it starts the discovery again, so no worries :)
                     Log.i(TAG, "No devices selected");
+                    mWifiConnection.setCurrentlyTryingToConnectService(null);
                 }
             }
         }
@@ -417,9 +419,9 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
 
     @Override
     public void connectionStatusChanged(SyncUtils.SyncHandShakeState
-                                                state, NetworkInfo.DetailedState detailedState, int Error) {
+                                                state, NetworkInfo.DetailedState detailedState, int Error, WifiDirectService currentDevice) {
         Log.i(TAG + " COM:", "State " + state + ", detailed state: " + detailedState + " , Error: " + Error);
-
+        Log.i(TAG, "currentDevice info:" + currentDevice.print());
         String conStatus = "";
         if (state == SyncUtils.SyncHandShakeState.NONE) {
             conStatus = "NONE";
@@ -433,7 +435,9 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
             conStatus = "Connected";
             if (mWifiConnection != null && handShakeThread == null) {
                 String address = mWifiConnection.retrieveInetAddress();
-
+                if (mWifiServiceSearcher != null && currentDevice != null && mWifiServiceSearcher.getHighPriorityServiceList().contains(currentDevice)) {
+                    mWifiServiceSearcher.getHighPriorityServiceList().remove(currentDevice);
+                }
                 stopServiceSearcher();
                 stopWifiAccessPoint();
                 setListeningState(SyncUtils.ReportingState.Idle);
@@ -499,12 +503,15 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
         });
     }
 
-
+    // TO DO - Unit Test required
     public void addHighPriorityConnection(WifiDirectService device) {
         synchronized (this) {
             if (mWifiServiceSearcher != null && mWifiBase != null && mWifiServiceSearcher.serviceList() != null) {
                 mWifiBase.connectedDevices().remove(device);
-                mWifiServiceSearcher.serviceList().add(0, device);
+                //add only if doesn't exists
+                if (!mWifiServiceSearcher.getHighPriorityServiceList().contains(device)) {
+                    mWifiServiceSearcher.getHighPriorityServiceList().add(0, device);
+                }
             }
         }
     }

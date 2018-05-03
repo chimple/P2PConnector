@@ -30,8 +30,11 @@ public class P2PServiceFinder {
 
     // Receivers
     private P2PServiceFinderReceiver receiver;
+
+
     private String SERVICE_TYPE;
     private List<WifiDirectService> serviceList;
+    private List<WifiDirectService> highPriorityServiceList;
 
     // P2P
 
@@ -61,6 +64,7 @@ public class P2PServiceFinder {
         this.channel = Channel;
         this.callBack = callBack;
         this.SERVICE_TYPE = serviceType;
+        this.highPriorityServiceList = new ArrayList<WifiDirectService>();
         this.serviceList = new ArrayList<WifiDirectService>();
         this.initialize();
     }
@@ -95,7 +99,9 @@ public class P2PServiceFinder {
                             }
                             startServiceDiscovery();
                         } else {
-                            that.discoverServiceTimeOutTimer.cancel();
+                            if (discoverServiceTimeOutTimer != null) {
+                                that.discoverServiceTimeOutTimer.cancel();
+                            }
                         }
                     }
                 }
@@ -343,4 +349,13 @@ public class P2PServiceFinder {
         }
         Log.i(TAG, status);
     }
+
+    public List<WifiDirectService> getHighPriorityServiceList() {
+        return highPriorityServiceList;
+    }
+
+    public void setHighPriorityServiceList(List<WifiDirectService> highPriorityServiceList) {
+        this.highPriorityServiceList = highPriorityServiceList;
+    }
+
 }

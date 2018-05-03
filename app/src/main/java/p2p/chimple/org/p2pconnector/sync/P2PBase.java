@@ -146,14 +146,19 @@ public class P2PBase implements WifiP2pManager.ChannelListener {
         return this.connectedDevices;
     }
 
-
-    public WifiDirectService selectServiceToConnect(List<WifiDirectService> available) {
+    // TO DO - Unit Test Required
+    public WifiDirectService selectServiceToConnect(List<WifiDirectService> available, List<WifiDirectService> highPriorityDevices) {
 
         WifiDirectService ret = null;
 
         List<WifiDirectService> list = Collections.synchronizedList(this.connectedDevices);
 
         synchronized (list) {
+
+            if (highPriorityDevices != null) {
+                available.addAll(0, highPriorityDevices);
+            }
+
             if (list.size() > 0 && available.size() > 0) {
 
                 int firstNewMatch = -1;
@@ -195,6 +200,12 @@ public class P2PBase implements WifiP2pManager.ChannelListener {
             }
             if (ret != null) {
                 list.add(ret);
+
+                //remove ret if exists in highPriorityDevices - may be connection is confirmed!!!?
+                if(highPriorityDevices.contains(ret)) {
+                    highPriorityDevices.remove(ret);
+                }
+
                 Log.i(TAG + "EEE", "adding to connected devices address" + ret.getDeviceAddress() + " name:" + ret.getDeviceName());
                 // just to set upper limit for the amount of remembered contacts
                 // when we have 101, we remove the oldest (that's the top one)
