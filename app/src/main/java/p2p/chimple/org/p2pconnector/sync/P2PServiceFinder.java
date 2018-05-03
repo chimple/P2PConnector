@@ -90,10 +90,14 @@ public class P2PServiceFinder {
                             doContinue = callBack.gotPeersList(wifiP2pDeviceList.getDeviceList());
                         }
                         if (doContinue) {
-                            that.discoverServiceTimeOutTimer.start();
-                            startServiceDiscovery();
+                            if (discoverServiceTimeOutTimer != null) {
+                                that.discoverServiceTimeOutTimer.start();
+                                startServiceDiscovery();
+                            }
                         } else {
-                            that.discoverServiceTimeOutTimer.cancel();
+                            if (discoverServiceTimeOutTimer != null) {
+                                that.discoverServiceTimeOutTimer.cancel();
+                            }
                         }
                     }
                 }
@@ -226,7 +230,9 @@ public class P2PServiceFinder {
                 discoveryState = SyncUtils.DiscoveryState.NONE;
                 Log.i(TAG, "Starting peer discovery failed, error code " + reason);
                 //lets try again after 1 minute time-out !
-                that.discoverServiceTimeOutTimer.start();
+                if (discoverServiceTimeOutTimer != null) {
+                    that.discoverServiceTimeOutTimer.start();
+                }
             }
         });
     }
