@@ -27,16 +27,22 @@ public class SendSyncInfoMessageState implements P2PState {
     @Override
     public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String message) {
         //send handshaking message
-        if (manager.getConnectedThread() != null) {
+        try {
+
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
             String handShakingInformationReceived = p2PStateFlow.getStateResult(P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION);
             Log.i(TAG, "handShakingInformationReceived in SendSyncInfoMessageState" + handShakingInformationReceived);
             String syncInformation = new P2PDBApiImpl(db, manager.getContext()).buildAllSyncMessages(handShakingInformationReceived);
             final String updatedSyncInformation = "START" + syncInformation + "END";
-            manager.getConnectedThread().write(updatedSyncInformation.getBytes(), 0, updatedSyncInformation.length());
-            Log.i(TAG, "syncInformation message sent" + syncInformation);
+            if (manager.getConnectedThread() != null && updatedSyncInformation != null && !updatedSyncInformation.isEmpty()) {
+                manager.getConnectedThread().write(updatedSyncInformation.getBytes(), 0, updatedSyncInformation.length());
+                Log.i(TAG, "syncInformation message sent" + syncInformation);
+            }
             p2PStateFlow.setAllSyncInformationSent(true);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
+
     }
 
     @Override

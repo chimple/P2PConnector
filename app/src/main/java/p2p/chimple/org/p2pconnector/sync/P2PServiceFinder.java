@@ -201,8 +201,6 @@ public class P2PServiceFinder {
     }
 
 
-
-
     public List<WifiDirectService> serviceList() {
         return serviceList;
     }
@@ -267,11 +265,17 @@ public class P2PServiceFinder {
                             }
 
                             public void onFailure(int reason) {
-                                stopDiscovery();
-                                discoveryState = SyncUtils.DiscoveryState.NONE;
-                                Log.i(TAG, "Starting service discovery failed, error code " + reason);
-                                //lets try again after 1 minute time-out !
-                                that.discoverServiceTimeOutTimer.start();
+                                try {
+                                    stopDiscovery();
+                                    discoveryState = SyncUtils.DiscoveryState.NONE;
+                                    Log.i(TAG, "Starting service discovery failed, error code " + reason);
+                                    //lets try again after 1 minute time-out !
+                                    if (that.discoverServiceTimeOutTimer != null) {
+                                        that.discoverServiceTimeOutTimer.start();
+                                    }
+                                } catch (Exception e) {
+                                    Log.e(TAG, e.getMessage());
+                                }
                             }
                         });
                     }

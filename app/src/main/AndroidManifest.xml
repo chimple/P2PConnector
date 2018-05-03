@@ -27,6 +27,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".scheduler.WifiDirectIntentService" />
+        <service
+            android:name=".scheduler.P2PHandShakingJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +41,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".P2PActivity.TakeProfilePic"></activity>
+
+        <receiver android:name=".scheduler.P2PHandShakeJobStarter" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

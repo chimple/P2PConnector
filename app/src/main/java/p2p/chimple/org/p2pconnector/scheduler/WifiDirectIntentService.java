@@ -65,7 +65,7 @@ public class WifiDirectIntentService extends Service {
         thread.start();
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
-        //this.p2pSyncManager = new P2PSyncManager(this.getApplicationContext());
+        this.p2pSyncManager = new P2PSyncManager(this.getApplicationContext());
     }
 
     @Override
@@ -110,7 +110,7 @@ public class WifiDirectIntentService extends Service {
     protected void onHandleIntent(Intent intent) {
         Log.i(TAG, "do actual work");
         //broadcast result once done
-        this.p2pSyncManager.execute();
+        //this.p2pSyncManager.execute();
         Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
         result.putExtra(JOB_PARAMS, currentJobParams);
         LocalBroadcastManager.getInstance(this).sendBroadcast(result);

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import p2p.chimple.org.p2pconnector.P2PActivity.TakeProfilePic;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
+import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
@@ -120,6 +121,7 @@ public class MainActivity extends Activity {
     public void execute() {
         timeHandler = new Handler();
         mStatusChecker.run();
+//        JobUtils.scheduleJob(getApplicationContext());
         this.p2pSyncManager.execute();
     }
 
