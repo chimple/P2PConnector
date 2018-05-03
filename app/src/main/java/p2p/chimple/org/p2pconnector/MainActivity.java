@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +20,7 @@ import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customTimerStatusUpdateEvent;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -31,24 +31,11 @@ public class MainActivity extends Activity {
     P2PDBApi p2pdbapi;
     static final int CAM_REQUEST=1;
 
-    //Status
-    private int mInterval = 1000; // 1 second by default, can be changed later
-    private Handler timeHandler;
-    private int timeCounter = 0;
-    Runnable mStatusChecker = new Runnable() {
-        @Override
-        public void run() {
-            // call function to update timer
-            timeCounter = timeCounter + 1;
-            ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
-            timeHandler.postDelayed(mStatusChecker, mInterval);
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.p2pSyncManager = new P2PSyncManager(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(customStatusUpdateEvent));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageTimerReceiver, new IntentFilter(customTimerStatusUpdateEvent));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -119,8 +106,6 @@ public class MainActivity extends Activity {
     }
 
     public void execute() {
-        timeHandler = new Handler();
-        mStatusChecker.run();
 //        JobUtils.scheduleJob(getApplicationContext());
         this.p2pSyncManager.execute();
     }
@@ -139,7 +124,7 @@ public class MainActivity extends Activity {
         final String status = line;
         runOnUiThread(new Thread(new Runnable() {
             public void run() {
-                timeCounter = 0;
+                that.p2pSyncManager.setTimeCounter(0);
                 ((TextView) findViewById(R.id.debugdataBox)).append(logWho + " : " + status + "\n");
             }
         }));
@@ -155,6 +140,19 @@ public class MainActivity extends Activity {
         }
     };
 
+    public void updateTimerStatus(final int timeCounter) {
+        runOnUiThread(new Thread(new Runnable() {
+            public void run() {
+                ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
+            }
+        }));
+    }
 
-
+    private BroadcastReceiver mMessageTimerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int timeCounter = intent.getIntExtra("timeCounter", -1);
+            that.updateTimerStatus(timeCounter);
+        }
+    };
 }

@@ -45,4 +45,9 @@ public class WifiDirectService {
     public String getDeviceName() {
         return deviceName;
     }
+
+    public String print() {
+        return "instanceName:" + instanceName + " serviceType:" + serviceType + " deviceAddress:" + deviceAddress + " deviceName:" + deviceName;
+    }
+
 }

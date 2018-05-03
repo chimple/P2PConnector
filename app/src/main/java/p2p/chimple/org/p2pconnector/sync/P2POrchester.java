@@ -1,12 +1,14 @@
 package p2p.chimple.org.p2pconnector.sync;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.InetAddress;
@@ -39,10 +41,12 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
     private Handler mHandler = null;
     private CountDownTimer serviceFoundTimeOutTimer;
 
-    public P2POrchester(Context context, P2POrchesterCallBack callBack) {
+    public static final String neighboursUpdateEvent = "neighbours-update-event";
+
+    public P2POrchester(Context context, P2POrchesterCallBack callBack, Handler handler) {
         this.context = context;
         this.callBack = callBack;
-        this.mHandler = new Handler(this.context.getMainLooper());
+        this.mHandler = handler;
         this.connectionState = SyncUtils.ConnectionState.NotInitialized;
         this.reportingState = SyncUtils.ReportingState.NotInitialized;
 
@@ -128,7 +132,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
             WifiP2pManager p2p = mWifiBase.getWifiP2pManager();
 
             setListeningState(SyncUtils.ReportingState.Listening);
-            mWifiAccessPoint = new P2PAccessPoint(this.context, p2p, channel, this);
+            mWifiAccessPoint = new P2PAccessPoint(this.context, p2p, channel, this.mHandler, this);
         }
     }
 
@@ -302,21 +306,29 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
 
     @Override
     public Map<String, WifiDirectService> foundNeighboursList(List<WifiDirectService> list) {
-        Map<String, WifiDirectService> neighbours = new HashMap<String, WifiDirectService>();
+        HashMap<String, WifiDirectService> neighbours = new HashMap<String, WifiDirectService>();
         List<WifiDirectService> devices = Collections.synchronizedList(list);
         synchronized (devices) {
             if (devices != null && devices.size() > 0) {
                 for (WifiDirectService device : devices) {
-                    Log.i(TAG, "Selected device address: " + device.getInstanceName());
+                    Log.i(TAG, "foundNeighboursList Selected device address: " + device.getInstanceName());
                     String[] separated = device.getInstanceName().split(":");
                     String userUUID = separated[0];
-                    Log.i(TAG + " SS:", "found User UUID:" + separated[0]);
-                    Log.i(TAG + " SS:", "found SSID:" + separated[1] + ", pwd:" + separated[2] + "IP: " + separated[3]);
+                    Log.i(TAG + "foundNeighboursList SS:", "found User UUID:" + separated[0]);
+                    Log.i(TAG + "foundNeighboursList SS:", "found SSID:" + separated[1] + ", pwd:" + separated[2] + "IP: " + separated[3]);
                     neighbours.put(userUUID, device);
                 }
             }
+            this.broadcastNeighboursUpdatedEvent(neighbours);
         }
         return neighbours;
+    }
+
+    private void broadcastNeighboursUpdatedEvent(HashMap<String, WifiDirectService> neighbours) {
+        Log.d("sender", "Broadcasting message NeighboursUpdatedEvent");
+        Intent intent = new Intent(neighboursUpdateEvent);
+        intent.putExtra("neighbours", neighbours);
+        LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
     }
 
     @Override

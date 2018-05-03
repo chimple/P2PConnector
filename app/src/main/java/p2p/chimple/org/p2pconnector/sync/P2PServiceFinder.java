@@ -145,7 +145,7 @@ public class P2PServiceFinder {
             }
         };
 
-        wifiP2pManager.setDnsSdResponseListeners(channel, serviceListener, txtListener);
+        wifiP2pManager.setDnsSdResponseListeners(channel, serviceListener, null);
     }
 
     private void initTimers() {

@@ -1,9 +1,9 @@
 package p2p.chimple.org.p2pconnector.sync;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pGroup;
@@ -23,17 +23,16 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
-import p2p.chimple.org.p2pconnector.db.AppDatabase;
-import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
-
+import static p2p.chimple.org.p2pconnector.sync.P2POrchester.neighboursUpdateEvent;
 
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
     private static final String TAG = P2PSyncManager.class.getSimpleName();
     private Context context;
-
+    private P2PSyncManager that;
     private CountDownTimer disconnectGroupOwnerTimeOut;
     private List<String> clientIPAddressList = new ArrayList<String>();
     private P2POrchester mWDConnector = null;
@@ -44,10 +43,18 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private Handler mHandler;
     private HandlerThread handlerThread;
     private P2PStateFlow p2PStateFlow;
-    StringBuffer sBuffer = new StringBuffer();
+    private boolean connectedInLastTwoMins = false;
+    private boolean reStartedDueToNoActivity = false;
+    //Status
+    private int mInterval = 1000; // 1 second by default, can be changed later
+    private int timeCounter = 0;
+    Runnable mStatusChecker = null;
+
+    private Map<String, WifiDirectService> neighbours = null;
 
     public static final String profileFileExtension = ".txt";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
+    public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
 
     public enum Strings {
@@ -74,11 +81,57 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
 
     public P2PSyncManager(Context context) {
+        this.that = this;
         this.context = context;
         this.handlerThread = new HandlerThread("P2PSyncManager");
         this.handlerThread.start();
         this.mHandler = new Handler(this.handlerThread.getLooper(), this);
         this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
+
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(mMessageReceiver, new IntentFilter(neighboursUpdateEvent));
+        mStatusChecker = new Runnable() {
+            @Override
+            public void run() {
+                // call function to update timer
+                timeCounter = timeCounter + 1;
+                if (timeCounter > 120 && !connectedInLastTwoMins && !reStartedDueToNoActivity) {
+                    Log.i(TAG, "RESTART CONNECTOR TO RESET  ALL STATE");
+                    that.reStartedDueToNoActivity = true;
+                    that.reStartConnector(true, 10000);
+                    //do something
+                }
+                that.broadcastCustomTimerStatusUpdateEvent();
+                that.mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        };
+
+    }
+
+    private void broadcastCustomTimerStatusUpdateEvent() {
+        Intent intent = new Intent(customTimerStatusUpdateEvent);
+        // You can also include some extra data.
+        intent.putExtra("timeCounter", this.timeCounter);
+        LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            synchronized (this) {
+                neighbours = (HashMap<String, WifiDirectService>) intent.getSerializableExtra("neighbours");
+                for (Map.Entry<String, WifiDirectService> entry : neighbours.entrySet()) {
+                    if (entry.getKey() != null && entry.getValue() != null) {
+                        Log.i(TAG, "got neighbour: " + entry.getKey() + " : " + ((WifiDirectService) entry.getValue()).print());
+                    }
+                }
+            }
+        }
+    };
+
+
+    public Map<String, WifiDirectService> getNeighbours() {
+        return this.neighbours;
     }
 
     @Override
@@ -90,8 +143,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 updateStatus(TAG, "Wrote: " + writeMessage);
                 break;
             case ConnectedThread.MESSAGE_READ:
-                synchronized (P2PSyncManager.class)
-                {
+                synchronized (P2PSyncManager.class) {
                     byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.i(TAG, "MESSAGE READ:" + readMessage);
@@ -108,6 +160,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     public void execute() {
+        mStatusChecker.run();
         //changing the time and its interval
 //        disconnectGroupOwnerTimeOut = new CountDownTimer(30000, 4000) {
         disconnectGroupOwnerTimeOut = new CountDownTimer(20000, 2000) {
@@ -117,14 +170,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
             public void onFinish() {
                 // no clients queuing up, thus lets reset the group now.
-                stopConnector();
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    //Lets give others chance on creating new group before we come back online
-                    public void run() {
-                        StartConnector();
-                    }
-                }, 10000);
+                // notify job finished -
+                that.reStartConnector(true, 10000);
             }
         };
 
@@ -137,11 +184,27 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         StartConnector();
     }
 
+    private void reStartConnector(boolean shouldRestart, int delayMillis) {
+        stopConnector();
+        if (shouldRestart) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                //Lets give others chance on creating new group before we come back online
+                public void run() {
+                    StartConnector();
+                }
+            }, delayMillis);
+
+        }
+    }
+
     public void toggle() {
         if (mWDConnector != null) {
             stopConnector();
         } else {
             StartConnector();
+            this.connectedInLastTwoMins = false;
+            this.reStartedDueToNoActivity = false;
         }
     }
 
@@ -149,7 +212,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         //lets be ready for incoming test communications
         updateStatus(TAG, "starting listener now, and connector");
         startListenerThread();
-        mWDConnector = new P2POrchester(this.context, this);
+        mWDConnector = new P2POrchester(this.context, this, this.mHandler);
     }
 
     public void stopConnector() {
@@ -216,6 +279,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         stopConnectedThread();
         stopConnectToThread();
         this.disconnectGroupOwnerTimeOut.cancel();
+        this.connectedInLastTwoMins = false;
+        that.reStartedDueToNoActivity = false;
 
         if (clientIPAddressList.size() > 0) {
             //With this test we'll just handle each client one-by-one in order they got connected
@@ -225,7 +290,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             Log.i(TAG, "Data state" + "Will connect to " + Address);
             mTestConnectToThread = new ConnectToThread(this, Address, TestChatPortNumber);
             mTestConnectToThread.start();
-
         } else {
             updateStatus("Data state", "All addresses connected, will start exit timer now.");
             // lets just see if we get more connections coming in before the timeout comes
@@ -243,25 +307,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         }
     }
 
-
-    @SuppressLint("LongLogTag")
-    private void sayAck(String data) {
-        if (mTestConnectedThread != null) {
-            String message = "Got:" + data;
-            Log.i(TAG + "CHAT REPLIED", "sayAck: Thanks for sending" + data);
-            mTestConnectedThread.write(message.getBytes());
-        }
-    }
-
-    private void persistAllSyncInformation(String message) {
-        Log.i(TAG, "sync message:" + message);
-        AppDatabase db = AppDatabase.getInstance(this.context);
-        new P2PDBApiImpl(db, this.context).persistP2PSyncInfos(message);
-    }
-
     @Override
     public void Connected(Socket socket) {
         Log.i(TAG, "Connected to ");
+        this.connectedInLastTwoMins = true;
         final Socket socketTmp = socket;
         mTestConnectToThread = null;
         this.p2PStateFlow.resetAllStates();
@@ -271,6 +320,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     @Override
     public void GotConnection(Socket socket) {
         Log.i(TAG, "We got incoming connection");
+        this.connectedInLastTwoMins = true;
         final Socket socketTmp = socket;
         startListenerThread();
         mTestConnectToThread = null;
@@ -421,5 +471,13 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     public static String generateUserPhotoFileName(String userId) {
         return "profile-" + userId + profileFileExtension;
+    }
+
+    public int getTimeCounter() {
+        return timeCounter;
+    }
+
+    public void setTimeCounter(int timeCounter) {
+        this.timeCounter = timeCounter;
     }
 }
