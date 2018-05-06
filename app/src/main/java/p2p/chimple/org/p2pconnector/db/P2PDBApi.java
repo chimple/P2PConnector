@@ -4,6 +4,7 @@ import java.util.List;
 
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 
 public interface P2PDBApi {
 
@@ -11,9 +12,7 @@ public interface P2PDBApi {
 
     List<String> getUsers();
 
-    List<String> getNeighbours();
-
-    List<P2PSyncInfo> fetchLatestMessagesByMessageType(String messageType, List<String> userIds);
+    List<P2PUserIdMessage> fetchLatestMessagesByMessageType(String messageType, List<String> userIds);
 
     public boolean addMessage(String userId, String recipientId, String messageType, String message);
 
@@ -28,6 +27,8 @@ public interface P2PDBApi {
     public String serializeHandShakingMessage();
 
     public void persistP2PSyncInfos(String p2pSyncJson);
+
+    public String buildAllSyncMessages(String handShakeJson);
 
     public boolean upsertProfile();
 }

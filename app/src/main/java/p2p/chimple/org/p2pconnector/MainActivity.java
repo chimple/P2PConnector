@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Object obj = new Object();
-                obj = p2pdbapi.getNeighbours();
+                obj = P2PSyncManager.getInstance(getApplicationContext()).getNeighbours();
                 Log.i("buttonNeighbour", obj.toString());
             }
         });

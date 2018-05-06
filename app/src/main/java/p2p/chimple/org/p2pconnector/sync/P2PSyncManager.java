@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import p2p.chimple.org.p2pconnector.application.P2PContext;
+
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.P2P_SYNC_RESULT_RECEIVED;
 import static p2p.chimple.org.p2pconnector.sync.P2POrchester.neighboursUpdateEvent;
@@ -35,7 +37,7 @@ import static p2p.chimple.org.p2pconnector.sync.P2POrchester.neighboursUpdateEve
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
     private static final String TAG = P2PSyncManager.class.getSimpleName();
     private Context context;
-    private P2PSyncManager that;
+    private static P2PSyncManager instance;
     private CountDownTimer disconnectGroupOwnerTimeOut;
     private List<String> clientIPAddressList = new ArrayList<String>();
     private P2POrchester mWDConnector = null;
@@ -78,8 +80,17 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
 
-    public P2PSyncManager(Context context) {
-        this.that = this;
+    public static P2PSyncManager getInstance(Context context) {
+        if (instance == null) {
+            synchronized (P2PSyncManager.class) {
+                instance = new P2PSyncManager(context);
+            }
+        }
+
+        return instance;
+    }
+
+    private P2PSyncManager(Context context) {
         this.context = context;
         this.handlerThread = new HandlerThread("P2PSyncManager");
         this.handlerThread.start();
@@ -100,12 +111,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 Log.i(TAG, "timeCounter" + timeCounter);
                 if (timeCounter > 120 && !connectedInLastTwoMins && !reStartedDueToNoActivity) {
                     Log.i(TAG, "RESTART CONNECTOR TO RESET  ALL STATE");
-                    that.reStartedDueToNoActivity = true;
-                    that.reStartConnector(true, 10000);
+                    instance.reStartedDueToNoActivity = true;
+                    instance.reStartConnector(true, 10000);
                     //do something
                 }
-                that.broadcastCustomTimerStatusUpdateEvent();
-                that.mHandler.postDelayed(mStatusChecker, mInterval);
+                instance.broadcastCustomTimerStatusUpdateEvent();
+                instance.mHandler.postDelayed(mStatusChecker, mInterval);
             }
 
         };
@@ -191,10 +202,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             }
 
             public void onFinish() {
-                if (that.isAllAvailableClientsConnectedAndSynced) {
+                if (instance.isAllAvailableClientsConnectedAndSynced) {
                     Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
                     result.putExtra(JOB_PARAMS, currentJobParams);
-                    LocalBroadcastManager.getInstance(that.context).sendBroadcast(result);
+                    LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
                 }
             }
         };
@@ -302,10 +313,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void goToNextClientWaiting() {
         stopConnectedThread();
         stopConnectToThread();
-        that.disconnectGroupOwnerTimeOut.cancel();
-        that.connectedInLastTwoMins = false;
-        that.reStartedDueToNoActivity = false;
-        that.isAllAvailableClientsConnectedAndSynced = false;
+        instance.disconnectGroupOwnerTimeOut.cancel();
+        instance.connectedInLastTwoMins = false;
+        instance.reStartedDueToNoActivity = false;
+        instance.isAllAvailableClientsConnectedAndSynced = false;
 
         if (clientIPAddressList.size() > 0) {
             //With this test we'll just handle each client one-by-one in order they got connected
@@ -417,6 +428,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.disconnectGroupOwnerTimeOut.cancel();
         this.stopConnector();
         this.mStatusChecker = null;
+        P2PSyncManager.instance = null;
         updateStatus(TAG, "onDestroy");
     }
 

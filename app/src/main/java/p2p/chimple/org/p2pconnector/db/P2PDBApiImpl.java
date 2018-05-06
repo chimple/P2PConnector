@@ -37,6 +37,7 @@ import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessage;
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessageDeserializer;
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
@@ -353,13 +354,12 @@ public class P2PDBApiImpl implements P2PDBApi {
         return Arrays.asList(db.p2pSyncDao().fetchAllUsers());
     }
 
-
-    public List<String> getNeighbours() {
-        return Arrays.asList(db.p2pSyncDao().fetchAllNeighours());
-    }
-
-    public List<P2PSyncInfo> fetchLatestMessagesByMessageType(String messageType, List<String> userIds) {
-        return null;
+    public List<P2PUserIdMessage> fetchLatestMessagesByMessageType(String messageType, List<String> userIds) {
+        if (userIds != null && userIds.size() > 0) {
+            return db.p2pSyncDao().fetchLatestMessagesByMessageType(messageType, userIds);
+        } else {
+            return db.p2pSyncDao().fetchLatestMessagesByMessageType(messageType);
+        }
     }
 
     public boolean addMessage(String userId, String recipientId, String messageType, String message) {
@@ -435,23 +435,7 @@ public class P2PDBApiImpl implements P2PDBApi {
             String userId = pref.getString("USER_ID", null); // getting String
             String deviceId = pref.getString("DEVICE_ID", null); // getting String
 
-            Long maxSequence = db.p2pSyncDao().getLatestSequenceAvailableByUserIdAndDeviceId(userId, deviceId);
-            if (maxSequence == null) {
-                maxSequence = 0L;
-            }
-
-            maxSequence++;
-
-
-            P2PSyncInfo profileInfo = new P2PSyncInfo();
-            profileInfo.setUserId(userId);
-            profileInfo.setDeviceId(deviceId);
-            profileInfo.setSequence(maxSequence);
-            profileInfo.setMessage(fileName);
-            profileInfo.setMessageType(P2PSyncManager.MessageTypes.PHOTO.type());
-
-            db.p2pSyncDao().insertP2PSyncInfo(profileInfo);
-            return true;
+            return this.upsertProfileForUserIdAndDevice(userId, deviceId, fileName);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -459,7 +443,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
-    public boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message) {
+    private boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message) {
         try {
             P2PSyncInfo userInfo = db.p2pSyncDao().getProfileByUserId(userId, P2PSyncManager.MessageTypes.PHOTO.type());
             if (userInfo != null) {
