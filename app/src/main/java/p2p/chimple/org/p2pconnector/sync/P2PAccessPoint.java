@@ -51,7 +51,6 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         this.wifiP2pManager = Manager;
         this.channel = Channel;
         this.callBack = callBack;
-        //this.mHandler = new Handler(this.context.getMainLooper());
         this.mHandler = handler;
         this.initialize();
     }

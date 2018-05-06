@@ -8,6 +8,7 @@ import android.util.Log;
 import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
+import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
@@ -15,6 +16,9 @@ public class P2PApplication extends Application {
     private static final String TAG = P2PApplication.class.getName();
     private static Context context;
     private P2PApplication that;
+
+    public static int REGULAR_JOB_TIMINGS = 5 * 60 * 1000;
+    public static int IMMEDIATE_JOB_TIMINGS = 5 * 1000;
 
     @Override
     public void onCreate() {

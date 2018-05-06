@@ -19,28 +19,28 @@ import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
+import static p2p.chimple.org.p2pconnector.application.P2PApplication.IMMEDIATE_JOB_TIMINGS;
+import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JOB_TIMINGS;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customTimerStatusUpdateEvent;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private P2PSyncManager p2pSyncManager;
     private MainActivity that = this;
 
     ImageView imageView;
     P2PDBApi p2pdbapi;
-    static final int CAM_REQUEST=1;
+    static final int CAM_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.p2pSyncManager = new P2PSyncManager(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(customStatusUpdateEvent));
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageTimerReceiver, new IntentFilter(customTimerStatusUpdateEvent));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageView=(ImageView) findViewById(R.id.image_view);
+        imageView = (ImageView) findViewById(R.id.image_view);
 
 
         Button showIPButton = (Button) findViewById(R.id.button3);
@@ -65,7 +65,8 @@ public class MainActivity extends Activity {
         toggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                that.p2pSyncManager.toggle();
+
+                JobUtils.scheduledJob(getApplicationContext(), IMMEDIATE_JOB_TIMINGS);
             }
         });
 
@@ -75,7 +76,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Intent camera = new Intent(getApplicationContext(),TakeProfilePic.class);
+                Intent camera = new Intent(getApplicationContext(), TakeProfilePic.class);
                 startActivity(camera);
             }
         });
@@ -86,8 +87,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Object obj = new Object();
-                obj= p2pdbapi.getUsers();
-                Log.i("buttonNeighbour",obj.toString());
+                obj = p2pdbapi.getUsers();
+                Log.i("buttonNeighbour", obj.toString());
             }
         });
 
@@ -97,8 +98,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Object obj = new Object();
-                obj= p2pdbapi.getNeighbours();
-                Log.i("buttonNeighbour",obj.toString());
+                obj = p2pdbapi.getNeighbours();
+                Log.i("buttonNeighbour", obj.toString());
             }
         });
 
@@ -106,15 +107,13 @@ public class MainActivity extends Activity {
     }
 
     public void execute() {
-//        JobUtils.scheduleJob(getApplicationContext());
-        this.p2pSyncManager.execute();
+        JobUtils.scheduledJob(getApplicationContext(), REGULAR_JOB_TIMINGS);
     }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.p2pSyncManager.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         updateStatus(TAG, "Destroying MainActivity");
     }
@@ -124,7 +123,6 @@ public class MainActivity extends Activity {
         final String status = line;
         runOnUiThread(new Thread(new Runnable() {
             public void run() {
-                that.p2pSyncManager.setTimeCounter(0);
                 ((TextView) findViewById(R.id.debugdataBox)).append(logWho + " : " + status + "\n");
             }
         }));

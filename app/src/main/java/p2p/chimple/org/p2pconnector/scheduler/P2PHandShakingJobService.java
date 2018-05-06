@@ -15,6 +15,8 @@ import android.util.Log;
 
 import java.util.List;
 
+import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JOB_TIMINGS;
+
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 
 public class P2PHandShakingJobService extends JobService {
@@ -23,6 +25,9 @@ public class P2PHandShakingJobService extends JobService {
 
     public static final String P2P_SYNC_RESULT_RECEIVED = "P2P_SYNC_RESULT_RECEIVED";
     public static final String JOB_PARAMS = "JOB_PARAMS";
+
+
+    private Intent wifiDirectServiceIntent;
 
     @Override
     public void onCreate() {
@@ -51,12 +56,16 @@ public class P2PHandShakingJobService extends JobService {
     public boolean onStartJob(final JobParameters params) {
         // The work that this service "does" is simply wait for a certain duration and finish
         // the job (on another thread).
-        Intent wifiDirectServiceIntent = new Intent(getApplicationContext(), WifiDirectIntentService.class);
-        wifiDirectServiceIntent.putExtra(JOB_PARAMS, params);
-        getApplicationContext().startService(wifiDirectServiceIntent);
-        Log.i(TAG, "on start job: " + params.getJobId());
+        if (!JobUtils.isJobRunning()) {
+            wifiDirectServiceIntent = new Intent(getApplicationContext(), WifiDirectIntentService.class);
+            wifiDirectServiceIntent.putExtra(JOB_PARAMS, params);
+            getApplicationContext().startService(wifiDirectServiceIntent);
+            JobUtils.setJobRunning(true);
+            Log.i(TAG, "on start job: " + params.getJobId());
+        } else {
+            Log.i(TAG, "Job is already running");
+        }
 
-        // Return true as there's more work to be done with this job.
         return true;
     }
 
@@ -64,17 +73,9 @@ public class P2PHandShakingJobService extends JobService {
     public boolean onStopJob(JobParameters params) {
         // Stop tracking these job parameters, as we've 'finished' executing.
         Log.i(TAG, "on stop job: " + params.getJobId());
+        JobUtils.setJobRunning(false);
         // Return false to drop the job.
         return false;
-    }
-
-    private List<JobInfo> getAllPendingJob() {
-        JobScheduler jobScheduler = (JobScheduler)
-                getSystemService(JOB_SCHEDULER_SERVICE);
-
-        // Get the list of scheduled jobs
-        List<JobInfo> jobList = jobScheduler.getAllPendingJobs();
-        return jobList;
     }
 
     private void unregisterWifiDirectIntentBroadcastReceiver() {
@@ -86,7 +87,8 @@ public class P2PHandShakingJobService extends JobService {
     }
 
     private void registerWifiDirectIntentBroadcastReceiver() {
-        receiver = new WifiDirectIntentBroadcastReceiver();
+
+        receiver = new WifiDirectIntentBroadcastReceiver(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(P2P_SYNC_RESULT_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
@@ -99,11 +101,20 @@ public class P2PHandShakingJobService extends JobService {
      * Used to update the UI and receive communication messages
      */
     public class WifiDirectIntentBroadcastReceiver extends BroadcastReceiver {
+        private P2PHandShakingJobService service;
+
+        public WifiDirectIntentBroadcastReceiver(P2PHandShakingJobService service) {
+            this.service = service;
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             JobParameters params = intent.getExtras().getParcelable(JOB_PARAMS);
-            Log.i(TAG, "on finisned job: " + params.getJobId());
+            Log.i(TAG, "on finished job: " + params.getJobId());
+            JobUtils.setJobRunning(false);
+            JobUtils.cancelAllJobs(context);
+            JobUtils.scheduledJob(context, REGULAR_JOB_TIMINGS);
+            getApplicationContext().stopService(wifiDirectServiceIntent);
             jobFinished(params, false);
         }
     }

@@ -1,5 +1,6 @@
 package p2p.chimple.org.p2pconnector.sync;
 
+import android.app.job.JobParameters;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
+import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.P2P_SYNC_RESULT_RECEIVED;
 import static p2p.chimple.org.p2pconnector.sync.P2POrchester.neighboursUpdateEvent;
 
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
@@ -45,6 +48,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private P2PStateFlow p2PStateFlow;
     private boolean connectedInLastTwoMins = false;
     private boolean reStartedDueToNoActivity = false;
+    private boolean isAllAvailableClientsConnectedAndSynced = false;
     //Status
     private int mInterval = 1000; // 1 second by default, can be changed later
     private int timeCounter = 0;
@@ -56,12 +60,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
-
-    public enum Strings {
-        Photo,
-        Chat,
-        Game
-    }
 
     public enum MessageTypes {
         PHOTO("Photo"),
@@ -89,11 +87,17 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(this);
 
         LocalBroadcastManager.getInstance(this.context).registerReceiver(mMessageReceiver, new IntentFilter(neighboursUpdateEvent));
+
+        this.initStatusChecker();
+    }
+
+    private void initStatusChecker() {
         mStatusChecker = new Runnable() {
             @Override
             public void run() {
                 // call function to update timer
                 timeCounter = timeCounter + 1;
+                Log.i(TAG, "timeCounter" + timeCounter);
                 if (timeCounter > 120 && !connectedInLastTwoMins && !reStartedDueToNoActivity) {
                     Log.i(TAG, "RESTART CONNECTOR TO RESET  ALL STATE");
                     that.reStartedDueToNoActivity = true;
@@ -103,8 +107,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 that.broadcastCustomTimerStatusUpdateEvent();
                 that.mHandler.postDelayed(mStatusChecker, mInterval);
             }
-        };
 
+        };
     }
 
     private void broadcastCustomTimerStatusUpdateEvent() {
@@ -159,19 +163,39 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         return true;
     }
 
-    public void execute() {
+//    public void execute(final JobParameters currentJobParams) {
+//        mStatusChecker.run();
+//        //changing the time and its interval
+//        disconnectGroupOwnerTimeOut = new CountDownTimer(20000, 2000) {
+//            public void onTick(long millisUntilFinished) {
+//                // not using
+//            }
+//
+//            public void onFinish() {
+//                Log.i(TAG, "execute on finished");
+//                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+//                result.putExtra(JOB_PARAMS, currentJobParams);
+//                LocalBroadcastManager.getInstance(that.context).sendBroadcast(result);
+//
+//            }
+//        };
+//        disconnectGroupOwnerTimeOut.start();
+//    }
+
+    public void execute(final JobParameters currentJobParams) {
         mStatusChecker.run();
         //changing the time and its interval
-//        disconnectGroupOwnerTimeOut = new CountDownTimer(30000, 4000) {
         disconnectGroupOwnerTimeOut = new CountDownTimer(20000, 2000) {
             public void onTick(long millisUntilFinished) {
                 // not using
             }
 
             public void onFinish() {
-                // no clients queuing up, thus lets reset the group now.
-                // notify job finished -
-                that.reStartConnector(true, 10000);
+                if (that.isAllAvailableClientsConnectedAndSynced) {
+                    Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+                    result.putExtra(JOB_PARAMS, currentJobParams);
+                    LocalBroadcastManager.getInstance(that.context).sendBroadcast(result);
+                }
             }
         };
 
@@ -278,9 +302,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void goToNextClientWaiting() {
         stopConnectedThread();
         stopConnectToThread();
-        this.disconnectGroupOwnerTimeOut.cancel();
-        this.connectedInLastTwoMins = false;
+        that.disconnectGroupOwnerTimeOut.cancel();
+        that.connectedInLastTwoMins = false;
         that.reStartedDueToNoActivity = false;
+        that.isAllAvailableClientsConnectedAndSynced = false;
 
         if (clientIPAddressList.size() > 0) {
             //With this test we'll just handle each client one-by-one in order they got connected
@@ -294,6 +319,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             updateStatus("Data state", "All addresses connected, will start exit timer now.");
             // lets just see if we get more connections coming in before the timeout comes
             Log.i(TAG, "Data state" + "All addresses connected, will start exit timer now.");
+            this.isAllAvailableClientsConnectedAndSynced = true;
             this.disconnectGroupOwnerTimeOut.start();
         }
     }
@@ -379,6 +405,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     private void broadcastCustomStatusUpdateEvent(String who, String line) {
         Log.d("sender", "Broadcasting message customStatusUpdateEvent");
+        this.timeCounter = 0;
         Intent intent = new Intent(customStatusUpdateEvent);
         // You can also include some extra data.
         intent.putExtra("who", who);
@@ -389,6 +416,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void onDestroy() {
         this.disconnectGroupOwnerTimeOut.cancel();
         this.stopConnector();
+        this.mStatusChecker = null;
+        updateStatus(TAG, "onDestroy");
     }
 
 
