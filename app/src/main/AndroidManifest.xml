@@ -42,11 +42,6 @@
         </activity>
         <activity android:name=".P2PActivity.TakeProfilePic"></activity>
 
-        <receiver android:name=".scheduler.P2PHandShakeJobStarter" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

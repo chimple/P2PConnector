@@ -4,34 +4,18 @@ import android.app.Service;
 import android.app.job.JobParameters;
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pGroup;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
+
 import android.util.Log;
-import android.widget.TextView;
 
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import p2p.chimple.org.p2pconnector.sync.CommunicationCallBack;
-import p2p.chimple.org.p2pconnector.sync.CommunicationThread;
-import p2p.chimple.org.p2pconnector.sync.ConnectToThread;
-import p2p.chimple.org.p2pconnector.sync.ConnectedThread;
-import p2p.chimple.org.p2pconnector.sync.P2POrchester;
-import p2p.chimple.org.p2pconnector.sync.P2POrchesterCallBack;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
-import p2p.chimple.org.p2pconnector.sync.SyncUtils;
+
 
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
-import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.P2P_SYNC_RESULT_RECEIVED;
 
 public class WifiDirectIntentService extends Service {
     private static final String TAG = WifiDirectIntentService.class.getSimpleName();
@@ -110,9 +94,6 @@ public class WifiDirectIntentService extends Service {
     protected void onHandleIntent(Intent intent) {
         Log.i(TAG, "do actual work");
         //broadcast result once done
-        //this.p2pSyncManager.execute();
-        Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
-        result.putExtra(JOB_PARAMS, currentJobParams);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(result);
+        this.p2pSyncManager.execute(this.currentJobParams);
     }
 }
