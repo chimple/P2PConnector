@@ -93,7 +93,10 @@ public class P2PWifiConnector {
         this.wifiManager.disconnect();
         this.wifiManager.enableNetwork(this.netId, false);
         this.wifiManager.reconnect();
-        this.connectionTimeOutTimer.start();
+        if (this.connectionTimeOutTimer!=null){
+            this.connectionTimeOutTimer.start();
+        }
+
     }
 
     public void cleanUp(boolean disconnect) {
@@ -134,7 +137,9 @@ public class P2PWifiConnector {
             NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
             if (info != null) {
                 if (info.isConnected()) {
-                    this.connectionTimeOutTimer.cancel();
+                    if(this.connectionTimeOutTimer!=null){
+                        this.connectionTimeOutTimer.cancel();
+                    }
                     this.hadConnected = true;
                     mConectionState = SyncUtils.SyncHandShakeState.Connected;
                 } else if (info.isConnectedOrConnecting()) {

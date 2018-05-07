@@ -421,7 +421,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
     public void connectionStatusChanged(SyncUtils.SyncHandShakeState
                                                 state, NetworkInfo.DetailedState detailedState, int Error, WifiDirectService currentDevice) {
         Log.i(TAG + " COM:", "State " + state + ", detailed state: " + detailedState + " , Error: " + Error);
-        Log.i(TAG, "currentDevice info:" + currentDevice.print());
+//        Log.i(TAG, "currentDevice info:" + currentDevice.print());
         String conStatus = "";
         if (state == SyncUtils.SyncHandShakeState.NONE) {
             conStatus = "NONE";

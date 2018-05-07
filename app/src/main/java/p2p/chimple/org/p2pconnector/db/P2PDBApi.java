@@ -31,4 +31,6 @@ public interface P2PDBApi {
     public String buildAllSyncMessages(String handShakeJson);
 
     public boolean upsertProfile();
+
+    public boolean persistProfileMessage(String photoJson);
 }

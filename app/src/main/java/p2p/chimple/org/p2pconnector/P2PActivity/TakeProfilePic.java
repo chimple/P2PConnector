@@ -9,23 +9,26 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
+import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
 public class TakeProfilePic extends Activity {
 
     Button button;
     ImageView imageView;
 
-    P2PDBApi p2pdbapi;
+    P2PDBApiImpl p2pdbapi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,6 @@ public class TakeProfilePic extends Activity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("onActivityResult","requestCode:"+requestCode+"resultCode"+resultCode+"data"+data);
@@ -59,8 +61,30 @@ public class TakeProfilePic extends Activity {
             if (resultCode == RESULT_OK) {
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 imageView.setImageBitmap(bitmap);
+                String photojson=getStringFromBitmap(bitmap);
+                boolean status = p2pdbapi.persistProfileMessage(photojson);
+                if (status){
+                    Log.i("onActivityResult","successfull");
+                }else{
+                    Log.i("onActivityResult","Failure");
+                }
 
             }
         }
+    }
+
+    private String getStringFromBitmap(Bitmap bitmapPicture) {
+        /*
+         * This functions converts Bitmap picture to a string which can be
+         * JSONified.
+         * */
+        final int COMPRESSION_QUALITY = 100;
+        String encodedImage;
+        ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+        bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
+                byteArrayBitmapStream);
+        byte[] b = byteArrayBitmapStream.toByteArray();
+        encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+        return encodedImage;
     }
 }

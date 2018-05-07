@@ -17,7 +17,8 @@ public class P2PApplication extends Application {
     private static Context context;
     private P2PApplication that;
 
-    public static int REGULAR_JOB_TIMINGS = 5 * 60 * 1000;
+//    public static int REGULAR_JOB_TIMINGS = 5 * 60 * 1000;
+public static int REGULAR_JOB_TIMINGS = 1000;
     public static int IMMEDIATE_JOB_TIMINGS = 5 * 1000;
 
     @Override
