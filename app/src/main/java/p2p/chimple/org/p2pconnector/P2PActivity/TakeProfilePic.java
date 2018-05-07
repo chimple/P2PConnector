@@ -1,8 +1,10 @@
 package p2p.chimple.org.p2pconnector.P2PActivity;
 
 import android.app.Activity;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,20 +17,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.R;
+import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
+
+import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 public class TakeProfilePic extends Activity {
 
     Button button;
     ImageView imageView;
+    private AppDatabase db;
 
-    P2PDBApiImpl p2pdbapi;
+    private P2PDBApiImpl p2pdbapi = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +47,24 @@ public class TakeProfilePic extends Activity {
 
         button=(Button) findViewById(R.id.buttonTakePhoto);
         imageView=(ImageView) findViewById(R.id.image_view);
+
+        try {
+            db = Room.inMemoryDatabaseBuilder(getApplicationContext(), AppDatabase.class)
+                    .allowMainThreadQueries()
+                    .build();
+
+        } catch (Exception ex) {
+            Log.i("test", ex.getMessage());
+        }
+//        p2PSyncInfoDao = db.p2pSyncDao();
+        p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
+
+        SharedPreferences pref = getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("USER_ID", UUID.randomUUID().toString());
+        editor.putString("DEVICE_ID", UUID.randomUUID().toString());
+        editor.putString("PROFILE_PHOTO", "photo1.jpg");
+        editor.commit(); // commit changes
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +90,14 @@ public class TakeProfilePic extends Activity {
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 imageView.setImageBitmap(bitmap);
                 String photojson=getStringFromBitmap(bitmap);
-                boolean status = p2pdbapi.persistProfileMessage(photojson);
+                Log.i("photojson",photojson);
+                boolean status=false;
+                try {
+                    JSONObject jsonObj = new JSONObject(photojson);
+                    status = p2pdbapi.persistProfileMessage(String.valueOf(jsonObj));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 if (status){
                     Log.i("onActivityResult","successfull");
                 }else{
