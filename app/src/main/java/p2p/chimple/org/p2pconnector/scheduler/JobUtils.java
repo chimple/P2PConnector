@@ -34,7 +34,7 @@ public class JobUtils {
         ComponentName serviceComponent = new ComponentName(context, P2PHandShakingJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
         builder.setPersisted(true);
-        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         return builder;
     }
 
