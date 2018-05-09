@@ -16,8 +16,10 @@ public class P2PApplication extends Application {
     private static final String TAG = P2PApplication.class.getName();
     private static Context context;
     private P2PApplication that;
+    public static AppDatabase db;
+    String USERID_UUID;
 
-//    public static int REGULAR_JOB_TIMINGS = 5 * 60 * 1000;
+    //    public static int REGULAR_JOB_TIMINGS = 5 * 60 * 1000;
 public static int REGULAR_JOB_TIMINGS = 1000;
     public static int IMMEDIATE_JOB_TIMINGS = 5 * 1000;
 
@@ -39,7 +41,9 @@ public static int REGULAR_JOB_TIMINGS = 1000;
                 that.createShardProfilePreferences();
                 P2PContext.getInstance().initialize(P2PApplication.this);
                 //TODO: for now force the creation here
-                AppDatabase.getInstance(P2PApplication.this);
+                db = AppDatabase.getInstance(P2PApplication.this);
+
+                Log.i(TAG,"app database instance"+String.valueOf(db));
 
                 initializationComplete();
             }
@@ -51,7 +55,7 @@ public static int REGULAR_JOB_TIMINGS = 1000;
     private void createShardProfilePreferences() {
         SharedPreferences pref = this.getContext().getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
-        String USERID_UUID = UUID.randomUUID().toString();
+        USERID_UUID = UUID.randomUUID().toString();
         Log.i(TAG, "created UUID User:" + USERID_UUID);
         editor.putString("USER_ID", USERID_UUID);
         editor.putString("DEVICE_ID", UUID.randomUUID().toString());

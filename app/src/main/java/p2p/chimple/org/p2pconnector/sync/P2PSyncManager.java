@@ -59,6 +59,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private Map<String, WifiDirectService> neighbours = null;
 
     public static final String profileFileExtension = ".txt";
+//    public static final String profileFileExtension = ".jpg";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
@@ -114,6 +115,9 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     instance.reStartedDueToNoActivity = true;
                     instance.reStartConnector(true, 10000);
                     //do something
+                }
+                if (instance==null){
+                    instance = getInstance(context);
                 }
                 instance.broadcastCustomTimerStatusUpdateEvent();
                 instance.mHandler.postDelayed(mStatusChecker, mInterval);
@@ -456,7 +460,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 }
                 OutputStream os = new FileOutputStream(file);
                 String str = new String(contents, StandardCharsets.UTF_8);
-                Log.i(TAG, "created profile photo:" + fileName + " with contents" + str);
+                Log.i(TAG, "created profile photo:" + fileName + " with contents " + str);
                 os.write(contents);
                 os.close();
 

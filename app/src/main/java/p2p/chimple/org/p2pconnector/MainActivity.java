@@ -11,11 +11,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,16 +41,21 @@ import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JO
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customTimerStatusUpdateEvent;
+import static p2p.chimple.org.p2pconnector.application.P2PApplication.db;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private MainActivity that = this;
 
-    private AppDatabase db;
     private Context context;
     ImageView imageView;
+    ListView listView;
+    String[] listItem=null;
+    ArrayAdapter<String> adapter=null;
+
     private P2PDBApiImpl p2pdbapi = null;
     private P2PSyncInfoDao p2PSyncInfoDao;
+    private P2PSyncInfo p2PSyncInfo;
     static final int CAM_REQUEST = 1;
 
     @Override
@@ -60,23 +68,11 @@ public class MainActivity extends Activity {
 
         imageView = (ImageView) findViewById(R.id.image_view);
 
-        try {
-            db = Room.inMemoryDatabaseBuilder(getApplicationContext(), AppDatabase.class)
-                    .allowMainThreadQueries()
-                    .build();
+        listView = (ListView) findViewById(R.id.list);
 
-        } catch (Exception ex) {
-            Log.i("test", ex.getMessage());
-        }
-//        p2PSyncInfoDao = db.p2pSyncDao();
+
+        p2PSyncInfoDao = db.p2pSyncDao();
         p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
-
-        SharedPreferences pref = getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("USER_ID", UUID.randomUUID().toString());
-        editor.putString("DEVICE_ID", UUID.randomUUID().toString());
-        editor.putString("PROFILE_PHOTO", "photo1.jpg");
-        editor.commit(); // commit changes
 
 
         Button showIPButton = (Button) findViewById(R.id.button3);
@@ -122,12 +118,17 @@ public class MainActivity extends Activity {
         buttonAllUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 List<String> users = p2pdbapi.getUsers();
-                Log.i("buttonAllUsers", String.valueOf(users));
-//                assertEquals(users.size(), 2);
-//                List<String> result = new ArrayList();
-//                result = that.p2pdbapi.getUsers();
-//                Log.i("buttonAllUsers", String.valueOf(result));
+
+                for (int i = 0; i < users.size(); i++) {
+                    Log.i("buttonAllUsers", users.get(i));
+                    listItem = users.toArray(new String[i]);
+                }
+                adapter = new ArrayAdapter<String>(getBaseContext(),
+                        android.R.layout.simple_list_item_1, listItem);
+                listView.setAdapter(adapter);
             }
         });
 
@@ -139,6 +140,16 @@ public class MainActivity extends Activity {
                 Object obj = new Object();
                 obj = P2PSyncManager.getInstance(getApplicationContext()).getNeighbours();
                 Log.i("buttonNeighbour", String.valueOf(obj));
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // TODO Auto-generated method stub
+                String value=adapter.getItem(position);
+                Toast.makeText(getApplicationContext(),value, Toast.LENGTH_SHORT).show();
+
             }
         });
 
