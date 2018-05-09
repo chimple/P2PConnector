@@ -12,8 +12,23 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="9"
-        android:id="@+id/image_view"/>
+        android:layout_weight="8"
+        android:id="@+id/image_view"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:src="@drawable/photo"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_red_dark"
+        android:textColor="@android:color/white"
+        android:text="Set Profile Pic"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_weight="1"
+        android:id="@+id/buttonSetProfilePic"
+        android:layout_gravity="center_horizontal"/>
 
     <Button
         android:layout_width="match_parent"

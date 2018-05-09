@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +44,7 @@ import static p2p.chimple.org.p2pconnector.application.P2PApplication.db;
 
 public class TakeProfilePic extends Activity {
 
-    Button button;
+    Button TakePhoto,SetProfilePic;
     ImageView imageView;
 
     private P2PDBApiImpl p2pdbapi = null;
@@ -52,15 +53,17 @@ public class TakeProfilePic extends Activity {
     String fileName=null;
     String userId=null;
     String deviceId=null;
-    private static final int CAMERA_PHOTO = 111;
+    private static final int CAMERA_PHOTO = 1;
     private Uri imageToUploadUri;
+    boolean defaultImage = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.take_profile_pic);
 
-        button=(Button) findViewById(R.id.buttonTakePhoto);
+        TakePhoto=(Button) findViewById(R.id.buttonTakePhoto);
+        SetProfilePic=(Button) findViewById(R.id.buttonSetProfilePic);
         imageView=(ImageView) findViewById(R.id.image_view);
 
         SharedPreferences pref = getSharedPreferences(P2P_SHARED_PREF, 0);
@@ -72,9 +75,10 @@ public class TakeProfilePic extends Activity {
         p2PSyncInfoDao = db.p2pSyncDao();
         p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
 
-        button.setOnClickListener(new View.OnClickListener() {
+        TakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                defaultImage=false;
                 Intent chooserIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File folder = new File(getExternalFilesDir(null), "P2P_IMAGES");
                 if (!folder.exists()){
@@ -86,6 +90,37 @@ public class TakeProfilePic extends Activity {
                 startActivityForResult(chooserIntent, CAMERA_PHOTO);
             }
         });
+
+        SetProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Bitmap bm = BitmapFactory.decodeResource( getResources(), R.drawable.photo);
+
+                String value=getApplicationContext().getExternalFilesDir(null).getPath();
+                Log.i("SetProfilePic","do some action using the image path: "+value);
+                Toast.makeText(getApplicationContext(),value, Toast.LENGTH_LONG).show();
+                if (defaultImage){
+                    try {
+                        File file = new File(getApplicationContext().getExternalFilesDir(null)+"/P2P_IMAGES",userId+".jpg" );
+                        FileOutputStream outStream = null;
+                        outStream = new FileOutputStream(file);
+                        bm.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                        outStream.flush();
+                        outStream.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                Intent intent = new Intent(getApplicationContext(), NeighbourList.class);
+                intent.putExtra("MyId",userId);
+                startActivity(intent);
+            }
+        });
+
     }
 
 
@@ -175,20 +210,5 @@ public class TakeProfilePic extends Activity {
             Log.e("", e.getMessage(), e);
             return null;
         }
-    }
-
-    private String getStringFromBitmap(Bitmap bitmapPicture) {
-        /*
-         * This functions converts Bitmap picture to a string which can be
-         * JSONified.
-         * */
-        final int COMPRESSION_QUALITY = 100;
-        String encodedImage;
-        ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
-        bitmapPicture.compress(Bitmap.CompressFormat.JPEG, COMPRESSION_QUALITY,
-                byteArrayBitmapStream);
-        byte[] b = byteArrayBitmapStream.toByteArray();
-        encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-        return encodedImage;
     }
 }
