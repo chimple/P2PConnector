@@ -67,8 +67,6 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(customStatusUpdateEvent));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageTimerReceiver, new IntentFilter(customTimerStatusUpdateEvent));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -88,52 +86,6 @@ public class LoginActivity extends Activity {
         Log.i("buttonAllUsers:","PROFILE_PHOTO filename :"+fileName+", USER_ID :  "+userId+", DEVICE_ID :  "+deviceId);
 
 
-        Button showIPButton = (Button) findViewById(R.id.button3);
-        showIPButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SyncUtils.printLocalIpAddresses(that);
-            }
-        });
-
-        Button clearButton = (Button) findViewById(R.id.button2);
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                ((TextView) findViewById(R.id.debugdataBox)).setText("");
-            }
-        });
-
-
-        Button toggleButton = (Button) findViewById(R.id.buttonToggle);
-
-        toggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                JobUtils.scheduledJob(getApplicationContext(), IMMEDIATE_JOB_TIMINGS);
-            }
-        });
-
-//        Button buttonAdd = (Button) findViewById(R.id.buttonAdd);
-//
-//        buttonAdd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent camera = new Intent(getApplicationContext(), TakeProfilePic.class);
-//                startActivity(camera);
-//            }
-//        });
-
-//        Button buttonAllUsers = (Button) findViewById(R.id.buttonAllUsers);
-//
-//        buttonAllUsers.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-
         List<String> users = p2pdbapi.getUsers();
         Toast.makeText(getApplicationContext(),String.valueOf(users.size()),Toast.LENGTH_LONG).show();
         for (int i = 0; i < users.size(); i++) {
@@ -143,19 +95,6 @@ public class LoginActivity extends Activity {
         adapter = new ArrayAdapter<String>(getBaseContext(),
                 android.R.layout.simple_list_item_1, listItem);
         listView.setAdapter(adapter);
-//            }
-//        });
-
-//        Button buttonNeighbour = (Button) findViewById(R.id.buttonNeighbour);
-//
-//        buttonNeighbour.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Object obj = new Object();
-//                obj = P2PSyncManager.getInstance(getApplicationContext()).getNeighbours();
-//                Log.i("buttonNeighbour", String.valueOf(obj));
-//            }
-//        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -169,56 +108,8 @@ public class LoginActivity extends Activity {
                 startActivity(intent);
             }
         });
-
-        this.execute();
-    }
-
-    public void execute() {
-        JobUtils.scheduledJob(getApplicationContext(), REGULAR_JOB_TIMINGS);
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        updateStatus(TAG, "Destroying MainActivity");
-    }
-
-    public void updateStatus(String who, String line) {
-        final String logWho = who;
-        final String status = line;
-        runOnUiThread(new Thread(new Runnable() {
-            public void run() {
-//                ((TextView) findViewById(R.id.debugdataBox)).append(logWho + " : " + status + "\n");
-            }
-        }));
-    }
-
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String who = intent.getStringExtra("who");
-            String line = intent.getStringExtra("line");
-            that.updateStatus(who, line);
-        }
-    };
-
-    public void updateTimerStatus(final int timeCounter) {
-        runOnUiThread(new Thread(new Runnable() {
-            public void run() {
-                ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
-            }
-        }));
-    }
-
-    private BroadcastReceiver mMessageTimerReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int timeCounter = intent.getIntExtra("timeCounter", -1);
-            that.updateTimerStatus(timeCounter);
-        }
-    };
 }
 

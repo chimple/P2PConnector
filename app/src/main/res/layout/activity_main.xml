@@ -3,22 +3,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="2"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".MainActivity">
 
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center_vertical"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Registered User"
-        android:id="@+id/regUser"/>
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:text="New User"
-        android:id="@+id/newUser"/>
+        <include layout="@layout/header_layout"/>
+
+
+        <ScrollView
+            android:id="@+id/SCROLLER_ID"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
+
+            <TextView
+                android:id="@+id/debugdataBox"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0" />
+
+        </ScrollView>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.5"
+            android:text="Registered User"
+            android:id="@+id/regUser"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.5"
+            android:text="New User"
+            android:id="@+id/newUser"/>
+    </LinearLayout>
+
+
 
 </LinearLayout>
