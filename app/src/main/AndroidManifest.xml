@@ -34,7 +34,7 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".P2PActivity.LoginActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,8 +43,8 @@
         </activity>
         <activity android:name=".P2PActivity.TakeProfilePic" />
         <activity android:name=".P2PActivity.ActionTypeActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".P2PActivity.NeighbourList"></activity>
+        <activity android:name=".P2PActivity.LoginActivity" />
+        <activity android:name=".P2PActivity.NeighbourList" />
     </application>
 
 </manifest>
