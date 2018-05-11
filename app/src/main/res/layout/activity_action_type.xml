@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/activity_vertical_margin"
+    android:weightSum="10"
+    tools:context=".P2PActivity.ActionTypeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My ID: "
+            android:id="@+id/MyId"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Neighbour ID: "
+            android:id="@+id/NeighbourId"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonChat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="chat"
+        android:textSize="30dp"
+        android:layout_weight="5"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        tools:layout_editor_absoluteX="61dp"
+        tools:layout_editor_absoluteY="47dp" />
+
+    <Button
+        android:id="@+id/buttonGame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="game"
+
+        android:textSize="30dp"
+        android:layout_weight="5"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        tools:layout_editor_absoluteX="148dp"
+        tools:layout_editor_absoluteY="154dp" />
+</LinearLayout>
