@@ -75,8 +75,8 @@ public class P2PServiceFinder {
         this.registerP2PServiceFinderReceiver();
         this.registerPeerListeners();
         this.registerDnsSdServiceResponseListener();
-
-        this.startPeerDiscovery();
+        // let try out with this....
+        // this.startPeerDiscovery();
     }
 
     private void registerPeerListeners() {
@@ -138,36 +138,22 @@ public class P2PServiceFinder {
                 peerDiscoveryTimer.start();
             }
         };
-        txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
-            public void onDnsSdTxtRecordAvailable(String domain,
-                                                  Map<String, String> txtMap, WifiP2pDevice device) {
-                Log.i(TAG, "Discovered TXT record:");
-                Log.i(TAG, "\t" + deviceToString(device));
-                Log.i(TAG, "\t" + domain);
-                for (Map.Entry<String, String> e : txtMap.entrySet())
-                    Log.i(TAG, "\t" + e.getKey() + " = " + e.getValue());
-                if (domain.endsWith("." + SERVICE_TYPE + ".local.")) {
-                    String currentUserId = txtMap.get("currentUserId");
-                    Log.i(TAG, "currentUserId" + currentUserId);
-                }
-            }
-        };
 
         wifiP2pManager.setDnsSdResponseListeners(channel, serviceListener, null);
     }
 
     private void initTimers() {
-//changing the timer
 
-//        this.discoverServiceTimeOutTimer = new CountDownTimer(60000, 1000) {
-        this.discoverServiceTimeOutTimer = new CountDownTimer(30000, 1000) {
+        this.discoverServiceTimeOutTimer = new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 // not using
             }
 
             public void onFinish() {
                 stopDiscovery();
-                startPeerDiscovery();
+                //lets try out this
+                //startPeerDiscovery();
+                startServiceDiscovery();
             }
         };
 
@@ -336,12 +322,6 @@ public class P2PServiceFinder {
         if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED) {
             status = status + "Stopped.";
             startPeerDiscovery();
-//            final Handler handler = new Handler();
-//            handler.postDelayed(new Runnable() {
-//                public void run() {
-//                    startPeerDiscovery();
-//                }
-//            }, 30000);
         } else if (state == WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED) {
             status = status + "Started.";
         } else {
