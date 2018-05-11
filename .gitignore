@@ -1,6 +1,5 @@
 .gradle/4.4/fileHashes/fileHashes.bin
 *.properties
 *.gradle
-*.xml
 *.bin
 *.lock
