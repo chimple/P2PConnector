@@ -1,6 +1,6 @@
-.gradle/4.4/fileHashes/fileHashes.bin
+.gradle/*
+.idea/*
 *.properties
 *.gradle
-*.xml
 *.bin
 *.lock
