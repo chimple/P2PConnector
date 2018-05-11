@@ -113,8 +113,12 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
     }
 
     private void reInitializeServiceFinder() {
-        WifiP2pManager.Channel channel = mWifiBase.getP2PChannel();
-        WifiP2pManager p2p = mWifiBase.getWifiP2pManager();
+        WifiP2pManager.Channel channel = null;
+        WifiP2pManager p2p = null;
+        if (mWifiBase != null) {
+            channel = mWifiBase.getP2PChannel();
+            p2p = mWifiBase.getWifiP2pManager();
+        }
 
         if (channel != null && p2p != null) {
             Log.i(TAG, "Starting WifiServiceSearcher");
