@@ -132,11 +132,13 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
         if (mWifiAccessPoint != null) {
             setListeningState(SyncUtils.ReportingState.Listening);
         } else {
-            WifiP2pManager.Channel channel = mWifiBase.getP2PChannel();
-            WifiP2pManager p2p = mWifiBase.getWifiP2pManager();
+            if (mWifiBase != null) {
+                WifiP2pManager.Channel channel = mWifiBase.getP2PChannel();
+                WifiP2pManager p2p = mWifiBase.getWifiP2pManager();
 
-            setListeningState(SyncUtils.ReportingState.Listening);
-            mWifiAccessPoint = new P2PAccessPoint(this.context, p2p, channel, this.mHandler, this);
+                setListeningState(SyncUtils.ReportingState.Listening);
+                mWifiAccessPoint = new P2PAccessPoint(this.context, p2p, channel, this.mHandler, this);
+            }
         }
     }
 
