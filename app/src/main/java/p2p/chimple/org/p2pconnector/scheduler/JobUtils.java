@@ -4,6 +4,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import static android.content.Context.JOB_SCHEDULER_SERVICE;
 
@@ -21,20 +22,27 @@ public class JobUtils {
                 Log.i(TAG, "Cancelling all pending jobs");
                 jobScheduler.cancelAll();
             }
-            JobInfo.Builder builder = buildJob(context);
-            builder.setMinimumLatency(period);
-            jobScheduler.schedule(builder.build());
-            Log.i(TAG, "Scheduling immediate job");
+            JobInfo.Builder builder = buildJob(context,period);
+            int status = jobScheduler.schedule(builder.build());
+            Log.i(TAG, "Scheduling immediate job, Status "+status);
         } else {
             Log.i(TAG, "Job is already running");
         }
     }
 
-    private synchronized static JobInfo.Builder buildJob(Context context) {
+    private synchronized static JobInfo.Builder buildJob(Context context, int period) {
         ComponentName serviceComponent = new ComponentName(context, P2PHandShakingJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
-        builder.setPersisted(true);
-//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+
+        JobInfo.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder = new JobInfo.Builder(0, serviceComponent)
+                    .setMinimumLatency(period)
+                    .setPersisted(true);
+        } else {
+            builder = new JobInfo.Builder(0, serviceComponent)
+                    .setPeriodic(period)
+                    .setPersisted(true);
+        }
         return builder;
     }
 
