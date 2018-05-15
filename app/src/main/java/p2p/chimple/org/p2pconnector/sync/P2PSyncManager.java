@@ -63,6 +63,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
+    public static final int RESTART_IF_NOT_CONNECTED_TIME = 120;
+    public static final int EXIT_CURRENT_JOB_TIME = 300;
 
     public enum MessageTypes {
         PHOTO("Photo"),
@@ -111,7 +113,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 timeCounter = timeCounter + 1;
                 totalTimeTillJobStarted = totalTimeTillJobStarted + 1;
                 Log.i(TAG, "timeCounter" + timeCounter + " Not connectedInLastTwoMins:" + !connectedInLastTwoMins);
-                if (timeCounter > 120 && !connectedInLastTwoMins) {
+                if (timeCounter > RESTART_IF_NOT_CONNECTED_TIME && !connectedInLastTwoMins) {
                     instance.resetAndStartAgain();
                 }
 
@@ -120,7 +122,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     instance.mHandler.postDelayed(mStatusChecker, mInterval);
                 }
 
-                if (totalTimeTillJobStarted > 150 && !exitTimerStarted) {
+                if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !exitTimerStarted) {
                     disconnectGroupOwnerTimeOut.start();
                     exitTimerStarted = true;
                 }
