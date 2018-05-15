@@ -23,7 +23,6 @@ public class JobUtils {
                 jobScheduler.cancelAll();
             }
             JobInfo.Builder builder = buildJob(context,period);
-//            builder.setMinimumLatency(period);
             int status = jobScheduler.schedule(builder.build());
             Log.i(TAG, "Scheduling immediate job, Status "+status);
         } else {
@@ -38,9 +37,11 @@ public class JobUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder = new JobInfo.Builder(0, serviceComponent)
                     .setMinimumLatency(period)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(true);
         } else {
             builder = new JobInfo.Builder(0, serviceComponent)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPeriodic(period)
                     .setPersisted(true);
         }

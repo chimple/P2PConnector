@@ -62,7 +62,7 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
 
     private void initialize() {
         this.registerP2PAccessPointReceiver();
-        this.reStartHandShakeListening();
+        this.reStartHandShakeListening(0);
 
         wifiP2pManager.createGroup(channel, new WifiP2pManager.ActionListener() {
             public void onSuccess() {
@@ -244,30 +244,36 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                reStartHandShakeListening();
+                reStartHandShakeListening(0);
                 that.callBack.Connected(remoteTmp, true);
             }
         });
     }
 
     @Override
-    public void ListeningFailed(String reason) {
+    public void ListeningFailed(String reason, int triedTimes) {
+        final int trialCountTmp = triedTimes;
+        Log.i(TAG, "P2PAccessPoint listening failed: " + reason);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                reStartHandShakeListening();
+                if (trialCountTmp < 2) {
+                    reStartHandShakeListening((trialCountTmp + 1));
+                } else {
+                    P2PSyncManager.getInstance(that.context).resetAndStartAgain();
+                }
             }
         });
     }
 
 
-    private void reStartHandShakeListening() {
+    private void reStartHandShakeListening(int trialCountTmp) {
         if (mHandShakeListenerThread != null) {
             mHandShakeListenerThread.cleanUp();
             mHandShakeListenerThread = null;
         }
 
-        mHandShakeListenerThread = new HandShakeListenerThread(that, HandShakeportToUse);
+        mHandShakeListenerThread = new HandShakeListenerThread(that, HandShakeportToUse, trialCountTmp);
         mHandShakeListenerThread.start();
     }
 
