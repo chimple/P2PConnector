@@ -37,7 +37,7 @@ import static p2p.chimple.org.p2pconnector.sync.P2POrchester.neighboursUpdateEve
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
     private static final String TAG = P2PSyncManager.class.getSimpleName();
     private Context context;
-    private static P2PSyncManager instance;
+    public static P2PSyncManager instance;
     private CountDownTimer disconnectGroupOwnerTimeOut;
     private List<String> clientIPAddressList = new ArrayList<String>();
     private P2POrchester mWDConnector = null;
