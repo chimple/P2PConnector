@@ -132,7 +132,9 @@ public class P2PServiceFinder {
                     Log.i(TAG, "Not our Service, :" + SERVICE_TYPE + "!=" + serviceType + ":");
                 }
 
-                that.discoverServiceTimeOutTimer.cancel();
+                if (that.discoverServiceTimeOutTimer!=null){
+                    that.discoverServiceTimeOutTimer.cancel();
+                }
 
                 peerDiscoveryTimer.cancel();
                 peerDiscoveryTimer.start();

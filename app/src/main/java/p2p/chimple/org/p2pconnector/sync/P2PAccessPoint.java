@@ -97,7 +97,10 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
         try {
             if (info.isGroupOwner) {
-                mInetAddress = info.groupOwnerAddress.getHostAddress();
+                if (info.groupOwnerAddress!=null){
+                    mInetAddress = info.groupOwnerAddress.getHostAddress();
+                }
+
                 wifiP2pManager.requestGroupInfo(channel, this);
             } else {
                 Log.i(TAG, "we are client !! group owner address is: " + info.groupOwnerAddress.getHostAddress());

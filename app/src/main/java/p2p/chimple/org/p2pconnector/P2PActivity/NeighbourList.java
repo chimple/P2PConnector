@@ -29,7 +29,6 @@ public class NeighbourList extends AppCompatActivity {
     ListView listView;
     String[] listItem=null;
     ArrayAdapter<String> adapter=null;
-    Map<String, WifiDirectService> users;
 
 //    private P2PSyncManager syncManager=instance;
 
@@ -54,13 +53,15 @@ public class NeighbourList extends AppCompatActivity {
 
 
         if(instance!=null) {
-            users = instance.getNeighbours();
+            Map<String, WifiDirectService> users = instance.getNeighbours();
             if (users != null) {
                 Log.i("Neighbours list", String.valueOf(users));
+                listItem = users.keySet().toArray(new String[0]);
             }
         }else{
             String temp="no users found";
             Log.i("Neighbours list","No users has been found");
+            listItem[0] = temp;
         }
 
 
@@ -76,7 +77,7 @@ public class NeighbourList extends AppCompatActivity {
 //
 //        }
         adapter = new ArrayAdapter<String>(getBaseContext(),
-                android.R.layout.simple_list_item_1, (List<String>) users);
+                android.R.layout.simple_list_item_1, listItem);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

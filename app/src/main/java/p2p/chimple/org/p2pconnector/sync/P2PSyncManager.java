@@ -118,9 +118,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 }
 
                 if(!exitTimerStarted) {
-                    instance.broadcastCustomTimerStatusUpdateEvent();
-                    instance.mHandler.postDelayed(mStatusChecker, mInterval);
-                }
+                    if (instance!=null){
+                        instance.broadcastCustomTimerStatusUpdateEvent();
+                        instance.mHandler.postDelayed(mStatusChecker, mInterval);
+
+                    }
+                    }
 
                 if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !exitTimerStarted) {
                     disconnectGroupOwnerTimeOut.start();
