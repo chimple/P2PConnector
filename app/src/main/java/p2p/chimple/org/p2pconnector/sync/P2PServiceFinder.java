@@ -135,9 +135,11 @@ public class P2PServiceFinder {
                 if (that.discoverServiceTimeOutTimer!=null){
                     that.discoverServiceTimeOutTimer.cancel();
                 }
+                if (peerDiscoveryTimer!=null){
+                    peerDiscoveryTimer.cancel();
+                    peerDiscoveryTimer.start();
+                }
 
-                peerDiscoveryTimer.cancel();
-                peerDiscoveryTimer.start();
             }
         };
 
