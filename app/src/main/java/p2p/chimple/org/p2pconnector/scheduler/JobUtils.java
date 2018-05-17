@@ -46,12 +46,6 @@ public class JobUtils {
                     .setPersisted(true);
         }
         return builder;
-
-//        JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
-//        builder.setPersisted(true);
-//        builder.setPeriodic(period);
-////        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_METERED);
-//        return builder;
     }
 
     public synchronized static boolean isAnyJobScheduled(Context context) {
