@@ -117,13 +117,13 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     instance.resetAndStartAgain();
                 }
 
-                if(!exitTimerStarted) {
-                    if (instance!=null){
+                if (!exitTimerStarted) {
+                    if (instance != null) {
                         instance.broadcastCustomTimerStatusUpdateEvent();
                         instance.mHandler.postDelayed(mStatusChecker, mInterval);
 
                     }
-                    }
+                }
 
                 if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !exitTimerStarted) {
                     disconnectGroupOwnerTimeOut.start();
@@ -244,7 +244,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void StartConnector() {
         //lets be ready for incoming test communications
         updateStatus(TAG, "starting listener now, and connector");
-        startListenerThread();
+        startListenerThread(0);
         mWDConnector = new P2POrchester(this.context, this, this.mHandler);
     }
 
@@ -269,9 +269,9 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         return this.context;
     }
 
-    private void startListenerThread() {
+    private void startListenerThread(int triedSoFar) {
         stopListenerThread();
-        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber);
+        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber, triedSoFar);
         mTestListenerThread.start();
     }
 
@@ -354,7 +354,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         Log.i(TAG, "We got incoming connection");
         this.connectedInLastTwoMins = true;
         final Socket socketTmp = socket;
-        startListenerThread();
+        startListenerThread(0);
         mTestConnectToThread = null;
         this.p2PStateFlow.resetAllStates();
         startTestConnection(socketTmp, false);
@@ -366,8 +366,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     @Override
-    public void ListeningFailed(String reason) {
-        startListenerThread();
+    public void ListeningFailed(String reason, int trialCountTmp) {
+        if (trialCountTmp < 2) {
+            startListenerThread((trialCountTmp + 1));
+        } else {
+            this.resetAndStartAgain();
+        }
     }
 
     @Override

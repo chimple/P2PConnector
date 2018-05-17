@@ -12,9 +12,11 @@ public class CommunicationThread extends Thread {
     private CommunicationCallBack callBack;
     private final ServerSocket mSocket;
     boolean mStopped = false;
+    private int listenerErrorSoFarTimes = 0;
 
-    public CommunicationThread(CommunicationCallBack callback, int port) {
+    public CommunicationThread(CommunicationCallBack callback, int port, int trialnum) {
         this.callBack = callback;
+        this.listenerErrorSoFarTimes = trialnum;
         ServerSocket tmp = null;
 
         try {
@@ -39,14 +41,14 @@ public class CommunicationThread extends Thread {
                     Log.i(TAG, "Incoming test-connection");
                     this.callBack.GotConnection(socket);
                 } else if (!mStopped) {
-                    this.callBack.ListeningFailed("Socket is null");
+                    this.callBack.ListeningFailed("Socket is null", this.listenerErrorSoFarTimes);
                 }
 
             } catch (Exception e) {
                 if (!mStopped) {
                     //return failure
                     Log.i(TAG, "accept socket failed: " + e.toString());
-                    this.callBack.ListeningFailed(e.toString());
+                    this.callBack.ListeningFailed(e.toString(), this.listenerErrorSoFarTimes);
                 }
             }
         }
