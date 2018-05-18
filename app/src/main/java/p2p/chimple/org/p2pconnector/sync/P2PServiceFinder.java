@@ -75,8 +75,8 @@ public class P2PServiceFinder {
         this.registerP2PServiceFinderReceiver();
         this.registerPeerListeners();
         this.registerDnsSdServiceResponseListener();
-//         let try out with this....
-         this.startPeerDiscovery();
+        // let try out with this....
+        // this.startPeerDiscovery();
     }
 
     private void registerPeerListeners() {
@@ -135,9 +135,11 @@ public class P2PServiceFinder {
                 if (that.discoverServiceTimeOutTimer!=null){
                     that.discoverServiceTimeOutTimer.cancel();
                 }
+                if (peerDiscoveryTimer!=null){
+                    peerDiscoveryTimer.cancel();
+                    peerDiscoveryTimer.start();
+                }
 
-                peerDiscoveryTimer.cancel();
-                peerDiscoveryTimer.start();
             }
         };
 
@@ -154,8 +156,8 @@ public class P2PServiceFinder {
             public void onFinish() {
                 stopDiscovery();
                 //lets try out this
-                startPeerDiscovery();
-//                startServiceDiscovery();
+                //startPeerDiscovery();
+                startServiceDiscovery();
             }
         };
 

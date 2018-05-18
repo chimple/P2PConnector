@@ -10,19 +10,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
-import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
-import p2p.chimple.org.p2pconnector.sync.WifiDirectService;
 
 import static p2p.chimple.org.p2pconnector.application.P2PApplication.db;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.instance;
 
 public class NeighbourList extends AppCompatActivity {
 
@@ -43,7 +38,6 @@ public class NeighbourList extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.neighbourList);
 
-//        syncManager = this.getApplicationContext();
         p2PSyncInfoDao = db.p2pSyncDao();
         p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
 
@@ -64,18 +58,7 @@ public class NeighbourList extends AppCompatActivity {
             listItem[0] = temp;
         }
 
-
-//        Log.i("Neighbours list",users.get(users.keySet().toArray()[0]));
-
-//        List<String> users = p2pdbapi.getUsers();
-//        for (int i = 0; i < users.size(); i++) {
-////            Log.i("NeighbourList AllUsers", users.get(i));
-//            if (!users.get(i).equals(MyId)){
-////                Log.i("NList AllUsers loop", users.get(i));
-//                listItem = users.get().toArray(new String[i]);
-//            }
-//
-//        }
+        }
         adapter = new ArrayAdapter<String>(getBaseContext(),
                 android.R.layout.simple_list_item_1, listItem);
         listView.setAdapter(adapter);
