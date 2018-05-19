@@ -9,6 +9,6 @@ public interface CommunicationCallBack {
 
     public void ConnectionFailed(String reason);
 
-    public void ListeningFailed(String reason, int listenerErrorSoFarTimes);
+    public void ListeningFailed(String reason);
 
 }

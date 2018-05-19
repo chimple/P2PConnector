@@ -36,6 +36,7 @@ public class P2PStateFlow {
 
     private P2PSyncManager manager;
     private static P2PStateFlow instance;
+    private ConnectedThread thread;
 
     private Map<Transition, P2PState> allPossibleStates = null;
 
@@ -66,6 +67,14 @@ public class P2PStateFlow {
             }
         }
         return instance;
+    }
+
+    public void setConnectedThread(final ConnectedThread thread) {
+        this.thread = thread;
+    }
+
+    public ConnectedThread getThread() {
+        return thread;
     }
 
     private void initializeAllP2PStates() {
@@ -119,6 +128,7 @@ public class P2PStateFlow {
     }
 
     public void transit(Transition command, String message) {
+        Log.i(TAG, "checking if thread is not null" + (thread != null));
         Transition transitionTo = this.getState().process(command);
         P2PState currentState = this.getState();
         Transition currentStateTransition = currentState.getTransition();

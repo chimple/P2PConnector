@@ -118,10 +118,10 @@ public class MainActivity extends Activity {
         }
     };
 
-    public void updateTimerStatus(final int timeCounter) {
+    public void updateTimerStatus(final String timeCounter) {
         runOnUiThread(new Thread(new Runnable() {
             public void run() {
-                ((TextView) findViewById(R.id.TimeBox)).setText("T: " + timeCounter);
+                ((TextView) findViewById(R.id.TimeBox)).setText(timeCounter);
             }
         }));
     }
@@ -129,7 +129,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver mMessageTimerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int timeCounter = intent.getIntExtra("timeCounter", -1);
+            String timeCounter = intent.getStringExtra("timeCounter");
             that.updateTimerStatus(timeCounter);
         }
     };

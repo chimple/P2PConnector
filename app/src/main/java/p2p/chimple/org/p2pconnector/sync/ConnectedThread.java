@@ -43,6 +43,7 @@ public class ConnectedThread extends Thread {
         }
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
+        Log.d(TAG, "Creating ConnectedThread finished");
     }
 
     public void run() {

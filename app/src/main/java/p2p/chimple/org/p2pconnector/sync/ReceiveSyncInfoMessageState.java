@@ -22,14 +22,14 @@ public class ReceiveSyncInfoMessageState implements P2PState {
 
     @Override
     public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String readMessage) {
-        if (manager.getConnectedThread() != null) {
+        if (p2PStateFlow.getThread() != null) {
             this.outcome = readMessage;
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
             new P2PDBApiImpl(db, manager.getContext()).persistP2PSyncInfos(readMessage);
             p2PStateFlow.setAllSyncInformationReceived(true);
             if (!p2PStateFlow.isAllSyncInformationSent()) {
                 p2PStateFlow.transit(SEND_DB_SYNC_INFORMATION, this.outcome);
-            } else if(!p2PStateFlow.isProfilePhotoSent()) {
+            } else if (!p2PStateFlow.isProfilePhotoSent()) {
                 p2PStateFlow.transit(SEND_PROFILE_PHOTO, null);
             }
 

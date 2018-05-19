@@ -38,18 +38,20 @@ public class SendProfilePhotoState implements P2PState {
         SharedPreferences pref = manager.getContext().getSharedPreferences(P2P_SHARED_PREF, 0);
         String userId = pref.getString("USER_ID", null); // getting String
         String deviceId = pref.getString("DEVICE_ID", null); // getting String
-
-        if (manager.getConnectedThread() != null) {
+        Log.i(TAG, "SendProfilePhotoState onEnter");
+        if (p2PStateFlow.getThread() != null) {
             // SEND PHOTO
             Log.i(TAG, "sending photo from " + photoFileName);
             byte[] contents = P2PSyncManager.getProfilePhotoContents(photoFileName, manager.getContext());
             String photoInformation = "START" + new P2PDBApiImpl(db, manager.getContext()).serializeProfileMessage(userId, deviceId, contents) + "END";
-            manager.getConnectedThread().write(photoInformation.getBytes());
+            p2PStateFlow.getThread().write(photoInformation.getBytes());
             Log.i(TAG, "photo message sent" + photoInformation);
             p2PStateFlow.setProfilePhotoSent(true);
             if (p2PStateFlow.isProfilePhotoReceived()) {
                 p2PStateFlow.allMessagesExchanged();
             }
+        } else {
+            Log.i(TAG, "sending photo thread null wht to do???");
         }
     }
 

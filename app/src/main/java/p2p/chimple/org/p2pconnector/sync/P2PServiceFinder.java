@@ -148,7 +148,7 @@ public class P2PServiceFinder {
 
     private void initTimers() {
 
-        this.discoverServiceTimeOutTimer = new CountDownTimer(60000, 1000) {
+        this.discoverServiceTimeOutTimer = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 // not using
             }
@@ -161,7 +161,7 @@ public class P2PServiceFinder {
             }
         };
 
-        long millisInFuture = 6000 + (new Random(System.currentTimeMillis()).nextInt(6000));
+        long millisInFuture = 3000 + (new Random(System.currentTimeMillis()).nextInt(1000));
         Log.i(TAG, "peerDiscoveryTimer timeout value:" + millisInFuture);
         this.peerDiscoveryTimer = new CountDownTimer(millisInFuture, 1000) {
             public void onTick(long millisUntilFinished) {

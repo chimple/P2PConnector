@@ -97,7 +97,7 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
         try {
             if (info.isGroupOwner) {
-                if (info.groupOwnerAddress!=null){
+                if (info.groupOwnerAddress != null) {
                     mInetAddress = info.groupOwnerAddress.getHostAddress();
                 }
 
@@ -210,12 +210,12 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         wifiP2pManager.addLocalService(channel, service, new WifiP2pManager.ActionListener() {
             public void onSuccess() {
                 lastError = -1;
-                Log.i(TAG,"Added local service");
+                Log.i(TAG, "Added local service");
             }
 
             public void onFailure(int reason) {
                 lastError = reason;
-                Log.i(TAG,"Adding local service failed, error code " + reason);
+                Log.i(TAG, "Adding local service failed, error code " + reason);
             }
         });
     }
@@ -228,12 +228,12 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         wifiP2pManager.clearLocalServices(channel, new WifiP2pManager.ActionListener() {
             public void onSuccess() {
                 lastError = -1;
-                Log.i(TAG,"Cleared local services");
+                Log.i(TAG, "Cleared local services");
             }
 
             public void onFailure(int reason) {
                 lastError = reason;
-                Log.i(TAG,"Clearing local services failed, error code " + reason);
+                Log.i(TAG, "Clearing local services failed, error code " + reason);
             }
         });
     }
@@ -260,10 +260,11 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+
                 if (trialCountTmp < 2) {
                     reStartHandShakeListening((trialCountTmp + 1));
                 } else {
-                    P2PSyncManager.getInstance(that.context).resetAndStartAgain();
+                    P2PSyncManager.getInstance(that.context).reStartConnector(true, 1000);
                 }
             }
         });
@@ -287,10 +288,10 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
             if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
                 NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
                 if (networkInfo.isConnected()) {
-                    Log.i(TAG,"We are connected, will check info now");
+                    Log.i(TAG, "We are connected, will check info now");
                     wifiP2pManager.requestConnectionInfo(channel, that);
                 } else {
-                    Log.i(TAG,"We are DIS-connected");
+                    Log.i(TAG, "We are DIS-connected");
                 }
             }
         }

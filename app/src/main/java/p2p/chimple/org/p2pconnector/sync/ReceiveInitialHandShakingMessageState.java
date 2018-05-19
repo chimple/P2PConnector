@@ -19,7 +19,7 @@ public class ReceiveInitialHandShakingMessageState implements P2PState {
 
     @Override
     public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String readMessage) {
-        if (manager.getConnectedThread() != null) {
+        if (p2PStateFlow.getThread() != null) {
             this.outcome = readMessage;
             Log.i(TAG, "handShakingInformationReceived" + this.outcome);
             manager.updateStatus("handShakingInformationReceived", this.outcome);
@@ -29,6 +29,8 @@ public class ReceiveInitialHandShakingMessageState implements P2PState {
             } else {
                 p2PStateFlow.transit(SEND_DB_SYNC_INFORMATION, null);
             }
+        } else {
+            Log.i(TAG, "ReceiveInitialHandShakingMessageState THREAD NULL >>>>>");
         }
 
     }

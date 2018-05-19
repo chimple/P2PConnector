@@ -25,7 +25,7 @@ public class ReceiveProfilePhotoState implements P2PState {
 
     @Override
     public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String readMessage) {
-        if (manager.getConnectedThread() != null) {
+        if (p2PStateFlow.getThread() != null) {
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
             new P2PDBApiImpl(db, manager.getContext()).persistProfileMessage(readMessage);
             p2PStateFlow.setProfilePhotoReceived(true);

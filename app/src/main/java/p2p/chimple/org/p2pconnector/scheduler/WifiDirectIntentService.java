@@ -71,6 +71,7 @@ public class WifiDirectIntentService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "Destroying P2PSync Manager");
         this.p2pSyncManager.onDestroy();
         mServiceLooper.quit();
     }

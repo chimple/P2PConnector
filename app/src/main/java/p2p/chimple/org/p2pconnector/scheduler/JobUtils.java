@@ -37,11 +37,11 @@ public class JobUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder = new JobInfo.Builder(0, serviceComponent)
                     .setMinimumLatency(period)
-//                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(true);
         } else {
             builder = new JobInfo.Builder(0, serviceComponent)
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+//                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPeriodic(period)
                     .setPersisted(true);
         }

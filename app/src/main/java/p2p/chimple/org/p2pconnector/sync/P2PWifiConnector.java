@@ -91,7 +91,7 @@ public class P2PWifiConnector {
 
         this.netId = this.wifiManager.addNetwork(this.wifiConfig);
         this.wifiManager.disconnect();
-        this.wifiManager.enableNetwork(this.netId, false);
+        this.wifiManager.enableNetwork(this.netId, true);
         this.wifiManager.reconnect();
         if (this.connectionTimeOutTimer!=null){
             this.connectionTimeOutTimer.start();
