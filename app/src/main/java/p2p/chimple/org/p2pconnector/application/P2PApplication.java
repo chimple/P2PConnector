@@ -19,9 +19,8 @@ public class P2PApplication extends Application {
     public static AppDatabase db;
     String USERID_UUID;
 
-    public static int REGULAR_JOB_TIMINGS = 2 * 60 * 1000; // every 7 mins
-//    public static int REGULAR_JOB_TIMINGS = 1000; // every 7 mins
-    public static int IMMEDIATE_JOB_TIMINGS = 3 * 1000; // in next 10 seconds
+    public static int REGULAR_JOB_TIMINGS = 5 * 60 * 1000; // every 7 mins
+    public static int IMMEDIATE_JOB_TIMINGS = 5 * 1000; // in next 5 seconds
 
     @Override
     public void onCreate() {
