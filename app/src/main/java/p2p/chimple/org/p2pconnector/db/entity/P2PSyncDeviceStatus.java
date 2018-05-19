@@ -78,4 +78,8 @@ public class P2PSyncDeviceStatus {
     public void setSyncImmediately(Boolean syncImmediately) {
         this.syncImmediately = syncImmediately;
     }
+
+    public String print() {
+        return "P2PSyncDeviceStatus:" + " deviceId:" + deviceId;
+    }
 }

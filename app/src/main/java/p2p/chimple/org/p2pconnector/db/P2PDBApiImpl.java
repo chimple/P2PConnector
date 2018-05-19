@@ -1,9 +1,13 @@
 package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.provider.ContactsContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -20,6 +24,7 @@ import org.apache.commons.collections4.Closure;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -42,16 +47,29 @@ import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
+import p2p.chimple.org.p2pconnector.sync.P2PStateFlow;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
+import static p2p.chimple.org.p2pconnector.sync.P2POrchester.neighboursUpdateEvent;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 public class P2PDBApiImpl implements P2PDBApi {
     private static final String TAG = P2PDBApiImpl.class.getName();
     private AppDatabase db;
     private Context context;
+    private static P2PDBApiImpl p2pDBApiInstance;
 
-    public P2PDBApiImpl(AppDatabase db, Context context) {
+    public static P2PDBApiImpl getInstance(AppDatabase db, Context context) {
+        synchronized (P2PDBApiImpl.class) {
+            if (p2pDBApiInstance == null) {
+                p2pDBApiInstance = new P2PDBApiImpl(db, context);
+            }
+            return p2pDBApiInstance;
+        }
+    }
+
+
+    private P2PDBApiImpl(AppDatabase db, Context context) {
         this.db = db;
         this.context = context;
     }
@@ -122,20 +140,29 @@ public class P2PDBApiImpl implements P2PDBApi {
     @Override
     public void addDeviceToSync(String deviceId, boolean syncImmediately) {
         P2PSyncDeviceStatus currentStatus = db.p2pSyncDeviceStatusDao().getDeviceInfo(deviceId);
-        P2PSyncDeviceStatus status = null;
+        P2PSyncDeviceStatus status = currentStatus;
         if (currentStatus == null) {
+            // treat as new request
             status = new P2PSyncDeviceStatus(deviceId, syncImmediately);
         } else {
-            if(currentStatus.syncImmediately == false) {
-                status = new P2PSyncDeviceStatus(deviceId, true);
-            } else if(currentStatus.syncImmediately == true) {
-                status = currentStatus;
-                status.syncTime = null;
+            if (currentStatus.syncTime == null) {
+                // not yet sync
+                if (currentStatus.syncImmediately == false) {
+                    if (syncImmediately == true) {
+                        status = new P2PSyncDeviceStatus(deviceId, true);
+                    } else {
+                        status.syncTime = null;
+                    }
+                } else if (currentStatus.syncImmediately == true) {
+                    status.syncTime = null;
+                }
+            } else {
+                // treat as new request
+                status = new P2PSyncDeviceStatus(deviceId, syncImmediately);
             }
         }
 
         db.p2pSyncDeviceStatusDao().insertP2PSyncDeviceStatus(status);
-
     }
 
     @Override
@@ -165,6 +192,19 @@ public class P2PDBApiImpl implements P2PDBApi {
 
         return syncImmediatelyRequest;
     }
+
+    @Override
+    public P2PSyncDeviceStatus getLatestDeviceToSyncFromDevices(List<String> items) {
+        String deviceIds = StringUtils.join(items, ',');
+
+        P2PSyncDeviceStatus syncImmediatelyRequest = db.p2pSyncDeviceStatusDao().getTopDeviceToSyncImmediately(deviceIds);
+        if (syncImmediatelyRequest == null) {
+            syncImmediatelyRequest = db.p2pSyncDeviceStatusDao().getTopDeviceToNotSyncImmediately(deviceIds);
+        }
+
+        return syncImmediatelyRequest;
+    }
+
 
     public String serializeHandShakingMessage() {
         try {

@@ -55,7 +55,7 @@ public class P2PSyncDeviceStatusInstrumentedTest {
         }
 
         p2pSyncDeviceStatusDao = database.p2pSyncDeviceStatusDao();
-        p2pDBAPI = new P2PDBApiImpl(database, context.getApplicationContext());
+        p2pDBAPI = P2PDBApiImpl.getInstance(database, context.getApplicationContext());
     }
 
     @Test
@@ -105,6 +105,12 @@ public class P2PSyncDeviceStatusInstrumentedTest {
         p2pDBAPI.syncCompleted("deviceC");
         topDevice = p2pDBAPI.getLatestDeviceToSync();
         assertEquals(topDevice.deviceId, "deviceD");
+
+        List<String> devicesList = new ArrayList<String>();
+        devicesList.add("deviceD");
+        topDevice = p2pDBAPI.getLatestDeviceToSyncFromDevices(devicesList);
+        assertEquals(topDevice.deviceId, "deviceD");
+
     }
 
 

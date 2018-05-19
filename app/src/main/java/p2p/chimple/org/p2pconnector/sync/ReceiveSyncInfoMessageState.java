@@ -25,7 +25,7 @@ public class ReceiveSyncInfoMessageState implements P2PState {
         if (p2PStateFlow.getThread() != null) {
             this.outcome = readMessage;
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
-            new P2PDBApiImpl(db, manager.getContext()).persistP2PSyncInfos(readMessage);
+            P2PDBApiImpl.getInstance(db, manager.getContext()).persistP2PSyncInfos(readMessage);
             p2PStateFlow.setAllSyncInformationReceived(true);
             if (!p2PStateFlow.isAllSyncInformationSent()) {
                 p2PStateFlow.transit(SEND_DB_SYNC_INFORMATION, this.outcome);

@@ -45,4 +45,6 @@ public interface P2PDBApi {
     public P2PSyncDeviceStatus getLatestDeviceToSync();
 
     public void syncCompleted(String deviceId);
+
+    public P2PSyncDeviceStatus getLatestDeviceToSyncFromDevices(List<String> items);
 }

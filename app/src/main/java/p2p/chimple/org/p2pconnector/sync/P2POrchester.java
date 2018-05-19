@@ -12,12 +12,19 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import p2p.chimple.org.p2pconnector.db.AppDatabase;
+import p2p.chimple.org.p2pconnector.db.P2PDBApi;
+import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
+import p2p.chimple.org.p2pconnector.db.entity.P2PSyncDeviceStatus;
 
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.HandShakeportToUse;
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.SERVICE_TYPE;
@@ -320,8 +327,10 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                     Log.i(TAG, "foundNeighboursList Selected device address: " + device.getInstanceName());
                     String[] separated = device.getInstanceName().split(":");
                     String userUUID = separated[0];
-                    Log.i(TAG + "foundNeighboursList SS:", "found User UUID:" + separated[0]);
-                    Log.i(TAG + "foundNeighboursList SS:", "found SSID:" + separated[1] + ", pwd:" + separated[2] + "IP: " + separated[3]);
+                    String deviceUUID = separated[1];
+                    Log.i(TAG + "foundNeighboursList SS:", "found User UUID:" + userUUID);
+                    Log.i(TAG + "foundNeighboursList SS:", "found User deviceUUID:" + deviceUUID);
+                    Log.i(TAG + "foundNeighboursList SS:", "found SSID:" + separated[2] + ", pwd:" + separated[3] + "IP: " + separated[4]);
                     neighbours.put(userUUID, device);
                 }
             }
@@ -337,6 +346,70 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
         LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
     }
 
+
+    @Override
+    public void processServiceList(List<WifiDirectService> list) {
+        synchronized (P2POrchester.class) {
+            AppDatabase db = AppDatabase.getInstance(this.context);
+            P2PDBApi api = P2PDBApiImpl.getInstance(db, this.context);
+            List<String> deviceIds = new ArrayList<String>();
+            Map<String, WifiDirectService> serviceList = new HashMap<String, WifiDirectService>();
+            if (mWifiBase != null && list != null && list.size() > 0) {
+                Iterator<WifiDirectService> items = list.iterator();
+                while (items.hasNext()) {
+                    WifiDirectService service = (WifiDirectService) items.next();
+                    Log.i(TAG, "Selected device address: " + service.getInstanceName());
+                    String[] separated = service.getInstanceName().split(":");
+                    String userUUID = separated[0];
+                    String deviceUUID = separated[1];
+                    Log.i(TAG + "CONTAINS SS:", "found User UUID:" + userUUID + ", found Device UUID:" + deviceUUID + ", found SSID:" + separated[2] + ", pwd:" + separated[3] + "IP: " + separated[4]);
+                    api.addDeviceToSync(deviceUUID, false);
+                    deviceIds.add(deviceUUID);
+                    serviceList.put(deviceUUID, service);
+                }
+
+                if (mWifiConnection != null) {
+                    Log.i(TAG, "Already connecting !!");
+                    return;
+                } else {
+                    Log.i(TAG, "Selecting from deviceIds: " + deviceIds);
+                    P2PSyncDeviceStatus status = api.getLatestDeviceToSyncFromDevices(deviceIds);
+                    Log.i(TAG, "Selected device: " + status.print());
+                    WifiDirectService selItem = serviceList.get(status.deviceId);
+//                    WifiDirectService selItem = mWifiBase.selectServiceToConnect(list, mWifiServiceSearcher.getHighPriorityServiceList());
+                    if (selItem != null) {
+                        Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
+                        String[] separated = selItem.getInstanceName().split(":");
+                        String userUUID = separated[0];
+                        String deviceUUID = separated[1];
+                        Log.i(TAG + " SS:", "found User UUID:" + userUUID);
+                        Log.i(TAG + " SS:", "found Device UUID:" + deviceUUID);
+                        Log.i(TAG + " SS:", "found SSID:" + separated[2] + ", pwd:" + separated[3] + "IP: " + separated[4]);
+
+                        stopServiceSearcher();
+                        setConnectionState(SyncUtils.ConnectionState.Connecting);
+
+                        final String networkSSID = separated[2];
+                        final String networkPass = separated[3];
+                        final String ipAddress = separated[4];
+
+                        Log.i(TAG, "Starting to connect now.");
+                        mWifiConnection = new P2PWifiConnector(that.context, that);
+                        mWifiConnection.setCurrentlyTryingToConnectService(selItem);
+                        mWifiConnection.updateInetAddress(ipAddress);
+                        mWifiConnection.initialize(networkSSID, networkPass);
+
+                    } else {
+                        // we'll get discovery stopped event soon enough
+                        // and it starts the discovery again, so no worries :)
+                        Log.i(TAG, "No devices selected");
+                        mWifiConnection.setCurrentlyTryingToConnectService(null);
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void gotServicesList(List<WifiDirectService> list) {
         if (mWifiBase != null && list != null && list.size() > 0) {
@@ -350,15 +423,17 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                     Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
                     String[] separated = selItem.getInstanceName().split(":");
                     String userUUID = separated[0];
-                    Log.i(TAG + " SS:", "found User UUID:" + separated[0]);
-                    Log.i(TAG + " SS:", "found SSID:" + separated[1] + ", pwd:" + separated[2] + "IP: " + separated[3]);
+                    String deviceUUID = separated[1];
+                    Log.i(TAG + " SS:", "found User UUID:" + userUUID);
+                    Log.i(TAG + " SS:", "found Device UUID:" + deviceUUID);
+                    Log.i(TAG + " SS:", "found SSID:" + separated[2] + ", pwd:" + separated[3] + "IP: " + separated[4]);
 
                     stopServiceSearcher();
                     setConnectionState(SyncUtils.ConnectionState.Connecting);
 
-                    final String networkSSID = separated[1];
-                    final String networkPass = separated[2];
-                    final String ipAddress = separated[3];
+                    final String networkSSID = separated[2];
+                    final String networkPass = separated[3];
+                    final String ipAddress = separated[4];
 
                     Log.i(TAG, "Starting to connect now.");
                     mWifiConnection = new P2PWifiConnector(that.context, that);

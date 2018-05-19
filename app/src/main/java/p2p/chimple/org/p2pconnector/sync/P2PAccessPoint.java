@@ -122,7 +122,8 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
                 mPassphrase = group.getPassphrase();
                 SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
                 String userId = pref.getString("USER_ID", null); // getting String
-                startLocalService(userId + ":" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
+                String deviceId = pref.getString("DEVICE_ID", null); // getting String
+                startLocalService(userId + ":" + deviceId + ":" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
             }
         } catch (Exception e) {
             Log.i(TAG, "onGroupInfoAvailable, error: " + e.toString());
@@ -197,12 +198,8 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
     private void startLocalService(String instance) {
 
         Map<String, String> record = new HashMap<String, String>();
-
-        SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
-        String userId = pref.getString("USER_ID", null); // getting String
-
         record.put("available", "visible");
-        record.put("currentUserId", userId);
+
 
         WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(instance, SERVICE_TYPE, record);
 

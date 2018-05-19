@@ -172,7 +172,8 @@ public class P2PServiceFinder {
                 discoveryState = SyncUtils.DiscoveryState.NONE;
                 if (that.callBack != null) {
                     stopDiscovery();
-                    that.callBack.gotServicesList(serviceList);
+                    that.callBack.processServiceList(serviceList);
+//                    that.callBack.gotServicesList(serviceList);
                     that.callBack.foundNeighboursList(serviceList);
                 } else {
                     startPeerDiscovery();

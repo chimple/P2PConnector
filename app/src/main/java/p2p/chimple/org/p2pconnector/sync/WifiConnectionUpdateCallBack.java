@@ -18,6 +18,8 @@ public interface WifiConnectionUpdateCallBack {
 
     public void gotServicesList(List<WifiDirectService> list);
 
+    public void processServiceList(List<WifiDirectService> list);
+
     public Map<String, WifiDirectService> foundNeighboursList(List<WifiDirectService> list);
 
     public void GroupInfoAvailable(WifiP2pGroup group);

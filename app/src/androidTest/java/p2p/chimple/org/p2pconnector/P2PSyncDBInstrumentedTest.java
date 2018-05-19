@@ -55,7 +55,7 @@ public class P2PSyncDBInstrumentedTest {
         }
 
         p2PSyncInfoDao = database.p2pSyncDao();
-        p2pDBAPI = new P2PDBApiImpl(database, context.getApplicationContext());
+        p2pDBAPI = P2PDBApiImpl.getInstance(database, context.getApplicationContext());
 
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();

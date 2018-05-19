@@ -60,10 +60,10 @@ public class DatabaseInitializer {
                 String message = columns[3];
                 String messageType = columns[4];
 
-                new P2PDBApiImpl(db, context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
+                P2PDBApiImpl.getInstance(db, context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
             }
 
-            new P2PDBApiImpl(db, context).upsertProfile();
+            P2PDBApiImpl.getInstance(db, context).upsertProfile();
             db.setTransactionSuccessful();
 
         } catch (Exception e) {

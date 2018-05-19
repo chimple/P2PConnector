@@ -5,6 +5,8 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import java.util.List;
+
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncDeviceStatus;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
@@ -30,8 +32,10 @@ public interface P2PSyncDeviceStatusDao {
     @Query("SELECT * FROM P2PSyncDeviceStatus WHERE sync_time is null and (sync_immediately  = 0 or sync_immediately is null) order by discover_time asc limit 1")
     public P2PSyncDeviceStatus getTopDeviceToNotSyncImmediately();
 
-    @Query("SELECT * FROM P2PSyncDeviceStatus WHERE sync_time is null and (sync_immediately  = 0 or sync_immediately is null) order by discover_time asc")
-    public P2PSyncDeviceStatus[] getAllDevicesToNotSyncImmediately();
+    @Query("SELECT * FROM P2PSyncDeviceStatus WHERE sync_time is null and device_id in (:deviceIds) and sync_immediately = 1 order by discover_time asc limit 1")
+    public P2PSyncDeviceStatus getTopDeviceToSyncImmediately(String deviceIds);
 
+    @Query("SELECT * FROM P2PSyncDeviceStatus WHERE sync_time is null and device_id in (:deviceIds) and (sync_immediately  = 0 or sync_immediately is null) order by discover_time asc limit 1")
+    public P2PSyncDeviceStatus getTopDeviceToNotSyncImmediately(String deviceIds);
 
 }

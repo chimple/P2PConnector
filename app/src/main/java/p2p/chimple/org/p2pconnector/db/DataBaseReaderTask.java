@@ -14,7 +14,7 @@ public class DataBaseReaderTask extends AsyncTask<String, Void, String> {
     public DataBaseReaderTask(Context ctx) {
         this.ctx = new WeakReference<Context>(ctx);
         this.db = AppDatabase.getInstance(ctx);
-        this.api = new P2PDBApiImpl(db, this.ctx.get());
+        this.api = P2PDBApiImpl.getInstance(db, this.ctx.get());
     }
 
     @Override

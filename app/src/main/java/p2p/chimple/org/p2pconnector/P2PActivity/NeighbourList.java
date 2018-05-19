@@ -41,7 +41,7 @@ public class NeighbourList extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.neighbourList);
 
         p2PSyncInfoDao = db.p2pSyncDao();
-        p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
+        p2pdbapi = P2PDBApiImpl.getInstance(db,getApplicationContext());
 
         Intent intent=getIntent();
         MyId=intent.getStringExtra("MyId");

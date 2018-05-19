@@ -77,7 +77,7 @@ public class LoginActivity extends Activity {
 
 
         p2PSyncInfoDao = db.p2pSyncDao();
-        p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
+        p2pdbapi = P2PDBApiImpl.getInstance(db,getApplicationContext());
 
         SharedPreferences pref = getSharedPreferences(P2P_SHARED_PREF, 0);
         fileName = pref.getString("PROFILE_PHOTO", null); // getting String

@@ -73,7 +73,7 @@ public class TakeProfilePic extends Activity {
         Log.i("buttonAllUsers:","PROFILE_PHOTO filename :"+fileName+", USER_ID :  "+userId+", DEVICE_ID :  "+deviceId);
 
         p2PSyncInfoDao = db.p2pSyncDao();
-        p2pdbapi = new P2PDBApiImpl(db,getApplicationContext());
+        p2pdbapi = P2PDBApiImpl.getInstance(db,getApplicationContext());
 
         TakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override

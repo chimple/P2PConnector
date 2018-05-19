@@ -31,7 +31,7 @@ public class SendInitialHandShakingMessageState implements P2PState {
         Log.i(TAG, "onEnter SendInitialHandShakingMessageState" + !p2PStateFlow.isHandShakingInformationSent());
         if (p2PStateFlow.getThread() != null && !p2PStateFlow.isHandShakingInformationSent()) {
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
-            String initialMessage = "START" + new P2PDBApiImpl(db, manager.getContext()).serializeHandShakingMessage() + "END";
+            String initialMessage = "START" + P2PDBApiImpl.getInstance(db, manager.getContext()).serializeHandShakingMessage() + "END";
             p2PStateFlow.getThread().write(initialMessage.getBytes(), 0, initialMessage.length());
             Log.i(TAG, "initial handshaking message sent" + initialMessage);
             p2PStateFlow.setHandShakingInformationSent(true);
