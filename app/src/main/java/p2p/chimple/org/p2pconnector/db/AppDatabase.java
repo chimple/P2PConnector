@@ -9,13 +9,16 @@ import android.support.annotation.VisibleForTesting;
 
 
 import p2p.chimple.org.p2pconnector.db.converter.DateConverter;
+import p2p.chimple.org.p2pconnector.db.dao.P2PSyncDeviceStatusDao;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
+import p2p.chimple.org.p2pconnector.db.entity.P2PSyncDeviceStatus;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 
-@Database(entities = {P2PSyncInfo.class},
+@Database(entities = {P2PSyncInfo.class, P2PSyncDeviceStatus.class},
         version = 1
 )
-@TypeConverters(DateConverter.class)
+@TypeConverters(
+        DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "p2p_db";
 
@@ -25,6 +28,8 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase sInstance;
 
     public abstract P2PSyncInfoDao p2pSyncDao();
+
+    public abstract P2PSyncDeviceStatusDao p2pSyncDeviceStatusDao();
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (sInstance == null) {

@@ -1,8 +1,10 @@
 package p2p.chimple.org.p2pconnector.db;
 
+import java.util.Arrays;
 import java.util.List;
 
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PSyncDeviceStatus;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 
@@ -33,4 +35,14 @@ public interface P2PDBApi {
     public boolean upsertProfile();
 
     public boolean persistProfileMessage(String photoJson);
+
+    public void addDeviceToSync(String deviceId, boolean syncImmediately);
+
+    public List<P2PSyncDeviceStatus> getAllSyncDevices();
+
+    public List<P2PSyncDeviceStatus> getAllNonSyncDevices();
+
+    public P2PSyncDeviceStatus getLatestDeviceToSync();
+
+    public void syncCompleted(String deviceId);
 }
