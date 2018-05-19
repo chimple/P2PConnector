@@ -60,10 +60,12 @@ public class P2PSyncDeviceStatusInstrumentedTest {
 
     @Test
     public void syncTests() {
+        p2pDBAPI.addDeviceToSync("deviceA", true);
         p2pDBAPI.addDeviceToSync("deviceA", false);
         p2pDBAPI.addDeviceToSync("deviceB", false);
         p2pDBAPI.addDeviceToSync("deviceC", false);
         p2pDBAPI.addDeviceToSync("deviceD", false);
+        p2pDBAPI.addDeviceToSync("deviceB", true);
 
         List<P2PSyncDeviceStatus> devices = p2pDBAPI.getAllNonSyncDevices();
         assertEquals(devices.size(), 4);
@@ -72,6 +74,8 @@ public class P2PSyncDeviceStatusInstrumentedTest {
 
         //update couple of them
         p2pDBAPI.syncCompleted("deviceA");
+        topDevice = p2pDBAPI.getLatestDeviceToSync();
+        assertEquals(topDevice.deviceId, "deviceB");
         p2pDBAPI.syncCompleted("deviceB");
 
         devices = p2pDBAPI.getAllNonSyncDevices();

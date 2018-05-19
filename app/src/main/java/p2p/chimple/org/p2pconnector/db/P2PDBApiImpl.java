@@ -121,7 +121,19 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     @Override
     public void addDeviceToSync(String deviceId, boolean syncImmediately) {
-        P2PSyncDeviceStatus status = new P2PSyncDeviceStatus(deviceId, syncImmediately);
+        P2PSyncDeviceStatus currentStatus = db.p2pSyncDeviceStatusDao().getDeviceInfo(deviceId);
+        P2PSyncDeviceStatus status = null;
+        if (currentStatus == null) {
+            status = new P2PSyncDeviceStatus(deviceId, syncImmediately);
+        } else {
+            if(currentStatus.syncImmediately == false) {
+                status = new P2PSyncDeviceStatus(deviceId, true);
+            } else if(currentStatus.syncImmediately == true) {
+                status = currentStatus;
+                status.syncTime = null;
+            }
+        }
+
         db.p2pSyncDeviceStatusDao().insertP2PSyncDeviceStatus(status);
 
     }
@@ -146,9 +158,9 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     @Override
     public P2PSyncDeviceStatus getLatestDeviceToSync() {
-        P2PSyncDeviceStatus syncImmediatelyRequest =  db.p2pSyncDeviceStatusDao().getTopDeviceToSyncImmediately();
-        if(syncImmediatelyRequest == null) {
-            syncImmediatelyRequest =  db.p2pSyncDeviceStatusDao().getTopDeviceToNotSyncImmediately();
+        P2PSyncDeviceStatus syncImmediatelyRequest = db.p2pSyncDeviceStatusDao().getTopDeviceToSyncImmediately();
+        if (syncImmediatelyRequest == null) {
+            syncImmediatelyRequest = db.p2pSyncDeviceStatusDao().getTopDeviceToNotSyncImmediately();
         }
 
         return syncImmediatelyRequest;

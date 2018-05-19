@@ -21,6 +21,7 @@ public class P2PSyncDeviceStatus {
     public P2PSyncDeviceStatus() {
         this.syncImmediately = false;
         this.discoverTime = new Date();
+        this.syncTime = null;
     }
 
     @Ignore
@@ -28,6 +29,7 @@ public class P2PSyncDeviceStatus {
         this.deviceId = deviceId;
         this.syncImmediately = syncImmediately ? true : false;
         this.discoverTime = new Date();
+        this.syncTime = null;
     }
 
     @PrimaryKey

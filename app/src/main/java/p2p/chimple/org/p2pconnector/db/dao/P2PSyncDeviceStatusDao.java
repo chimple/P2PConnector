@@ -15,6 +15,9 @@ public interface P2PSyncDeviceStatusDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long insertP2PSyncDeviceStatus(P2PSyncDeviceStatus info);
 
+    @Query("SELECT * FROM P2PSyncDeviceStatus WHERE device_id = :deviceId")
+    public P2PSyncDeviceStatus getDeviceInfo(String deviceId);
+
     @Query("SELECT * FROM P2PSyncDeviceStatus WHERE sync_time is not null order by discover_time asc")
     public P2PSyncDeviceStatus[] getAllSyncDevices();
 
