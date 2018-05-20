@@ -5,6 +5,10 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import p2p.chimple.org.p2pconnector.db.AppDatabase;
+import p2p.chimple.org.p2pconnector.db.P2PDBApi;
+import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
+
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.NONE;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION;
@@ -118,13 +122,16 @@ public class P2PStateFlow {
                 instance.setInitialState(new NoneState());
             }
         }
-
     }
 
     public void allMessagesExchanged() {
-        Log.i(TAG, "all messages exchanged");
+        Log.i(TAG, ".... All messages exchanged ....");
         this.resetAllStates();
-        manager.goToNextClientWaiting();
+        P2PDBApi api = P2PDBApiImpl.getInstance(manager.getContext());
+        String deviceId = manager.fetchFromSharedPreference(P2PSyncManager.connectedDevice);
+        api.syncCompleted(deviceId);
+        manager.removeClientIPAddressToConnect();
+        manager.startExitTimer();
     }
 
     public void transit(Transition command, String message) {

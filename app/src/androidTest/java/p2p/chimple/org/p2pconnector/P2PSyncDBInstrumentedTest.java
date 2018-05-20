@@ -13,11 +13,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +53,7 @@ public class P2PSyncDBInstrumentedTest {
         }
 
         p2PSyncInfoDao = database.p2pSyncDao();
-        p2pDBAPI = P2PDBApiImpl.getInstance(database, context.getApplicationContext());
+        p2pDBAPI = P2PDBApiImpl.getInstance(context.getApplicationContext());
 
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();

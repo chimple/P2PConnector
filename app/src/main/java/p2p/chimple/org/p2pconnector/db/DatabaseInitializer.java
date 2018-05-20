@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -60,10 +59,10 @@ public class DatabaseInitializer {
                 String message = columns[3];
                 String messageType = columns[4];
 
-                P2PDBApiImpl.getInstance(db, context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
+                P2PDBApiImpl.getInstance(context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
             }
 
-            P2PDBApiImpl.getInstance(db, context).upsertProfile();
+            P2PDBApiImpl.getInstance(context).upsertProfile();
             db.setTransactionSuccessful();
 
         } catch (Exception e) {

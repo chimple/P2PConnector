@@ -1,7 +1,5 @@
 package p2p.chimple.org.p2pconnector.sync;
 
-import android.util.Log;
-
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
@@ -25,7 +23,7 @@ public class ReceiveSyncInfoMessageState implements P2PState {
         if (p2PStateFlow.getThread() != null) {
             this.outcome = readMessage;
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
-            P2PDBApiImpl.getInstance(db, manager.getContext()).persistP2PSyncInfos(readMessage);
+            P2PDBApiImpl.getInstance(manager.getContext()).persistP2PSyncInfos(readMessage);
             p2PStateFlow.setAllSyncInformationReceived(true);
             if (!p2PStateFlow.isAllSyncInformationSent()) {
                 p2PStateFlow.transit(SEND_DB_SYNC_INFORMATION, this.outcome);

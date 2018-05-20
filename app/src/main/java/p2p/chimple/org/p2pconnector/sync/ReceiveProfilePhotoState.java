@@ -1,10 +1,5 @@
 package p2p.chimple.org.p2pconnector.sync;
 
-import android.util.Base64;
-import android.util.Log;
-
-import java.io.UnsupportedEncodingException;
-
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
@@ -27,7 +22,7 @@ public class ReceiveProfilePhotoState implements P2PState {
     public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String readMessage) {
         if (p2PStateFlow.getThread() != null) {
             AppDatabase db = AppDatabase.getInstance(manager.getContext());
-            P2PDBApiImpl.getInstance(db, manager.getContext()).persistProfileMessage(readMessage);
+            P2PDBApiImpl.getInstance(manager.getContext()).persistProfileMessage(readMessage);
             p2PStateFlow.setProfilePhotoReceived(true);
             if (!p2PStateFlow.isProfilePhotoSent()) {
                 p2PStateFlow.transit(SEND_PROFILE_PHOTO, null);

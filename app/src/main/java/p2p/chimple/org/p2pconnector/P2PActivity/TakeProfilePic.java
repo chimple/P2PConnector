@@ -1,41 +1,26 @@
 package p2p.chimple.org.p2pconnector.P2PActivity;
 
 import android.app.Activity;
-import android.arch.persistence.room.Room;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.R;
-import p2p.chimple.org.p2pconnector.db.AppDatabase;
-import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
 
@@ -73,7 +58,7 @@ public class TakeProfilePic extends Activity {
         Log.i("buttonAllUsers:","PROFILE_PHOTO filename :"+fileName+", USER_ID :  "+userId+", DEVICE_ID :  "+deviceId);
 
         p2PSyncInfoDao = db.p2pSyncDao();
-        p2pdbapi = P2PDBApiImpl.getInstance(db,getApplicationContext());
+        p2pdbapi = P2PDBApiImpl.getInstance(getApplicationContext());
 
         TakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override

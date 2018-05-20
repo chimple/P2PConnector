@@ -4,20 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.List;
-import java.util.Map;
 
 import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
-import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
-import p2p.chimple.org.p2pconnector.sync.WifiDirectService;
 
 import static p2p.chimple.org.p2pconnector.application.P2PApplication.db;
 
@@ -41,7 +33,7 @@ public class NeighbourList extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.neighbourList);
 
         p2PSyncInfoDao = db.p2pSyncDao();
-        p2pdbapi = P2PDBApiImpl.getInstance(db,getApplicationContext());
+        p2pdbapi = P2PDBApiImpl.getInstance(getApplicationContext());
 
         Intent intent=getIntent();
         MyId=intent.getStringExtra("MyId");

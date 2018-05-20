@@ -24,14 +24,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import p2p.chimple.org.p2pconnector.application.P2PContext;
 
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.P2P_SYNC_RESULT_RECEIVED;
@@ -42,7 +37,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private Context context;
     private static P2PSyncManager instance;
     private CountDownTimer disconnectGroupOwnerTimeOut;
-    private List<String> clientIPAddressList = new ArrayList<String>();
+    private String clientIPAddressToConnect = null;
     private P2POrchester mWDConnector = null;
     private CommunicationThread mTestListenerThread = null;
     private ConnectToThread mTestConnectToThread = null;
@@ -64,6 +59,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static final String profileFileExtension = ".txt";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
+    public static final String connectedDevice = "CONNECTED_DEVICE";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
     public static final int EXIT_CURRENT_JOB_TIME = 4 * 60; // 4 mins
 
@@ -144,7 +140,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         Intent intent = new Intent(customTimerStatusUpdateEvent);
         // You can also include some extra data.
 //        Log.i(TAG, "totalTimeTillJobStarted" + totalTimeTillJobStarted + " Time left:" + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
-        intent.putExtra("timeCounter", "T:" + this.timeCounter + " Exit In :" +  (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
+        intent.putExtra("timeCounter", "T:" + this.timeCounter + " Exit In :" + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
         LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
     }
 
@@ -302,18 +298,17 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         }
     }
 
-    public void goToNextClientWaiting() {
+    public void connectToClient() {
         stopConnectedThread();
         stopConnectToThread();
         instance.disconnectGroupOwnerTimeOut.cancel();
-
-        if (clientIPAddressList.size() > 0) {
+        if (clientIPAddressToConnect != null) {
             //With this test we'll just handle each client one-by-one in order they got connected
-            String Address = clientIPAddressList.get(0);
-            clientIPAddressList.remove(0);
-            updateStatus("Data state", "Will connect to " + Address);
-            Log.i(TAG, "Data state" + "Will connect to " + Address);
-            mTestConnectToThread = new ConnectToThread(this, Address, TestChatPortNumber);
+            String connectToAddress = clientIPAddressToConnect;
+            clientIPAddressToConnect = null;
+            updateStatus("Connecting state", "Will connect to " + connectToAddress);
+            Log.i(TAG, "Connecting state" + "Will connect to " + connectToAddress);
+            mTestConnectToThread = new ConnectToThread(this, connectToAddress, TestChatPortNumber);
             mTestConnectToThread.start();
         } else {
             updateStatus("Data state", "All addresses connected, will start exit timer now.");
@@ -356,7 +351,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     @Override
     public void ConnectionFailed(String reason) {
-        goToNextClientWaiting();
+        connectToClient();
     }
 
     @Override
@@ -367,14 +362,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     @Override
     public void Connected(String address, boolean isGroupOwner) {
         if (isGroupOwner) {
-            clientIPAddressList.add(address);
-
+            clientIPAddressToConnect = address;
             updateStatus("Connectec", "Connected From remote host: " + address + ", CTread : " + mTestConnectedThread + ", CtoTread: " + mTestConnectToThread);
             Log.i(TAG, "Connectec" + "Connected From remote host: " + address + ", CTread : " + mTestConnectedThread + ", CtoTread: " + mTestConnectToThread);
-            if (mTestConnectedThread == null
-                    && mTestConnectToThread == null) {
-                Log.i(TAG, "GO TO NEXT CLIENT and WAITING");
-                goToNextClientWaiting();
+            if (mTestConnectedThread == null && mTestConnectToThread == null) {
+                Log.i(TAG, "CONNECT TO:" + clientIPAddressToConnect);
+                connectToClient();
             }
         } else {
             updateStatus("Connectec", "Connected to remote host: " + address);
@@ -423,9 +416,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         updateStatus(TAG, "onDestroy");
     }
 
-
     // Manage photo
-
     public static String createProfilePhoto(String generateUserId, byte[] contents, Context context) {
         Boolean canWrite = false;
         String fileName = null;
@@ -450,12 +441,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 Log.i(TAG, "created profile photo:" + fileName + " with contents " + str);
                 os.write(contents);
                 os.close();
-
-                // update shared preferences
-                SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("PROFILE_PHOTO", generateUserId);
-                editor.commit(); // commit changes
+                P2PSyncManager.getInstance(context).updateInSharedPreference("PROFILE_PHOTO", generateUserId);
             } catch (IOException e) {
                 // Unable to create file, likely because external storage is
                 // not currently mounted.
@@ -504,4 +490,26 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static String generateUserPhotoFileName(String userId) {
         return "profile-" + userId + profileFileExtension;
     }
+
+    public void updateInSharedPreference(String key, String value) {
+        // update shared preferences
+        SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        Log.i(TAG, "Storing value into Shared Preference for key:" + key + ", got value:" + value);
+        editor.putString(key, value);
+        editor.commit(); // commit changes
+    }
+
+    public String fetchFromSharedPreference(String key) {
+        // update shared preferences
+        SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        String value = pref.getString(key, null); // getting String
+        Log.i(TAG, "Fetched value from Shared Preference for key:" + key + ", got value:" + value);
+        return value;
+    }
+
+    public void removeClientIPAddressToConnect() {
+        this.clientIPAddressToConnect = null;
+    }
+
 }

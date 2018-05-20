@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
@@ -350,8 +349,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
     @Override
     public void processServiceList(List<WifiDirectService> list) {
         synchronized (P2POrchester.class) {
-            AppDatabase db = AppDatabase.getInstance(this.context);
-            P2PDBApi api = P2PDBApiImpl.getInstance(db, this.context);
+            P2PDBApi api = P2PDBApiImpl.getInstance(this.context);
             List<String> deviceIds = new ArrayList<String>();
             Map<String, WifiDirectService> serviceList = new HashMap<String, WifiDirectService>();
             if (mWifiBase != null && list != null && list.size() > 0) {
@@ -392,6 +390,8 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                         final String networkSSID = separated[2];
                         final String networkPass = separated[3];
                         final String ipAddress = separated[4];
+
+                        P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, deviceUUID);
 
                         Log.i(TAG, "Starting to connect now.");
                         mWifiConnection = new P2PWifiConnector(that.context, that);
