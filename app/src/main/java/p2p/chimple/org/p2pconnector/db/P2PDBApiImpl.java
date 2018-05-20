@@ -115,6 +115,7 @@ public class P2PDBApiImpl implements P2PDBApi {
                 String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), decodedMessage.getBytes(), this.context);
                 db.beginTransaction();
                 this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
+                P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, message.getDeviceId());
                 db.setTransactionSuccessful();
                 return true;
             } catch (Exception e) {

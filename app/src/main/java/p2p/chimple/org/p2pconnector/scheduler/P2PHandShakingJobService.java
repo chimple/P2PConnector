@@ -15,8 +15,6 @@ import android.util.Log;
 
 import java.util.List;
 
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JOB_TIMINGS;
-
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 
 public class P2PHandShakingJobService extends JobService {
@@ -113,7 +111,7 @@ public class P2PHandShakingJobService extends JobService {
             Log.i(TAG, "on finished job: " + params.getJobId());
             JobUtils.setJobRunning(false);
             JobUtils.cancelAllJobs(context);
-            JobUtils.scheduledJob(context, REGULAR_JOB_TIMINGS);
+            JobUtils.scheduledJob(context, false);
             getApplicationContext().stopService(wifiDirectServiceIntent);
             jobFinished(params, false);
         }

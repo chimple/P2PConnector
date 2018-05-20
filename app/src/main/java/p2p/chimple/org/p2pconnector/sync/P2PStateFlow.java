@@ -129,7 +129,9 @@ public class P2PStateFlow {
         this.resetAllStates();
         P2PDBApi api = P2PDBApiImpl.getInstance(manager.getContext());
         String deviceId = manager.fetchFromSharedPreference(P2PSyncManager.connectedDevice);
-        api.syncCompleted(deviceId);
+        if (deviceId != null) {
+            api.syncCompleted(deviceId);
+        }
         manager.removeClientIPAddressToConnect();
         manager.startExitTimer();
     }

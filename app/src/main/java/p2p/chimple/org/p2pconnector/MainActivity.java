@@ -19,7 +19,7 @@ import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
 import static p2p.chimple.org.p2pconnector.application.P2PApplication.IMMEDIATE_JOB_TIMINGS;
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JOB_TIMINGS;
+import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JOB_TIMINGS_FOR_MIN_LATENCY;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customTimerStatusUpdateEvent;
 
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private MainActivity that = this;
 
-    Button regUser,newUser;
+    Button regUser, newUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                JobUtils.scheduledJob(getApplicationContext(), IMMEDIATE_JOB_TIMINGS);
+                JobUtils.scheduledJob(getApplicationContext(), true);
             }
         });
 
@@ -87,7 +87,7 @@ public class MainActivity extends Activity {
     }
 
     public void execute() {
-        JobUtils.scheduledJob(getApplicationContext(), REGULAR_JOB_TIMINGS);
+        JobUtils.scheduledJob(getApplicationContext(), false);
     }
 
 
