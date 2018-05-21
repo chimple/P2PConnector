@@ -47,6 +47,7 @@ public class JobUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder = new JobInfo.Builder(0, serviceComponent)
                     .setMinimumLatency(REGULAR_JOB_TIMINGS_FOR_MIN_LATENCY)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(true);
         } else {
             builder = new JobInfo.Builder(0, serviceComponent)
@@ -64,6 +65,7 @@ public class JobUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder = new JobInfo.Builder(0, serviceComponent)
                     .setMinimumLatency(IMMEDIATE_JOB_TIMINGS)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(false);
         } else {
             builder = new JobInfo.Builder(0, serviceComponent)
