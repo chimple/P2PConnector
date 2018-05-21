@@ -372,38 +372,39 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
                 } else {
                     Log.i(TAG, "Selecting from deviceIds: " + deviceIds);
                     P2PSyncDeviceStatus status = api.getLatestDeviceToSyncFromDevices(deviceIds);
-                    Log.i(TAG, "Selected device: " + status.print());
-                    WifiDirectService selItem = serviceList.get(status.deviceId);
-//                    WifiDirectService selItem = mWifiBase.selectServiceToConnect(list, mWifiServiceSearcher.getHighPriorityServiceList());
-                    if (selItem != null) {
-                        Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
-                        String[] separated = selItem.getInstanceName().split(":");
-                        String userUUID = separated[0];
-                        String deviceUUID = separated[1];
-                        Log.i(TAG + " SS:", "found User UUID:" + userUUID);
-                        Log.i(TAG + " SS:", "found Device UUID:" + deviceUUID);
-                        Log.i(TAG + " SS:", "found SSID:" + separated[2] + ", pwd:" + separated[3] + "IP: " + separated[4]);
+                    WifiDirectService selItem = null;
+                    if(status != null) {
+                        Log.i(TAG, "Selected device: " + status.print());
+                        selItem = serviceList.get(status.deviceId);
+                        if (selItem != null) {
+                            Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
+                            String[] separated = selItem.getInstanceName().split(":");
+                            String userUUID = separated[0];
+                            String deviceUUID = separated[1];
+                            Log.i(TAG + " SS:", "found User UUID:" + userUUID);
+                            Log.i(TAG + " SS:", "found Device UUID:" + deviceUUID);
+                            Log.i(TAG + " SS:", "found SSID:" + separated[2] + ", pwd:" + separated[3] + "IP: " + separated[4]);
 
-                        stopServiceSearcher();
-                        setConnectionState(SyncUtils.ConnectionState.Connecting);
+                            stopServiceSearcher();
+                            setConnectionState(SyncUtils.ConnectionState.Connecting);
 
-                        final String networkSSID = separated[2];
-                        final String networkPass = separated[3];
-                        final String ipAddress = separated[4];
+                            final String networkSSID = separated[2];
+                            final String networkPass = separated[3];
+                            final String ipAddress = separated[4];
 
-                        P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, deviceUUID);
+                            P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, deviceUUID);
 
-                        Log.i(TAG, "Starting to connect now.");
-                        mWifiConnection = new P2PWifiConnector(that.context, that);
-                        mWifiConnection.setCurrentlyTryingToConnectService(selItem);
-                        mWifiConnection.updateInetAddress(ipAddress);
-                        mWifiConnection.initialize(networkSSID, networkPass);
-
-                    } else {
-                        // we'll get discovery stopped event soon enough
-                        // and it starts the discovery again, so no worries :)
-                        Log.i(TAG, "No devices selected");
-                        mWifiConnection.setCurrentlyTryingToConnectService(null);
+                            Log.i(TAG, "Starting to connect now.");
+                            mWifiConnection = new P2PWifiConnector(that.context, that);
+                            mWifiConnection.setCurrentlyTryingToConnectService(selItem);
+                            mWifiConnection.updateInetAddress(ipAddress);
+                            mWifiConnection.initialize(networkSSID, networkPass);
+                        } else {
+                            // we'll get discovery stopped event soon enough
+                            // and it starts the discovery again, so no worries :)
+                            Log.i(TAG, "No devices selected");
+                            mWifiConnection.setCurrentlyTryingToConnectService(null);
+                        }
                     }
                 }
             }
