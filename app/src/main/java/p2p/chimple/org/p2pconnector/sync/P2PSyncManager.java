@@ -54,6 +54,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private boolean exitTimerStarted = false;
     Runnable mStatusChecker = null;
 
+    private JobParameters currentJobParams;
+
     private Map<String, WifiDirectService> neighbours = null;
 
     public static final String profileFileExtension = ".txt";
@@ -125,17 +127,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         };
     }
 
-    public void startExitTimer() {
-        synchronized (P2PSyncManager.class) {
-            if (!exitTimerStarted) {
-                exitTimerStarted = true;
-                Log.i(TAG, "...... exitTimerStarted .....");
-                disconnectGroupOwnerTimeOut.start();
-                Log.i(TAG, "Exit time reached ... starting disconnectGroupOwnerTimeOut");
-            }
-        }
-    }
-
     private void broadcastCustomTimerStatusUpdateEvent() {
         Intent intent = new Intent(customTimerStatusUpdateEvent);
         // You can also include some extra data.
@@ -190,21 +181,9 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     public void execute(final JobParameters currentJobParams) {
+        this.currentJobParams = currentJobParams;
         mStatusChecker.run();
         //changing the time and its interval
-        disconnectGroupOwnerTimeOut = new CountDownTimer(5000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                Log.i(TAG, "disconnectGroupOwnerTimeOut ticking.....");
-            }
-
-            public void onFinish() {
-                Log.i(TAG, "SHUTTING DOWN CURRENT JOB");
-                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
-                result.putExtra(JOB_PARAMS, currentJobParams);
-                LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
-            }
-        };
-
         //Start Init
 
         WifiManager wifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
@@ -222,6 +201,31 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
         }
         StartConnector();
+    }
+
+    public void startExitTimer() {
+        synchronized (this) {
+            disconnectGroupOwnerTimeOut = new CountDownTimer(5000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    Log.i(TAG, "disconnectGroupOwnerTimeOut ticking.....");
+                }
+
+                public void onFinish() {
+                    Log.i(TAG, "SHUTTING DOWN CURRENT JOB");
+                    Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+                    result.putExtra(JOB_PARAMS, currentJobParams);
+                    LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
+                }
+            };
+
+            Log.i(TAG, "...... checking if exitTimerStarted ....." + exitTimerStarted);
+            if (!exitTimerStarted) {
+                exitTimerStarted = true;
+                Log.i(TAG, "...... exitTimerStarted .....");
+                disconnectGroupOwnerTimeOut.start();
+                Log.i(TAG, "Exit time reached ... starting disconnectGroupOwnerTimeOut");
+            }
+        }
     }
 
     public void reStartConnector(boolean shouldRestart, int delayMillis) {
@@ -301,7 +305,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void connectToClient() {
         stopConnectedThread();
         stopConnectToThread();
-        instance.disconnectGroupOwnerTimeOut.cancel();
+        if(instance.disconnectGroupOwnerTimeOut != null) {
+            instance.disconnectGroupOwnerTimeOut.cancel();
+        }
+
         if (clientIPAddressToConnect != null) {
             //With this test we'll just handle each client one-by-one in order they got connected
             String connectToAddress = clientIPAddressToConnect;
@@ -409,7 +416,9 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     public void onDestroy() {
         Log.i(TAG, "in P2P Destroy");
-        this.disconnectGroupOwnerTimeOut.cancel();
+        if(this.disconnectGroupOwnerTimeOut != null) {
+            this.disconnectGroupOwnerTimeOut.cancel();
+        }
         this.stopConnector();
         this.mStatusChecker = null;
         P2PSyncManager.instance = null;
@@ -511,5 +520,4 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void removeClientIPAddressToConnect() {
         this.clientIPAddressToConnect = null;
     }
-
 }

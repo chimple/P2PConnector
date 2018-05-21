@@ -132,7 +132,9 @@ public class P2PStateFlow {
         if (deviceId != null) {
             api.syncCompleted(deviceId);
         }
+        Log.i(TAG, ".... calling removeClientIPAddressToConnect ....");
         manager.removeClientIPAddressToConnect();
+        Log.i(TAG, ".... calling startExitTimer....");
         manager.startExitTimer();
     }
 

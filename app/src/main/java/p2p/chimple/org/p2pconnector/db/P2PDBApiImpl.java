@@ -163,6 +163,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         P2PSyncDeviceStatus status = new P2PSyncDeviceStatus(deviceId, false);
         status.setSyncTime(new Date());
         db.p2pSyncDeviceStatusDao().insertP2PSyncDeviceStatus(status);
+        Log.i(TAG, "sync completed with deviceId:" + deviceId);
 
     }
 
