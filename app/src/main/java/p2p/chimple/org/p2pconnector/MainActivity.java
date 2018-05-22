@@ -11,15 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import p2p.chimple.org.p2pconnector.MainActivity;
 import p2p.chimple.org.p2pconnector.P2PActivity.LoginActivity;
 import p2p.chimple.org.p2pconnector.P2PActivity.TakeProfilePic;
-import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.IMMEDIATE_JOB_TIMINGS;
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.REGULAR_JOB_TIMINGS_FOR_MIN_LATENCY;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customTimerStatusUpdateEvent;
 
