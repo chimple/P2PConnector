@@ -321,6 +321,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             updateStatus("Data state", "All addresses connected, will start exit timer now.");
             // lets just see if we get more connections coming in before the timeout comes
             Log.i(TAG, "Data state" + "All addresses connected, will start exit timer now.");
+            this.resetExitTimer();
             this.startExitTimer();
         }
     }
@@ -519,5 +520,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     public void removeClientIPAddressToConnect() {
         this.clientIPAddressToConnect = null;
+    }
+
+    public void resetExitTimer() {
+        if(exitTimerStarted == true) {
+            this.exitTimerStarted = false;
+        }
+
     }
 }

@@ -135,6 +135,7 @@ public class P2PStateFlow {
         Log.i(TAG, ".... calling removeClientIPAddressToConnect ....");
         manager.removeClientIPAddressToConnect();
         Log.i(TAG, ".... calling startExitTimer....");
+        manager.resetExitTimer();
         manager.startExitTimer();
     }
 
