@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,13 +64,17 @@ public class TakeProfilePic extends Activity {
         TakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+
                 defaultImage=false;
                 Intent chooserIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File folder = new File(getExternalFilesDir(null), "P2P_IMAGES");
                 if (!folder.exists()){
                     folder.mkdirs();
                 }
-                File f = new File(folder, userId+".jpg");
+                File f = new File(folder, "profile-"+userId+".jpg");
                 chooserIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                 imageToUploadUri = Uri.fromFile(f);
                 startActivityForResult(chooserIntent, CAMERA_PHOTO);
@@ -87,7 +92,7 @@ public class TakeProfilePic extends Activity {
                 Toast.makeText(getApplicationContext(),value, Toast.LENGTH_LONG).show();
                 if (defaultImage){
                     try {
-                        File file = new File(getApplicationContext().getExternalFilesDir(null)+"/P2P_IMAGES",userId+".jpg" );
+                        File file = new File(getApplicationContext().getExternalFilesDir(null)+"/P2P_IMAGES","profile-"+userId+".jpg" );
                         FileOutputStream outStream = null;
                         outStream = new FileOutputStream(file);
                         bm.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
@@ -118,7 +123,7 @@ public class TakeProfilePic extends Activity {
             if(imageToUploadUri != null){
                 Uri selectedImage = imageToUploadUri;
                 Log.i("selectedImage", String.valueOf(selectedImage));
-                getContentResolver().notifyChange(selectedImage, null);
+//                getContentResolver().notifyChange(selectedImage, null);
                 Bitmap reducedSizeBitmap = getBitmap(imageToUploadUri.getPath());
                 Log.i("reducedSizeBitmap", String.valueOf(reducedSizeBitmap));
                 if(reducedSizeBitmap != null){

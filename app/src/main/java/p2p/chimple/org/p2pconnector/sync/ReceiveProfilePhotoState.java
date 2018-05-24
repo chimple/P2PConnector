@@ -1,5 +1,7 @@
 package p2p.chimple.org.p2pconnector.sync;
 
+import android.util.Log;
+
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
@@ -25,8 +27,14 @@ public class ReceiveProfilePhotoState implements P2PState {
             P2PDBApiImpl.getInstance(manager.getContext()).persistProfileMessage(readMessage);
             p2PStateFlow.setProfilePhotoReceived(true);
             if (!p2PStateFlow.isProfilePhotoSent()) {
-                p2PStateFlow.transit(SEND_PROFILE_PHOTO, null);
+                p2PStateFlow.transit(SEND_PROFILE_PHOTO, readMessage);
+                Log.i("Received photo","images not received: "+readMessage);
             } else {
+//                ===============================
+//                p2PStateFlow.transit(SEND_PROFILE_PHOTO, readMessage);
+//                p2PStateFlow.transit(SEND_PROFILE_PHOTO, readMessage);
+                Log.i("Received photo: ",readMessage);
+//                ==============================
                 p2PStateFlow.allMessagesExchanged();
             }
 

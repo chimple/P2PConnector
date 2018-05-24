@@ -3,15 +3,21 @@ package p2p.chimple.org.p2pconnector.db;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
@@ -30,7 +36,7 @@ public class DatabaseInitializer {
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
         String generateUserId = pref.getString("USER_ID", null); // getting String
         Log.i(TAG, "generateUserId :" + generateUserId);
-        P2PSyncManager.createProfilePhoto(generateUserId, "hello - welcome".getBytes(), context);
+        P2PSyncManager.createProfilePhoto(generateUserId,getDefaultProfilePic(context) , context);
         Log.i(TAG, "generateUserId :" + generateUserId);
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = null;
@@ -91,4 +97,22 @@ public class DatabaseInitializer {
         }
 
     }
+
+    public static  byte[] getDefaultProfilePic(Context context){
+        byte[] BYTE;
+        Bitmap bitmap1, bitmap2;
+        Drawable drawable;
+        ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+        drawable = context.getResources().getDrawable(R.drawable.photo);
+
+        bitmap1 = ((BitmapDrawable)drawable).getBitmap();
+
+        bitmap1.compress(Bitmap.CompressFormat.JPEG,70,bytearrayoutputstream);
+
+        BYTE = bytearrayoutputstream.toByteArray();
+
+        return BYTE;
+    }
+
+
 }

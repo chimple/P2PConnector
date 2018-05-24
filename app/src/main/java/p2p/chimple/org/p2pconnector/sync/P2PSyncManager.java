@@ -58,7 +58,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     private Map<String, WifiDirectService> neighbours = null;
 
-    public static final String profileFileExtension = ".txt";
+//    public static final String profileFileExtension = ".txt";
+    public static final String profileFileExtension = ".jpg";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
     public static final String connectedDevice = "CONNECTED_DEVICE";
@@ -439,7 +440,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
         if (canWrite) {
             fileName = P2PSyncManager.generateUserPhotoFileName(generateUserId);
-            File file = new File(pathDir, fileName);
+            File file = new File(pathDir+"/P2P_IMAGES", fileName);
             try {
                 // Make sure the Pictures directory exists.
                 if (!checkIfFileExists(fileName, context)) {
@@ -472,7 +473,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             pathDir = context.getFilesDir();
         }
         try {
-            File file = new File(pathDir, fileName);
+            File file = new File(pathDir+"/P2P_IMAGES", fileName);
             byte[] bytes = new byte[(int) file.length()];
             BufferedInputStream bis;
             bis = new BufferedInputStream(new FileInputStream(file));
