@@ -14,9 +14,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Base64;
 import android.util.Log;
-
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -61,7 +60,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     private Map<String, WifiDirectService> neighbours = null;
 
-//    public static final String profileFileExtension = ".txt";
+    //    public static final String profileFileExtension = ".txt";
     public static final String profileFileExtension = ".jpg";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
@@ -309,7 +308,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void connectToClient() {
         stopConnectedThread();
         stopConnectToThread();
-        if(instance.disconnectGroupOwnerTimeOut != null) {
+        if (instance.disconnectGroupOwnerTimeOut != null) {
             instance.disconnectGroupOwnerTimeOut.cancel();
         }
 
@@ -421,7 +420,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     public void onDestroy() {
         Log.i(TAG, "in P2P Destroy");
-        if(this.disconnectGroupOwnerTimeOut != null) {
+        if (this.disconnectGroupOwnerTimeOut != null) {
             this.disconnectGroupOwnerTimeOut.cancel();
         }
         this.stopConnector();
@@ -443,7 +442,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
         if (canWrite) {
             fileName = P2PSyncManager.generateUserPhotoFileName(generateUserId);
-            File file = new File(pathDir+"/P2P_IMAGES", fileName);
+            File file = new File(pathDir + "/P2P_IMAGES", fileName);
             try {
                 // Make sure the Pictures directory exists.
                 if (!checkIfFileExists(fileName, context)) {
@@ -451,8 +450,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     file.createNewFile();
                 }
                 OutputStream os = new FileOutputStream(file);
-                String str = new String(contents, StandardCharsets.UTF_8);
-                Log.i(TAG, "created profile photo:" + fileName + " with contents " + str);
                 os.write(contents);
                 os.close();
                 P2PSyncManager.getInstance(context).updateInSharedPreference("PROFILE_PHOTO", generateUserId);
@@ -468,47 +465,38 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         return fileName;
     }
 
-    private static String encodeFileToBase64Binary(File file){
+    private static String encodeFileToBase64Binary(File file) {
         String encodedfile = null;
         try {
             FileInputStream fileInputStreamReader = new FileInputStream(file);
-            byte[] bytes = new byte[(int)file.length()];
+            byte[] bytes = new byte[(int) file.length()];
             fileInputStreamReader.read(bytes);
-            encodedfile = new String(Base64.encodeBase64(bytes));
+//            encodedfile = new String(Base64.encodeBase64(bytes));
+            encodedfile = new String(Base64.encode(bytes, Base64.DEFAULT));
         } catch (FileNotFoundException e) {
-// TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-// TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         return encodedfile;
     }
 
-    public static byte[] getProfilePhotoContents(String fileName, Context context) {
-        byte[] results = null;
-        String result = null;
+    public static String getProfilePhotoContents(String fileName, Context context) {
+        String result = "";
         File pathDir = context.getExternalFilesDir(null);
         if (null == pathDir) {
             pathDir = context.getFilesDir();
         }
         try {
-            File file = new File(pathDir+"/P2P_IMAGES", fileName);
-            byte[] bytes = new byte[(int) file.length()];
-            Log.i(TAG," fileSize : "+file.length());
-//            BufferedInputStream bis;
+            File file = new File(pathDir + "/P2P_IMAGES", fileName);
+            Log.i(TAG, " fileSize : " + file.length());
             result = encodeFileToBase64Binary(file);
-            Log.i(TAG,"FinalResult : "+result);
-//            bis = new BufferedInputStream(new FileInputStream(file));
-//            bis.read(bytes, 0, bytes.length);
-//            bis.close();
-//            results = bytes;
+            Log.i(TAG, "FinalResult : " + result);
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
-            results = null;
         }
-        return result.getBytes();
+        return result;
     }
 
 
@@ -548,7 +536,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     public void resetExitTimer() {
-        if(exitTimerStarted == true) {
+        if (exitTimerStarted == true) {
             this.exitTimerStarted = false;
         }
 

@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
+
 import org.apache.commons.collections4.Closure;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
@@ -106,14 +107,15 @@ public class P2PDBApiImpl implements P2PDBApi {
 
 
     public boolean persistProfileMessage(String photoJson) {
+        Log.i(TAG, "persistProfileMessage: " + photoJson);
         ProfileMessage message = this.deSerializeProfileMessageFromJson(photoJson);
         if (message != null) {
             String decodedMessage = null;
             try {
-                byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
-                decodedMessage = new String(data, "UTF-8");
-                String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), decodedMessage.getBytes(), this.context);
                 db.beginTransaction();
+//                byte[] data = Base64.decodeBase64(message.getData());
+                byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
+                String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), data, this.context);
                 this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
                 P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, message.getDeviceId());
                 db.setTransactionSuccessful();
@@ -221,9 +223,9 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
-    public String serializeProfileMessage(String userId, String deviceId, byte[] contents) {
+    public String serializeProfileMessage(String userId, String deviceId, String contents) {
         try {
-            String photoContents = Base64.encodeToString(contents, Base64.DEFAULT);
+            String photoContents = contents;
             Gson gson = this.registerProfileMessageBuilder();
             ProfileMessage message = new ProfileMessage(userId, deviceId, "profileMessage", photoContents);
             Type ProfileMessageType = new TypeToken<ProfileMessage>() {
@@ -300,6 +302,10 @@ public class P2PDBApiImpl implements P2PDBApi {
         Type ProfileMessageType = new TypeToken<ProfileMessage>() {
         }.getType();
         ProfileMessage message = gson.fromJson(photoJson, ProfileMessageType);
+        Log.i(TAG, "got deviceId " + message.getDeviceId());
+        Log.i(TAG, "got getMessageType " + message.getMessageType());
+        Log.i(TAG, "got getUserId " + message.getUserId());
+        Log.i(TAG, "got getData " + message.getData());
         return message;
     }
 

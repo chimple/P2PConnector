@@ -75,8 +75,7 @@ public class P2PServiceFinder {
         this.registerP2PServiceFinderReceiver();
         this.registerPeerListeners();
         this.registerDnsSdServiceResponseListener();
-        // let try out with this....
-        // this.startPeerDiscovery();
+        this.startPeerDiscovery();
     }
 
     private void registerPeerListeners() {
@@ -155,8 +154,7 @@ public class P2PServiceFinder {
 
             public void onFinish() {
                 stopDiscovery();
-                //lets try out this
-                //startPeerDiscovery();
+//                startPeerDiscovery();
                 startServiceDiscovery();
             }
         };
