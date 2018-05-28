@@ -16,9 +16,12 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -465,9 +468,27 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         return fileName;
     }
 
+    private static String encodeFileToBase64Binary(File file){
+        String encodedfile = null;
+        try {
+            FileInputStream fileInputStreamReader = new FileInputStream(file);
+            byte[] bytes = new byte[(int)file.length()];
+            fileInputStreamReader.read(bytes);
+            encodedfile = new String(Base64.encodeBase64(bytes));
+        } catch (FileNotFoundException e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return encodedfile;
+    }
 
     public static byte[] getProfilePhotoContents(String fileName, Context context) {
         byte[] results = null;
+        String result = null;
         File pathDir = context.getExternalFilesDir(null);
         if (null == pathDir) {
             pathDir = context.getFilesDir();
@@ -475,16 +496,19 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         try {
             File file = new File(pathDir+"/P2P_IMAGES", fileName);
             byte[] bytes = new byte[(int) file.length()];
-            BufferedInputStream bis;
-            bis = new BufferedInputStream(new FileInputStream(file));
-            bis.read(bytes, 0, bytes.length);
-            bis.close();
-            results = bytes;
-        } catch (IOException e) {
+            Log.i(TAG," fileSize : "+file.length());
+//            BufferedInputStream bis;
+            result = encodeFileToBase64Binary(file);
+            Log.i(TAG,"FinalResult : "+result);
+//            bis = new BufferedInputStream(new FileInputStream(file));
+//            bis.read(bytes, 0, bytes.length);
+//            bis.close();
+//            results = bytes;
+        } catch (Exception e) {
             Log.i(TAG, e.getMessage());
             results = null;
         }
-        return results;
+        return result.getBytes();
     }
 
 
