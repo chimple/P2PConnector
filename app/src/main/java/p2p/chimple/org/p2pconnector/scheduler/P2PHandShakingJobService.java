@@ -1,5 +1,6 @@
 package p2p.chimple.org.p2pconnector.scheduler;
 
+import android.app.Notification;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
@@ -30,6 +31,7 @@ public class P2PHandShakingJobService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
+        //startForeground(1,new Notification());
         this.registerWifiDirectIntentBroadcastReceiver();
         Log.i(TAG, "Service created");
     }
@@ -57,7 +59,11 @@ public class P2PHandShakingJobService extends JobService {
         if (!JobUtils.isJobRunning()) {
             wifiDirectServiceIntent = new Intent(getApplicationContext(), WifiDirectIntentService.class);
             wifiDirectServiceIntent.putExtra(JOB_PARAMS, params);
-            getApplicationContext().startService(wifiDirectServiceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getApplicationContext().startForegroundService(wifiDirectServiceIntent);
+            } else {
+                getApplicationContext().startService(new Intent(wifiDirectServiceIntent));
+            }
             JobUtils.setJobRunning(true);
             Log.i(TAG, "on start job: " + params.getJobId());
         } else {
