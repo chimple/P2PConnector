@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pGroup;
@@ -18,6 +20,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -464,24 +467,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         }
         return fileName;
     }
-
-    private static String encodeFileToBase64Binary(File file) {
-        String encodedfile = null;
-        try {
-            FileInputStream fileInputStreamReader = new FileInputStream(file);
-            byte[] bytes = new byte[(int) file.length()];
-            fileInputStreamReader.read(bytes);
-//            encodedfile = new String(Base64.encodeBase64(bytes));
-            encodedfile = new String(Base64.encode(bytes, Base64.DEFAULT));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return encodedfile;
-    }
-
+    
     public static String getProfilePhotoContents(String fileName, Context context) {
         String result = "";
         File pathDir = context.getExternalFilesDir(null);
@@ -491,7 +477,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         try {
             File file = new File(pathDir + "/P2P_IMAGES", fileName);
             Log.i(TAG, " fileSize : " + file.length());
-            result = encodeFileToBase64Binary(file);
+            //encode image to base64 string
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+            result = Base64.encodeToString(imageBytes, Base64.DEFAULT);
             Log.i(TAG, "FinalResult : " + result);
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());

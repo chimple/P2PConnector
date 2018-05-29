@@ -2,6 +2,8 @@ package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
@@ -21,6 +23,7 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,12 +113,15 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "persistProfileMessage: " + photoJson);
         ProfileMessage message = this.deSerializeProfileMessageFromJson(photoJson);
         if (message != null) {
-            String decodedMessage = null;
             try {
                 db.beginTransaction();
-//                byte[] data = Base64.decodeBase64(message.getData());
-                byte[] data = Base64.decode(message.getData(), Base64.DEFAULT);
-                String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), data, this.context);
+                String imageString = new String(message.getData());
+                byte[] data = Base64.decode(imageString, Base64.DEFAULT);
+                Bitmap decodedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                decodedImage.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+                byte[] bitmapdata = bos.toByteArray();
+                String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), bitmapdata, this.context);
                 this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
                 P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, message.getDeviceId());
                 db.setTransactionSuccessful();
