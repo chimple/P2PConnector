@@ -10,6 +10,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
@@ -17,7 +19,8 @@ import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
 
-public class WifiDirectIntentService extends Service {
+public class WifiDirectIntentService extends JobIntentService {
+    public static final int JOB_ID = 999;
     private static final String TAG = WifiDirectIntentService.class.getSimpleName();
     private volatile Looper mServiceLooper;
     private volatile ServiceHandler mServiceHandler;
@@ -28,7 +31,6 @@ public class WifiDirectIntentService extends Service {
 
     public WifiDirectIntentService() {
         super();
-        Log.i(TAG, "WifiDirectIntentService Contructor");
     }
 
     private final class ServiceHandler extends Handler {
@@ -38,8 +40,12 @@ public class WifiDirectIntentService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            onHandleIntent((Intent) msg.obj);
+            onHandleWork((Intent) msg.obj);
         }
+    }
+
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, WifiDirectIntentService.class, JOB_ID, work);
     }
 
     @Override
@@ -82,17 +88,8 @@ public class WifiDirectIntentService extends Service {
         return null;
     }
 
-    /**
-     * This method is invoked on the worker thread with a request to process.
-     * Only one Intent is processed at a time, but the processing happens on a
-     * worker thread that runs independently from other application logic.
-     * So, if this code takes a long time, it will hold up other requests to
-     * the same IntentService, but it will not hold up anything else.
-     *
-     * @param intent The value passed to {@link
-     *               Context#startService(Intent)}.
-     */
-    protected void onHandleIntent(Intent intent) {
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         Log.i(TAG, "do actual work");
         //broadcast result once done
         this.p2pSyncManager.execute(this.currentJobParams);
