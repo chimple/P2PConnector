@@ -16,8 +16,7 @@
         android:id="@+id/image_view"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:scaleType="centerInside"
-        android:adjustViewBounds="true"
-        android:src="@drawable/photo"/>
+        android:adjustViewBounds="true"/>
 
     <Button
         android:layout_width="match_parent"
