@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import p2p.chimple.org.p2pconnector.MainActivity;
 import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.application.P2PApplication;
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
@@ -116,7 +117,8 @@ public class TakeProfilePic extends Activity {
 
                 DatabaseInitializer.populateWithTestData(db,getApplicationContext(),BYTE);
 
-                Intent intent = new Intent(getApplicationContext(), NeighbourList.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.putExtra("MyId",userId);
                 startActivity(intent);
             }

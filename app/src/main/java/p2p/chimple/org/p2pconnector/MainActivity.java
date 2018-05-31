@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import p2p.chimple.org.p2pconnector.P2PActivity.LoginActivity;
 import p2p.chimple.org.p2pconnector.P2PActivity.TakeProfilePic;
+import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
@@ -59,16 +62,26 @@ public class MainActivity extends Activity {
         toggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (P2PDBApiImpl.getInstance(getApplicationContext()).getUsers().size() < 1 ){
+                    Toast.makeText(getApplicationContext(),"You have not yet registered \n Register first",Toast.LENGTH_LONG).show();
+                    Log.i(TAG,"You have not yet registered \n Register first");
+                }else{
+                    JobUtils.scheduledJob(getApplicationContext(), true);
+                }
 
-                JobUtils.scheduledJob(getApplicationContext(), true);
             }
         });
 
         regUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
+                if (P2PDBApiImpl.getInstance(getApplicationContext()).getUsers().size() < 1 ){
+                    Toast.makeText(getApplicationContext(),"No users found. \n Register first",Toast.LENGTH_LONG).show();
+                    Log.i(TAG,"No users found. \n Register first");
+                }else{
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -83,7 +96,11 @@ public class MainActivity extends Activity {
     }
 
     public void execute() {
-        JobUtils.scheduledJob(getApplicationContext(), false);
+        if (P2PDBApiImpl.getInstance(getApplicationContext()).getUsers().size() >= 1 ){
+            JobUtils.scheduledJob(getApplicationContext(), false);
+        }else{
+            Toast.makeText(getApplicationContext(),"No users found. \n Register first",Toast.LENGTH_LONG).show();
+        }
     }
 
 
