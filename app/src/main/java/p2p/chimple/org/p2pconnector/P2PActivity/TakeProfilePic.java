@@ -136,7 +136,18 @@ public class TakeProfilePic extends Activity {
             if(imageToUploadUri != null){
                 Uri selectedImage = imageToUploadUri;
                 Log.i("selectedImage", String.valueOf(selectedImage));
-                reducedSizeBitmap = BitmapFactory.decodeFile(imageToUploadUri.getPath());
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                File file = new File(imageToUploadUri.getPath());
+                //File Size compression
+                if (file.length() < 1000000 ){
+                    options.inSampleSize = 1;
+                }else if(file.length() < 2000000){
+                    options.inSampleSize = 2;
+                }else {
+                    options.inSampleSize = 3;
+                }
+
+                reducedSizeBitmap = BitmapFactory.decodeFile(imageToUploadUri.getPath(),options);
                 Log.i("reducedSizeBitmap", String.valueOf(reducedSizeBitmap.toString()));
                 if(reducedSizeBitmap != null){
                     imageView.setImageBitmap(reducedSizeBitmap);
