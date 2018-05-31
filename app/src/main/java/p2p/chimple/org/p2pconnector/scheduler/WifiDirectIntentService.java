@@ -1,5 +1,6 @@
 package p2p.chimple.org.p2pconnector.scheduler;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.app.job.JobParameters;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
@@ -19,8 +21,7 @@ import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
 
-public class WifiDirectIntentService extends JobIntentService {
-    public static final int JOB_ID = 999;
+public class WifiDirectIntentService extends Service {
     private static final String TAG = WifiDirectIntentService.class.getSimpleName();
     private volatile Looper mServiceLooper;
     private volatile ServiceHandler mServiceHandler;
@@ -40,12 +41,8 @@ public class WifiDirectIntentService extends JobIntentService {
 
         @Override
         public void handleMessage(Message msg) {
-            onHandleWork((Intent) msg.obj);
+            onHandleIntent((Intent) msg.obj);
         }
-    }
-
-    public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, WifiDirectIntentService.class, JOB_ID, work);
     }
 
     @Override
@@ -88,8 +85,7 @@ public class WifiDirectIntentService extends JobIntentService {
         return null;
     }
 
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
+    protected void onHandleIntent(@Nullable Intent intent) {
         Log.i(TAG, "do actual work");
         //broadcast result once done
         this.p2pSyncManager.execute(this.currentJobParams);

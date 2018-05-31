@@ -17,6 +17,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
+import android.util.Base64OutputStream;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -26,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -467,7 +469,32 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         }
         return fileName;
     }
-    
+
+    public static String getStringFile(File f) {
+        InputStream inputStream = null;
+        String encodedFile = "", lastVal;
+        try {
+            inputStream = new FileInputStream(f.getAbsolutePath());
+
+            byte[] buffer = new byte[10240];//specify the size to allow
+            int bytesRead;
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            Base64OutputStream output64 = new Base64OutputStream(output, Base64.DEFAULT);
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output64.write(buffer, 0, bytesRead);
+            }
+            output64.close();
+            encodedFile = output.toString();
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        lastVal = encodedFile;
+        return lastVal;
+    }
+
     public static String getProfilePhotoContents(String fileName, Context context) {
         String result = "";
         File pathDir = context.getExternalFilesDir(null);
@@ -477,12 +504,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         try {
             File file = new File(pathDir + "/P2P_IMAGES", fileName);
             Log.i(TAG, " fileSize : " + file.length());
-            //encode image to base64 string
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] imageBytes = baos.toByteArray();
-            result = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            result = P2PSyncManager.getStringFile(file);
             Log.i(TAG, "FinalResult : " + result);
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());

@@ -48,7 +48,7 @@ public class ConnectedThread extends Thread {
 
     public void run() {
         Log.i(TAG, "BTConnectedThread started");
-        byte[] buffer = new byte[1048576];
+        byte[] buffer = new byte[1048576 * 10];
         int bytes;
         StringBuffer sBuffer = null;
         while (mRunning) {

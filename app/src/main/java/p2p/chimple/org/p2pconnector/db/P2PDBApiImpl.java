@@ -116,10 +116,13 @@ public class P2PDBApiImpl implements P2PDBApi {
             try {
                 db.beginTransaction();
                 String imageString = new String(message.getData());
+                Log.i(TAG, "imageString:" + imageString);
                 byte[] data = Base64.decode(imageString, Base64.DEFAULT);
+//                final BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inJustDecodeBounds = true;
                 Bitmap decodedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                decodedImage.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+                decodedImage.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
                 byte[] bitmapdata = bos.toByteArray();
                 String fileName = P2PSyncManager.createProfilePhoto(message.getUserId(), bitmapdata, this.context);
                 this.upsertProfileForUserIdAndDevice(message.getUserId(), message.getDeviceId(), fileName);
@@ -127,6 +130,7 @@ public class P2PDBApiImpl implements P2PDBApi {
                 db.setTransactionSuccessful();
                 return true;
             } catch (Exception e) {
+                e.printStackTrace();
                 Log.e(TAG, e.getMessage());
                 return false;
             } finally {

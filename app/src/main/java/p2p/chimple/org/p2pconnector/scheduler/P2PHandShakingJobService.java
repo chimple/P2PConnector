@@ -59,7 +59,7 @@ public class P2PHandShakingJobService extends JobService {
         if (!JobUtils.isJobRunning()) {
             wifiDirectServiceIntent = new Intent(getApplicationContext(), WifiDirectIntentService.class);
             wifiDirectServiceIntent.putExtra(JOB_PARAMS, params);
-            WifiDirectIntentService.enqueueWork(getApplicationContext(), wifiDirectServiceIntent);
+            getApplicationContext().startService(new Intent(wifiDirectServiceIntent));
             JobUtils.setJobRunning(true);
             Log.i(TAG, "on start job: " + params.getJobId());
         } else {
