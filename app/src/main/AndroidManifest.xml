@@ -28,9 +28,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".scheduler.WifiDirectIntentService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false"/>
+        <service
+            android:name=".scheduler.WifiDirectIntentService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".scheduler.P2PHandShakingJobService"
             android:exported="true"
@@ -47,6 +48,7 @@
         <activity android:name=".P2PActivity.ActionTypeActivity" />
         <activity android:name=".P2PActivity.LoginActivity" />
         <activity android:name=".P2PActivity.NeighbourList" />
+        <activity android:name=".P2PActivity.EditProfile"></activity>
     </application>
 
 </manifest>

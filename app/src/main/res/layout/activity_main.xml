@@ -9,32 +9,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <include layout="@layout/header_layout"/>
-
-
-        <ScrollView
-            android:id="@+id/SCROLLER_ID"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
-
-            <TextView
-                android:id="@+id/debugdataBox"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1.0" />
-
-        </ScrollView>
-    </LinearLayout>
-
-
-    <LinearLayout
+        android:id="@+id/loginTypeLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -55,7 +30,5 @@
             android:text="New User"
             android:id="@+id/newUser"/>
     </LinearLayout>
-
-
 
 </LinearLayout>

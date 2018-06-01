@@ -1,79 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="2"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".P2PActivity.LoginActivity">
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:id="@+id/p2pNetworkLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <!--<include layout="@layout/header_layout"/>-->
+        <include layout="@layout/header_layout"/>
 
 
         <!--<ScrollView-->
         <!--android:id="@+id/SCROLLER_ID"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="200dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
         <!--android:fillViewport="true"-->
         <!--android:scrollbars="vertical">-->
 
-        <!--<TextView-->
-        <!--android:id="@+id/debugdataBox"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:layout_weight="1.0" />-->
-
-        <!--</ScrollView>-->
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/debugdataBox"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical">
+            android:layout_weight="1.0" />
 
-            <LinearLayout
+        <!--</ScrollView>-->
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/userListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <!--<Button-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/buttonAdd"-->
-                <!--android:text="ADD"/>-->
-                <!--<Button-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/buttonAllUsers"-->
-                <!--android:text="All Users"/>-->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="All Users List"
-                    android:textSize="40dp"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select Your Profile"
-                    />
-
-            </LinearLayout>
-
-            <ListView
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </ListView>
+                android:id="@+id/userIdStatusTitle"
+                android:text="All Users List"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Your ID"
+                android:id="@+id/userIdSelectedStatus"
+                />
 
         </LinearLayout>
 
+        <ListView
+            android:id="@+id/usersList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </ListView>
+
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

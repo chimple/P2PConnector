@@ -453,6 +453,10 @@ public class P2PDBApiImpl implements P2PDBApi {
         return Arrays.asList(db.p2pSyncDao().fetchAllUsers());
     }
 
+    public List<P2PSyncInfo> getInfoByUserId(String userid){
+        return Arrays.asList(db.p2pSyncDao().getSyncInformationByUserId(userid));
+    }
+
     public List<P2PUserIdMessage> fetchLatestMessagesByMessageType(String messageType, List<String> userIds) {
         if (userIds != null && userIds.size() > 0) {
             return db.p2pSyncDao().fetchLatestMessagesByMessageType(messageType, userIds);

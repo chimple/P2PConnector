@@ -3,6 +3,7 @@ package p2p.chimple.org.p2pconnector.P2PActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -23,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.MainActivity;
 import p2p.chimple.org.p2pconnector.R;
@@ -52,9 +55,13 @@ public class TakeProfilePic extends Activity {
     private Uri imageToUploadUri;
     boolean defaultImage = true;
     Bitmap reducedSizeBitmap;
+    String USERID_UUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.take_profile_pic);
 
@@ -99,6 +106,8 @@ public class TakeProfilePic extends Activity {
             public void onClick(View v) {
                 byte[] BYTE=null;
 
+                createShardProfilePreferences();
+
                 if (defaultImage){
                     ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -117,9 +126,13 @@ public class TakeProfilePic extends Activity {
 
                 DatabaseInitializer.populateWithTestData(db,getApplicationContext(),BYTE);
 
+
+//                String user = LoginActivity.userIdSelectedStatus.getText().toString();
+//                LoginActivity.userIdSelectedStatus.setText(user+" : "+USERID_UUID);
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("MyId",userId);
+//                intent.putExtra("MyId",userId);
                 startActivity(intent);
             }
         });
@@ -162,65 +175,13 @@ public class TakeProfilePic extends Activity {
     }
 
 
-    private Bitmap getBitmap(String path) {
-        Log.i("image path ",path);
-
-        Uri uri = Uri.fromFile(new File(path));
-        InputStream in = null;
-        try {
-            final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
-            in = getContentResolver().openInputStream(uri);
-
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(in, null, o);
-            in.close();
-
-
-            int scale = 1;
-            while ((o.outWidth * o.outHeight) * (1 / Math.pow(scale, 2)) >
-                    IMAGE_MAX_SIZE) {
-                scale++;
-            }
-            Log.d("", "scale = " + scale + ", orig-width: " + o.outWidth + ", orig-height: " + o.outHeight);
-
-            Bitmap b = null;
-            in = getContentResolver().openInputStream(uri);
-            if (scale > 1) {
-                scale--;
-                // scale to max possible inSampleSize that still yields an image
-                // larger than target
-                o = new BitmapFactory.Options();
-                o.inSampleSize = scale;
-                b = BitmapFactory.decodeStream(in, null, o);
-
-                // resize to desired dimensions
-                int height = b.getHeight();
-                int width = b.getWidth();
-                Log.d("", "1th scale operation dimenions - width: " + width + ", height: " + height);
-
-                double y = Math.sqrt(IMAGE_MAX_SIZE
-                        / (((double) width) / height));
-                double x = (y / height) * width;
-
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(b, (int) x,
-                        (int) y, true);
-                b.recycle();
-                b = scaledBitmap;
-
-                System.gc();
-            } else {
-                b = BitmapFactory.decodeStream(in);
-            }
-            in.close();
-
-            Log.d("", "bitmap size - width: " + b.getWidth() + ", height: " +
-                    b.getHeight());
-            return b;
-        } catch (IOException e) {
-            Log.e("", e.getMessage(), e);
-            return null;
-        }
+    private void createShardProfilePreferences() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        USERID_UUID = UUID.randomUUID().toString();
+        Log.i("createShardProfilePref", "created UUID User:" + USERID_UUID);
+        editor.putString("USER_ID", USERID_UUID);
+        editor.putString("DEVICE_ID", UUID.randomUUID().toString());
+        editor.commit(); // commit changes
     }
 }

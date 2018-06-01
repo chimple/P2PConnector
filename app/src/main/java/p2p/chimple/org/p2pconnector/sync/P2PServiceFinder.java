@@ -222,6 +222,9 @@ public class P2PServiceFinder {
             public void onFailure(int reason) {
                 discoveryState = SyncUtils.DiscoveryState.NONE;
                 Log.i(TAG, "Starting peer discovery failed, error code " + reason);
+                if (reason == 2){
+                    stopPeerDiscovery();
+                }
                 //lets try again after 1 minute time-out !
                 if (that.discoverServiceTimeOutTimer != null) {
                     that.discoverServiceTimeOutTimer.start();
