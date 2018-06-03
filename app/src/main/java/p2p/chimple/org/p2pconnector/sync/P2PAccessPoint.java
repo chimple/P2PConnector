@@ -15,6 +15,7 @@ import android.util.Log;
 
 import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,6 +142,7 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         stopLocalServices();
         removeGroup();
         removePersistentGroups();
+        deletePersistentInfo();
     }
 
     public void removeGroup() {
@@ -191,6 +193,65 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
         } catch (Exception e) {
             Log.e(TAG, "Failure removing persistent groups: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+
+    public void deletePersistentInfo() {
+        try {
+
+            Class persistentInterface = null;
+
+            //Iterate and get class PersistentGroupInfoListener
+            for (Class<?> classR : WifiP2pManager.class.getDeclaredClasses()) {
+                if (classR.getName().contains("PersistentGroupInfoListener")) {
+                    persistentInterface = classR;
+                    break;
+                }
+
+            }
+
+            final Method deletePersistentGroupMethod = WifiP2pManager.class.getDeclaredMethod("deletePersistentGroup", new Class[]{WifiP2pManager.Channel.class, int.class, WifiP2pManager.ActionListener.class});
+
+            //anonymous class to implement PersistentGroupInfoListener which has a method, onPersistentGroupInfoAvailable
+            Object persitentInterfaceObject =
+                    java.lang.reflect.Proxy.newProxyInstance(persistentInterface.getClassLoader(),
+                            new java.lang.Class[]{persistentInterface},
+                            new java.lang.reflect.InvocationHandler() {
+                                @Override
+                                public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args) throws java.lang.Throwable {
+                                    String method_name = method.getName();
+
+                                    if (method_name.equals("onPersistentGroupInfoAvailable")) {
+                                        Class wifiP2pGroupListClass = Class.forName("android.net.wifi.p2p.WifiP2pGroupList");
+                                        Object wifiP2pGroupListObject = wifiP2pGroupListClass.cast(args[0]);
+
+                                        Collection<WifiP2pGroup> wifiP2pGroupList = (Collection<WifiP2pGroup>) wifiP2pGroupListClass.getMethod("getGroupList", null).invoke(wifiP2pGroupListObject, null);
+                                        for (WifiP2pGroup group : wifiP2pGroupList) {
+                                            deletePersistentGroupMethod.invoke(wifiP2pManager, channel, (Integer) WifiP2pGroup.class.getMethod("getNetworkId").invoke(group, null), new WifiP2pManager.ActionListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    Log.i(TAG, "Persistent Group deleted");
+
+                                                }
+
+                                                @Override
+                                                public void onFailure(int i) {
+                                                    Log.i(TAG, "Persistent Group deleted");
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    return null;
+                                }
+                            });
+
+            Method requestPersistentGroupMethod =
+                    WifiP2pManager.class.getDeclaredMethod("requestPersistentGroupInfo", new Class[]{WifiP2pManager.Channel.class, persistentInterface});
+            requestPersistentGroupMethod.invoke(wifiP2pManager, channel, persitentInterfaceObject);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
