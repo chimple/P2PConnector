@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -160,7 +161,7 @@ public class TakeProfilePic extends Activity {
                     options.inSampleSize = 3;
                 }
 
-                reducedSizeBitmap = BitmapFactory.decodeFile(imageToUploadUri.getPath(),options);
+                reducedSizeBitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imageToUploadUri.getPath(), options), 512, 512);
                 Log.i("reducedSizeBitmap", String.valueOf(reducedSizeBitmap.toString()));
                 if(reducedSizeBitmap != null){
                     imageView.setImageBitmap(reducedSizeBitmap);
