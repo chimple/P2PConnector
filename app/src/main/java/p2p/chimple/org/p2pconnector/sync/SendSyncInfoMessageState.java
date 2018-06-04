@@ -6,7 +6,6 @@ import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_DB_SYNC_INFORMATION;
-import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_PROFILE_PHOTO;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_DB_SYNC_INFORMATION;
 
 public class SendSyncInfoMessageState implements P2PState {
@@ -35,8 +34,6 @@ public class SendSyncInfoMessageState implements P2PState {
             if (p2PStateFlow.getThread() != null && updatedSyncInformation != null && !updatedSyncInformation.isEmpty()) {
                 p2PStateFlow.getThread().write(updatedSyncInformation.getBytes(), 0, updatedSyncInformation.length());
                 Log.i(TAG, "syncInformation message sent" + syncInformation);
-            } else {
-                Log.i(TAG, "syncInformation message thread null what to do??????");
             }
             p2PStateFlow.setAllSyncInformationSent(true);
         } catch (Exception e) {
@@ -58,11 +55,6 @@ public class SendSyncInfoMessageState implements P2PState {
                 newTransition = RECEIVE_DB_SYNC_INFORMATION;
                 break;
             }
-            case RECEIVE_PROFILE_PHOTO: {
-                newTransition = RECEIVE_PROFILE_PHOTO;
-                break;
-            }
-
             default: {
                 newTransition = SEND_DB_SYNC_INFORMATION;
                 break;

@@ -5,7 +5,6 @@ import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_DB_SYNC_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_DB_SYNC_INFORMATION;
-import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_PROFILE_PHOTO;
 
 public class ReceiveSyncInfoMessageState implements P2PState {
 
@@ -27,8 +26,8 @@ public class ReceiveSyncInfoMessageState implements P2PState {
             p2PStateFlow.setAllSyncInformationReceived(true);
             if (!p2PStateFlow.isAllSyncInformationSent()) {
                 p2PStateFlow.transit(SEND_DB_SYNC_INFORMATION, this.outcome);
-            } else if (!p2PStateFlow.isProfilePhotoSent()) {
-                p2PStateFlow.transit(SEND_PROFILE_PHOTO, null);
+            } else  {
+                p2PStateFlow.allMessagesExchanged();
             }
 
         }
@@ -52,10 +51,6 @@ public class ReceiveSyncInfoMessageState implements P2PState {
     public P2PStateFlow.Transition process(P2PStateFlow.Transition transition) {
         P2PStateFlow.Transition newTransition = null;
         switch (transition) {
-            case SEND_PROFILE_PHOTO: {
-                newTransition = SEND_PROFILE_PHOTO;
-                break;
-            }
             case SEND_DB_SYNC_INFORMATION: {
                 newTransition = SEND_DB_SYNC_INFORMATION;
                 break;
