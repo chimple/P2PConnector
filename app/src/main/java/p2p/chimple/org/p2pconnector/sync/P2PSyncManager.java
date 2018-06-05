@@ -2,16 +2,19 @@ package p2p.chimple.org.p2pconnector.sync;
 
 import android.app.job.JobParameters;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -21,6 +24,7 @@ import android.util.Base64OutputStream;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +38,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import p2p.chimple.org.p2pconnector.R;
 
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JOB_PARAMS;
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.P2P_SYNC_RESULT_RECEIVED;
@@ -49,6 +55,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     private CommunicationThread mTestListenerThread = null;
     private ConnectToThread mTestConnectToThread = null;
     private ConnectedThread mTestConnectedThread = null;
+    private ImageSyncInfo imageSyncInfo = null;
     final private int TestChatPortNumber = 8768;
     private Handler mHandler;
     private HandlerThread handlerThread;
@@ -351,6 +358,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         Log.i(TAG, "Connected to ");
         final Socket socketTmp = socket;
         mTestConnectToThread = null;
+        //Client side send image here
+        //================================
+//        instance.imageSyncInfo = new ImageSyncInfo(socketTmp,context);
+//        instance.imageSyncInfo.start();
+//        instance.imageSyncInfo.write(socketTmp);
+        //================================
         this.p2PStateFlow.resetAllStates();
         startTestConnection(socketTmp, true);
     }
@@ -359,6 +372,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void GotConnection(Socket socket) {
         Log.i(TAG, "We got incoming connection");
         final Socket socketTmp = socket;
+        //Server side send image here
+        //================================
+//        instance.imageSyncInfo = new ImageSyncInfo(socketTmp,context);
+//        instance.imageSyncInfo.start();
+//        instance.imageSyncInfo.write(socketTmp);
+        //================================
         startListenerThread();
         mTestConnectToThread = null;
         this.p2PStateFlow.resetAllStates();
