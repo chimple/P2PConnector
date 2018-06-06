@@ -24,6 +24,7 @@ import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -251,6 +253,24 @@ public class P2PDBApiImpl implements P2PDBApi {
     public String buildAllSyncMessages(String handShakeJson) {
         List<HandShakingInfo> infos = deSerializeHandShakingInformationFromJson(handShakeJson);
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
+
+        Iterator outIT = output.iterator();
+        while(outIT.hasNext()) {
+            P2PSyncInfo info = (P2PSyncInfo) outIT.next();
+            Log.i(TAG, "got pSync Info of message" + info.getMessage());
+            Log.i(TAG, "got pSync Info of message type" + info.getMessageType());
+            if(info != null && info.messageType.equals("Photo")) {
+                String message = info.getMessage();
+                Log.i(TAG, "got pSync message original" + info.getMessage());
+                if(message != null) {
+                    File file = new File(context.getApplicationContext().getExternalFilesDir(null) + "/Cache", "DefaultImage.jpg");
+                    String encodedMesssage =  P2PSyncManager.encodeFileToBase64Binary(file.getAbsolutePath());
+                    Log.i(TAG, "got pSync message content" + encodedMesssage);
+                    info.setMessage(encodedMesssage);
+                }
+            }
+        }
+
         String json = this.convertP2PSyncInfoToJson(output);
         Log.i(TAG, "SYNC JSON:" + json);
         return json;

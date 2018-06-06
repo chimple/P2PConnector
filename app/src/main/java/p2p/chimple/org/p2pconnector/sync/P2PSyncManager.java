@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -343,7 +344,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     private void startTestConnection(Socket socket, final boolean shouldInitiate) {
         Log.i(TAG, "Initial Connection established with shouldInitiate:" + shouldInitiate);
-        instance.mTestConnectedThread = new ConnectedThread(socket, mHandler);
+        instance.mTestConnectedThread = new ConnectedThread(socket, mHandler, context);
         instance.mTestConnectedThread.start();
         instance.shouldInitiate = shouldInitiate;
         Log.i(TAG, "Initial Connection established - mTestConnectedThread initialized:" + (mTestConnectedThread != null));
@@ -487,6 +488,44 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             Log.i(TAG, "could not write to external storage");
         }
         return fileName;
+    }
+
+    public static String encodeFileToBase64Binary(String fileName) {
+        String encodedString = null;
+        try {
+            File file = new File(fileName);
+            byte[] bytes = loadFile(file);
+            byte[] encoded = Base64.encode(bytes, Base64.DEFAULT);
+            encodedString = new String(encoded);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encodedString;
+    }
+
+    private static byte[] loadFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+
+        long length = file.length();
+        if (length > Integer.MAX_VALUE) {
+            // File is too large
+        }
+        byte[] bytes = new byte[(int) length];
+
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+            offset += numRead;
+        }
+
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file " + file.getName());
+        }
+
+        is.close();
+        return bytes;
     }
 
     public static String getStringFile(File f) {
