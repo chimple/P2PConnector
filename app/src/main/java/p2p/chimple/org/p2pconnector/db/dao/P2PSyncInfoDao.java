@@ -11,6 +11,7 @@ import java.util.List;
 
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
 
@@ -49,8 +50,8 @@ public interface P2PSyncInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long insertP2PSyncInfo(P2PSyncInfo info);
 
-    @Query("SELECT distinct(user_id) from P2PSyncInfo")
-    public String[] fetchAllUsers();
+    @Query("SELECT user_id, device_id, message from P2PSyncInfo where message_type = 'Photo'")
+    public P2PUserIdDeviceIdAndMessage[] fetchAllUsers();
 
     @Query("SELECT distinct(user_id) from P2PSyncInfo")
     public String[] fetchAllNeighours();
@@ -67,4 +68,7 @@ public interface P2PSyncInfoDao {
 
     @Query("SELECT p2p.* from (SELECT session_id, max(step) as step from P2PSyncInfo where message_type = :messageType and status = 1 group by session_id) tmp, P2PSyncInfo p2p where p2p.session_id = tmp.session_id and p2p.step = tmp.step and ((p2p.user_id = :userId or p2p.recipient_user_id = :recipientId) or (p2p.user_id = :userId or p2p.recipient_user_id = :recipientId))")
     public List<P2PSyncInfo> fetchLatestConversations(String userId, String recipientId, String messageType);
+
+    @Query("SELECT p2p.* from (SELECT session_id, max(step) as step from P2PSyncInfo where status = 1 group by session_id) tmp, P2PSyncInfo p2p where p2p.session_id = tmp.session_id and p2p.step = tmp.step and p2p.user_id = :userId")
+    public List<P2PSyncInfo> fetchLatestConversationsByUser(String userId);
 }
