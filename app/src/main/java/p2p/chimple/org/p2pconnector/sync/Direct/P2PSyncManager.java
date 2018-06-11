@@ -427,6 +427,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     public void onDestroy() {
         Log.i(TAG, "in P2P Destroy");
+
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(p2pAllMessageExchangedReceiver);
         if (this.shutDownJobTimer != null) {
