@@ -44,6 +44,7 @@ import p2p.chimple.org.p2pconnector.db.entity.HandShakingMessageDeserializer;
 import p2p.chimple.org.p2pconnector.db.entity.P2PLatestInfoByUserAndDevice;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncDeviceStatus;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
@@ -468,8 +469,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         return results;
     }
 
-
-    public List<String> getUsers() {
+    public List<P2PUserIdDeviceIdAndMessage> getUsers() {
         return Arrays.asList(db.p2pSyncDao().fetchAllUsers());
     }
 
@@ -566,7 +566,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         }
     }
 
-    private boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message) {
+    public boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message) {
         try {
             P2PSyncInfo userInfo = db.p2pSyncDao().getProfileByUserId(userId, P2PSyncManager.MessageTypes.PHOTO.type());
             if (userInfo != null) {
@@ -596,6 +596,11 @@ public class P2PDBApiImpl implements P2PDBApi {
             Log.e(TAG, e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public List<P2PSyncInfo> getLatestConversationsByUser(String firstUserId) {
+        return db.p2pSyncDao().fetchLatestConversationsByUser(firstUserId);
     }
 }
 

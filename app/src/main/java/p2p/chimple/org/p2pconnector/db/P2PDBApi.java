@@ -6,13 +6,14 @@ import java.util.List;
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncDeviceStatus;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 
 public interface P2PDBApi {
 
     // API designed for Application
 
-    List<String> getUsers();
+    List<P2PUserIdDeviceIdAndMessage> getUsers();
 
     List<P2PUserIdMessage> fetchLatestMessagesByMessageType(String messageType, List<String> userIds);
 
@@ -47,4 +48,8 @@ public interface P2PDBApi {
     public void syncCompleted(String deviceId);
 
     public P2PSyncDeviceStatus getLatestDeviceToSyncFromDevices(List<String> items);
+
+    public boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message);
+
+    public List<P2PSyncInfo> getLatestConversationsByUser(String firstUserId);
 }

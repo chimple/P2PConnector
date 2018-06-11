@@ -20,12 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
@@ -114,12 +117,15 @@ public class LoginActivity extends Activity {
             }
         });
 
-        List<String> users = P2PDBApiImpl.getInstance(getApplicationContext()).getUsers();
+        List<P2PUserIdDeviceIdAndMessage> users = P2PDBApiImpl.getInstance(getApplicationContext()).getUsers();
         Toast.makeText(getApplicationContext(),String.valueOf(users.size()),Toast.LENGTH_LONG).show();
+        List<String> userIds = new ArrayList<String>();
         for (int i = 0; i < users.size(); i++) {
-            Log.i("MainActivity AllUsers", users.get(i));
-            listItem = users.toArray(new String[i]);
+            P2PUserIdDeviceIdAndMessage um = users.get(i);
+            Log.i("MainActivity AllUsers", um.userId);
+            userIds.add(um.userId);
         }
+        listItem = userIds.toArray(new String[userIds.size()]);
         adapter = new ArrayAdapter<String>(getBaseContext(),
                 android.R.layout.simple_list_item_1, listItem);
         usersList.setAdapter(adapter);
