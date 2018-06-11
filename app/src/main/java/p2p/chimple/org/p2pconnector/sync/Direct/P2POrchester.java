@@ -97,6 +97,9 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
 
     public void cleanUp() {
         Log.i(TAG, "Stopping all");
+        if(mWifiAccessPoint != null && mWifiAccessPoint.getmHandShakeListenerThread() != null) {
+            mWifiAccessPoint.getmHandShakeListenerThread().cleanUp();
+        }
         stopHandShakerThread();
         stopWifiConnection();
         stopWifiAccessPoint();

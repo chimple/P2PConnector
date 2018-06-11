@@ -122,6 +122,9 @@ public class NSDOrchester implements NSDHandShakeInitiatorCallBack, NSDWifiConne
 
     public void cleanUp() {
         Log.i(TAG, "Stopping all");
+        if (mWifiAccessPoint != null && mWifiAccessPoint.getmHandShakeListenerThread() != null) {
+            mWifiAccessPoint.getmHandShakeListenerThread().cleanUp();
+        }
         stopServiceSearcher();
         setConnectionState(SyncUtils.ConnectionState.NotInitialized);
         setListeningState(SyncUtils.ReportingState.NotInitialized);
