@@ -254,22 +254,22 @@ public class P2PDBApiImpl implements P2PDBApi {
         List<HandShakingInfo> infos = deSerializeHandShakingInformationFromJson(handShakeJson);
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
 
-        Iterator outIT = output.iterator();
-        while(outIT.hasNext()) {
-            P2PSyncInfo info = (P2PSyncInfo) outIT.next();
-            Log.i(TAG, "got pSync Info of message" + info.getMessage());
-            Log.i(TAG, "got pSync Info of message type" + info.getMessageType());
-            if(info != null && info.messageType.equals("Photo")) {
-                String message = info.getMessage();
-                Log.i(TAG, "got pSync message original" + info.getMessage());
-                if(message != null) {
-                    File file = new File(context.getApplicationContext().getExternalFilesDir(null) + "/Cache", "DefaultImage.jpg");
-                    String encodedMesssage =  P2PSyncManager.encodeFileToBase64Binary(file.getAbsolutePath());
-                    Log.i(TAG, "got pSync message content" + encodedMesssage);
-                    info.setMessage(encodedMesssage);
-                }
-            }
-        }
+//        Iterator outIT = output.iterator();
+//        while(outIT.hasNext()) {
+//            P2PSyncInfo info = (P2PSyncInfo) outIT.next();
+//            Log.i(TAG, "got pSync Info of message" + info.getMessage());
+//            Log.i(TAG, "got pSync Info of message type" + info.getMessageType());
+//            if(info != null && info.messageType.equals("Photo")) {
+//                String message = info.getMessage();
+//                Log.i(TAG, "got pSync message original" + info.getMessage());
+//                if(message != null) {
+//                    File file = new File(context.getApplicationContext().getExternalFilesDir(null) + "/Cache", "DefaultImage.jpg");
+//                    String encodedMesssage =  P2PSyncManager.encodeFileToBase64Binary(file.getAbsolutePath());
+//                    Log.i(TAG, "got pSync message content" + encodedMesssage);
+//                    info.setMessage(encodedMesssage);
+//                }
+//            }
+//        }
 
         String json = this.convertP2PSyncInfoToJson(output);
         Log.i(TAG, "SYNC JSON:" + json);

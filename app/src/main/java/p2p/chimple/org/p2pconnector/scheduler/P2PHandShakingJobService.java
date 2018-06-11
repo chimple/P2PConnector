@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -84,15 +85,27 @@ public class P2PHandShakingJobService extends JobService {
             receiver = null;
             Log.i(TAG, "WifiDirectIntentBroadcast Receiver unregistered");
         }
+        WifiManager wifiManager;
+        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if(wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED){
+            wifiManager.setWifiEnabled(false);
+        }
     }
 
     private void registerWifiDirectIntentBroadcastReceiver() {
+
+        WifiManager wifiManager;
+        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if(wifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED){
+            wifiManager.setWifiEnabled(true);
+        }
 
         receiver = new WifiDirectIntentBroadcastReceiver(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(P2P_SYNC_RESULT_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         Log.i(TAG, "WifiDirectIntentBroadcast Receiver registered");
+
     }
 
 
