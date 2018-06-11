@@ -3,6 +3,7 @@ package p2p.chimple.org.p2pconnector.sync;
 import android.util.Log;
 
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
+import p2p.chimple.org.p2pconnector.db.DBSyncManager;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_DB_SYNC_INFORMATION;
@@ -22,7 +23,7 @@ public class SendSyncInfoMessageState implements P2PState {
     }
 
     @Override
-    public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String message) {
+    public void onEnter(P2PStateFlow p2PStateFlow, DBSyncManager manager, String message) {
         //send handshaking message
         try {
             String handShakingInformationReceived = p2PStateFlow.getStateResult(P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION);

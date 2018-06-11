@@ -1,4 +1,4 @@
-package p2p.chimple.org.p2pconnector.sync;
+package p2p.chimple.org.p2pconnector.sync.sender;
 
 import java.net.Socket;
 

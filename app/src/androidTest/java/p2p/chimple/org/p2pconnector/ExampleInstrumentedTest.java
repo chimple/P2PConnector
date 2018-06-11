@@ -1,24 +1,15 @@
 package p2p.chimple.org.p2pconnector;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.UUID;
-
-import p2p.chimple.org.p2pconnector.db.AppDatabase;
-import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
-
 import static org.junit.Assert.*;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 /**
  * Instrumented test, which will execute on an Android device.

@@ -2,6 +2,8 @@ package p2p.chimple.org.p2pconnector.sync;
 
 import android.util.Log;
 
+import p2p.chimple.org.p2pconnector.db.DBSyncManager;
+
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.NONE;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_HANDSHAKING_INFORMATION;
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_HANDSHAKING_INFORMATION;
@@ -20,7 +22,7 @@ public class NoneState implements P2PState {
     }
 
     @Override
-    public void onEnter(P2PStateFlow p2PStateFlow, P2PSyncManager manager, String message) {
+    public void onEnter(P2PStateFlow p2PStateFlow, DBSyncManager manager, String message) {
         Log.i(TAG, "ENTER NONE STATE ... WAITING FOR NEXT COMMAND");
     }
 

@@ -2,15 +2,9 @@ package p2p.chimple.org.p2pconnector.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.util.UUID;
-
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
-import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
-
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
 
 public class P2PApplication extends Application {
     private static final String TAG = P2PApplication.class.getName();

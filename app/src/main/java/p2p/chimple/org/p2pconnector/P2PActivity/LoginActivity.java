@@ -13,28 +13,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import p2p.chimple.org.p2pconnector.R;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
-import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.scheduler.JobUtils;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
 import static junit.framework.Assert.assertEquals;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.db;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customStatusUpdateEvent;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.customTimerStatusUpdateEvent;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.customStatusUpdateEvent;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.customTimerStatusUpdateEvent;
 
 public class LoginActivity extends Activity {
 

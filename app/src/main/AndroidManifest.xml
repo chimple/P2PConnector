@@ -29,7 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".scheduler.WifiDirectIntentService"/>
+            android:name=".scheduler.P2PIntentService"/>
         <service
             android:name=".scheduler.P2PHandShakingJobService"
             android:exported="true"

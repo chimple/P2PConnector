@@ -3,24 +3,18 @@ package p2p.chimple.org.p2pconnector.db;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import p2p.chimple.org.p2pconnector.R;
-import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
+import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager;
 
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
 
 public class DatabaseInitializer {
 

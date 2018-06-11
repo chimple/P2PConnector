@@ -1,4 +1,4 @@
-package p2p.chimple.org.p2pconnector.sync;
+package p2p.chimple.org.p2pconnector.sync.Direct;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.HandShakeportToUse;
 import static p2p.chimple.org.p2pconnector.sync.SyncUtils.SERVICE_TYPE;
 

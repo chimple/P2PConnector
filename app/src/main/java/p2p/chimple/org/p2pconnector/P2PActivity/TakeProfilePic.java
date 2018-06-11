@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -17,15 +14,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.MainActivity;
@@ -36,9 +28,7 @@ import p2p.chimple.org.p2pconnector.db.DatabaseInitializer;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
 
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.getContext;
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
-import static p2p.chimple.org.p2pconnector.application.P2PApplication.db;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
 
 public class TakeProfilePic extends Activity {
 

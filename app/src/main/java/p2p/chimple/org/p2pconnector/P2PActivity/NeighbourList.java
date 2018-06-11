@@ -41,7 +41,7 @@ public class NeighbourList extends AppCompatActivity {
 
 
 //        if(instance!=null) {
-//            Map<String, WifiDirectService> users = instance.getNeighbours();
+//            Map<String, P2PSyncService> users = instance.getNeighbours();
 //            if (users != null) {
 //                Log.i("Neighbours list", String.valueOf(users));
 //                listItem = users.keySet().toArray(new String[0]);

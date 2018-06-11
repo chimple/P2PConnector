@@ -48,9 +48,9 @@ import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessage;
 import p2p.chimple.org.p2pconnector.db.entity.ProfileMessageDeserializer;
-import p2p.chimple.org.p2pconnector.sync.P2PSyncManager;
+import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager;
 
-import static p2p.chimple.org.p2pconnector.sync.P2PSyncManager.P2P_SHARED_PREF;
+import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
 
 public class P2PDBApiImpl implements P2PDBApi {
     private static final String TAG = P2PDBApiImpl.class.getName();
@@ -256,16 +256,16 @@ public class P2PDBApiImpl implements P2PDBApi {
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
 
         Iterator outIT = output.iterator();
-        while(outIT.hasNext()) {
+        while (outIT.hasNext()) {
             P2PSyncInfo info = (P2PSyncInfo) outIT.next();
             Log.i(TAG, "got pSync Info of message" + info.getMessage());
             Log.i(TAG, "got pSync Info of message type" + info.getMessageType());
-            if(info != null && info.messageType.equals("Photo")) {
+            if (info != null && info.messageType.equals("Photo")) {
                 String message = info.getMessage();
                 Log.i(TAG, "got pSync message original" + info.getMessage());
-                if(message != null) {
+                if (message != null) {
                     File file = new File(context.getApplicationContext().getExternalFilesDir(null) + "/Cache", "DefaultImage.jpg");
-                    String encodedMesssage =  P2PSyncManager.encodeFileToBase64Binary(file.getAbsolutePath());
+                    String encodedMesssage = P2PSyncManager.encodeFileToBase64Binary(file.getAbsolutePath());
                     Log.i(TAG, "got pSync message content" + encodedMesssage);
                     info.setMessage(encodedMesssage);
                 }
@@ -473,7 +473,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         return Arrays.asList(db.p2pSyncDao().fetchAllUsers());
     }
 
-    public List<P2PSyncInfo> getInfoByUserId(String userid){
+    public List<P2PSyncInfo> getInfoByUserId(String userid) {
         return Arrays.asList(db.p2pSyncDao().getSyncInformationByUserId(userid));
     }
 
@@ -568,12 +568,12 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     public boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message) {
         try {
-            P2PSyncInfo userInfo = db.p2pSyncDao().getProfileByUserId(userId, P2PSyncManager.MessageTypes.PHOTO.type());
+            P2PSyncInfo userInfo = db.p2pSyncDao().getProfileByUserId(userId, DBSyncManager.MessageTypes.PHOTO.type());
             if (userInfo != null) {
                 userInfo.setUserId(userId);
                 userInfo.setDeviceId(deviceId);
                 userInfo.setMessage(message);
-                userInfo.setMessageType(P2PSyncManager.MessageTypes.PHOTO.type());
+                userInfo.setMessageType(DBSyncManager.MessageTypes.PHOTO.type());
             } else {
                 userInfo = new P2PSyncInfo();
                 userInfo.setUserId(userId);
@@ -587,7 +587,7 @@ public class P2PDBApiImpl implements P2PDBApi {
                 maxSequence++;
                 userInfo.setSequence(maxSequence);
                 userInfo.setMessage(message);
-                userInfo.setMessageType(P2PSyncManager.MessageTypes.PHOTO.type());
+                userInfo.setMessageType(DBSyncManager.MessageTypes.PHOTO.type());
             }
             db.p2pSyncDao().insertP2PSyncInfo(userInfo);
             return true;
