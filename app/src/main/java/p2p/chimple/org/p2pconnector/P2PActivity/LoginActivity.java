@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ import static junit.framework.Assert.assertEquals;
 import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
 import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.customStatusUpdateEvent;
 import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.customTimerStatusUpdateEvent;
+import static p2p.chimple.org.p2pconnector.application.P2PApplication.getContext;
 
 public class LoginActivity extends Activity {
 
@@ -50,6 +53,13 @@ public class LoginActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+//        WifiManager wifiManager;
+//        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        if(wifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED){
+//            wifiManager.setWifiEnabled(true);
+//        }
+
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(customStatusUpdateEvent));
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageTimerReceiver, new IntentFilter(customTimerStatusUpdateEvent));
@@ -151,8 +161,14 @@ public class LoginActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        deleteCache(getContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         updateStatus(TAG, "Destroying MainActivity");
+//        WifiManager wifiManager;
+//        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        if(wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED){
+//            wifiManager.setWifiEnabled(false);
+//        }
     }
 
     public void updateStatus(String who, String line) {
@@ -200,5 +216,28 @@ public class LoginActivity extends Activity {
         editor.commit(); // commit changes
     }
 
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
 }
 
