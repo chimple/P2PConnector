@@ -81,11 +81,11 @@ public class P2PHandShakingJobService extends JobService {
             Log.i(TAG, "p2p Sync Completion Receiver unregistered");
         }
 
-        WifiManager wifiManager;
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
-            wifiManager.setWifiEnabled(false);
-        }
+//        WifiManager wifiManager;
+//        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
+//            wifiManager.setWifiEnabled(false);
+//        }
     }
 
     private void registerP2PSyncCompletionIntentBroadcastReceiver() {
@@ -94,11 +94,12 @@ public class P2PHandShakingJobService extends JobService {
         filter.addAction(P2P_SYNC_RESULT_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         Log.i(TAG, "p2p Sync Completion Receiver registered");
-        WifiManager wifiManager;
-        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if(wifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED){
-            wifiManager.setWifiEnabled(true);
-        }
+
+//        WifiManager wifiManager;
+//        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        if(wifiManager.getWifiState()==WifiManager.WIFI_STATE_DISABLED){
+//            wifiManager.setWifiEnabled(true);
+//        }
     }
 
 
