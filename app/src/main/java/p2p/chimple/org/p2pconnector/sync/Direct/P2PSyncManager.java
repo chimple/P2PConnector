@@ -207,16 +207,13 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         //Start Init
 
         WifiManager wifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED || wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
-            wifiManager.setWifiEnabled(false);
-            while (wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED) {
+        while (wifiManager.getWifiState() != WifiManager.WIFI_STATE_DISABLED) {
+                wifiManager.setWifiEnabled(false); 
+        }
+        while (wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED) {
                 wifiManager.setWifiEnabled(true);
-            }
         }
 
-        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED || wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLING) {
-            wifiManager.setWifiEnabled(true);
-        }
 
 //        WifiManager wifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
 //        if (!wifiManager.isWifiEnabled()) {
