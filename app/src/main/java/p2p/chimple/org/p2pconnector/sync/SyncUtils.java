@@ -24,7 +24,7 @@ import p2p.chimple.org.p2pconnector.sync.NSD.NSDSyncService;
 public class SyncUtils {
 
     public static final int HandShakeportToUse = 38777;
-    public static final String SERVICE_TYPE = "_WAPC_p2p._tcp";
+    public static final String SERVICE_TYPE = "_P2P_Conn._tcp";
 
     public enum DiscoveryState {
         NONE,
