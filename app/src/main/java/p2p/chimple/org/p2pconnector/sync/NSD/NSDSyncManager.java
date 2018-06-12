@@ -192,25 +192,37 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     }
 
     public void startExitTimer() {
+//        synchronized (this) {
+//            shutDownJobTimer = new CountDownTimer(5000, 1000) {
+//                public void onTick(long millisUntilFinished) {
+//                    Log.i(TAG, "shutDownJobTimer ticking.....");
+//                }
+//
+//                public void onFinish() {
+//                    Log.i(TAG, "SHUTTING DOWN CURRENT JOB with parameters" + instance.currentJobParams.toString());
+//                    Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+//                    result.putExtra(JOB_PARAMS, instance.currentJobParams);
+//                    LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
+//                }
+//            };
+//
+//            Log.i(TAG, "...... checking if exitTimerStarted ....." + exitTimerStarted);
+//            if (!exitTimerStarted) {
+//                exitTimerStarted = true;
+//                Log.i(TAG, "...... exitTimerStarted .....");
+//                shutDownJobTimer.start();
+//                Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
+//            }
+//        }
+
         synchronized (this) {
-            shutDownJobTimer = new CountDownTimer(5000, 1000) {
-                public void onTick(long millisUntilFinished) {
-                    Log.i(TAG, "shutDownJobTimer ticking.....");
-                }
-
-                public void onFinish() {
-                    Log.i(TAG, "SHUTTING DOWN CURRENT JOB with parameters" + instance.currentJobParams.toString());
-                    Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
-                    result.putExtra(JOB_PARAMS, instance.currentJobParams);
-                    LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
-                }
-            };
-
-            Log.i(TAG, "...... checking if exitTimerStarted ....." + exitTimerStarted);
             if (!exitTimerStarted) {
                 exitTimerStarted = true;
                 Log.i(TAG, "...... exitTimerStarted .....");
-                shutDownJobTimer.start();
+                Log.i(TAG, "SHUTTING DOWN CURRENT JOB with parameters" + instance.currentJobParams.toString());
+                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+                result.putExtra(JOB_PARAMS, instance.currentJobParams);
+                LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
                 Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
             }
         }
