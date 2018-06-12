@@ -223,6 +223,10 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     }
 
     public void stopNSDConnector() {
+        this.stopListenerThread();
+        this.stopConnectedThread();
+        this.stopConnectToThread();
+
         if (mNSDConnector != null) {
             mNSDConnector.cleanUp();
             mNSDConnector = null;
@@ -348,6 +352,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     public void onDestroy() {
         Log.i(TAG, "in NSD Destroy");
+
         if (this.shutDownJobTimer != null) {
             this.shutDownJobTimer.cancel();
         }

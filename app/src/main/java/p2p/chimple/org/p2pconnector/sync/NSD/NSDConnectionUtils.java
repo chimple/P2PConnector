@@ -18,6 +18,16 @@ public class NSDConnectionUtils {
         return localPort;
     }
 
+    public static int getCommunicationPort(Context context) {
+        int localPort = getInt(context, "NSD_LOCAL_COM_PORT");
+        if (localPort < 0) {
+            localPort = getNextFreePort();
+            saveInt(context, "NSD_LOCAL_COM_PORT", localPort);
+        }
+        return localPort;
+    }
+
+
     public static int getNextFreePort() {
         int localPort = -1;
         try {

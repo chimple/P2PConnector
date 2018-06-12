@@ -207,10 +207,20 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         //Start Init
 
         WifiManager wifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
-        if (!wifiManager.isWifiEnabled()) {
+        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
             wifiManager.setWifiEnabled(false);
         }
 
+        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
+            wifiManager.setWifiEnabled(true);
+        }
+
+
+//        WifiManager wifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
+//        if (!wifiManager.isWifiEnabled()) {
+//            wifiManager.setWifiEnabled(false);
+//        }
+//
 
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
         if (list != null) {
@@ -417,6 +427,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     public void onDestroy() {
         Log.i(TAG, "in P2P Destroy");
+
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(p2pAllMessageExchangedReceiver);
         if (this.shutDownJobTimer != null) {

@@ -112,10 +112,9 @@ public class P2PServiceFinder {
 
             public void onDnsSdServiceAvailable(String instanceName, String serviceType, WifiP2pDevice device) {
 
-                Log.i(TAG, "Found Service, :" + instanceName + ", type" + serviceType + ":");
-
                 if (serviceType.startsWith(SERVICE_TYPE)) {
                     boolean addService = true;
+                    Log.i(TAG, "Found Service, :" + instanceName + ", type" + serviceType + ":");
                     for (int i = 0; i < serviceList.size(); i++) {
                         if (serviceList.get(i).getDeviceAddress().equals(device.deviceAddress)) {
                             addService = false;

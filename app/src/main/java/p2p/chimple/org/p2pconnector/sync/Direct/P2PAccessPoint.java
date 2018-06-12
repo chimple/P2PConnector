@@ -356,4 +356,8 @@ public class P2PAccessPoint implements HandShakeListenerCallBack, WifiP2pManager
             }
         }
     }
+
+    public HandShakeListenerThread getmHandShakeListenerThread() {
+        return mHandShakeListenerThread;
+    }
 }

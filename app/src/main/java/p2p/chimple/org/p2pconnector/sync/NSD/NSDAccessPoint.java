@@ -99,4 +99,8 @@ public class NSDAccessPoint implements HandShakeListenerCallBack {
         mHandShakeListenerThread = new NSDHandShakingListenerThread(that, port, trialCountTmp);
         mHandShakeListenerThread.start();
     }
+
+    public NSDHandShakingListenerThread getmHandShakeListenerThread() {
+        return mHandShakeListenerThread;
+    }
 }
