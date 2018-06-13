@@ -52,4 +52,8 @@ public interface P2PDBApi {
     public boolean upsertProfileForUserIdAndDevice(String userId, String deviceId, String message);
 
     public List<P2PSyncInfo> getLatestConversationsByUser(String firstUserId);
+
+    public void persistP2PSyncMessage(P2PSyncInfo message);
+
+    public List<P2PSyncInfo> fetchByUserAndDeviceAndSequence(String userId, String deviceId, Long sequence);
 }

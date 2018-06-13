@@ -16,7 +16,7 @@ import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
 @Dao
 public interface P2PSyncInfoDao {
     @Query("SELECT * FROM P2PSyncInfo WHERE user_id=:userId AND device_id=:deviceId")
-    public P2PSyncInfo[] getSyncInformationByUserIdAndDeviceId(String userId, String deviceId);
+    public List<P2PSyncInfo> getSyncInformationByUserIdAndDeviceId(String userId, String deviceId);
 
     @Query("SELECT * FROM P2PSyncInfo WHERE user_id=:userId")
     public P2PSyncInfo[] getSyncInformationByUserId(String userId);
@@ -42,6 +42,9 @@ public interface P2PSyncInfoDao {
 
     @Query("SELECT * FROM P2PSyncInfo WHERE user_id=:userId AND device_id=:deviceId AND sequence <= :sequence")
     public P2PSyncInfo[] fetchByUserAndDeviceUpToSequence(String userId, String deviceId, Long sequence);
+
+    @Query("SELECT * FROM P2PSyncInfo WHERE user_id=:userId AND device_id=:deviceId AND sequence = :sequence")
+    public List<P2PSyncInfo> fetchByUserAndDeviceAndSequence(String userId, String deviceId, Long sequence);
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

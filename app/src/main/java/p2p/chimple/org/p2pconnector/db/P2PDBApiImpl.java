@@ -85,8 +85,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "inserted data" + info);
     }
 
-    private void persistP2PSyncMessage(P2PSyncInfo message) {
-        db.p2pSyncDao().insertP2PSyncInfo(message);
+    public void persistP2PSyncMessage(P2PSyncInfo message) {
         Log.i(TAG, "got Sync info:" + message.deviceId);
         Log.i(TAG, "got Sync info:" + message.userId);
         Log.i(TAG, "got Sync info:" + message.message);
@@ -94,6 +93,18 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "got Sync info:" + message.sequence);
         Log.i(TAG, "got Sync info:" + message.recipientUserId);
         Log.i(TAG, "inserted data" + message);
+
+        List found = db.p2pSyncDao().fetchByUserAndDeviceAndSequence(message.getUserId(), message.getDeviceId(), message.sequence);
+        if(found == null) {
+            db.p2pSyncDao().insertP2PSyncInfo(message);
+            Log.i(TAG, "inserted data" + message);
+        } else {
+            Log.i(TAG, "existing data" + message);
+        }
+    }
+
+    public List<P2PSyncInfo> fetchByUserAndDeviceAndSequence(String userId, String deviceId, Long sequence) {
+        return db.p2pSyncDao().fetchByUserAndDeviceAndSequence(userId, deviceId, sequence);
     }
 
     public void persistP2PSyncInfos(String p2pSyncJson) {
