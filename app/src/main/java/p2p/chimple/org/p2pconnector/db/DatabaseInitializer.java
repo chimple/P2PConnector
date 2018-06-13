@@ -72,6 +72,49 @@ public class DatabaseInitializer {
         }
     }
 
+
+
+    public static void populateWithTestData(AppDatabase db, Context context) {
+        SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = null;
+        try {
+            inputStream = assetManager.open("database.csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+        // message contains userId, deviceId, recipientUserId, message, messageType
+
+        String line = "";
+        db.beginTransaction();
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] columns = line.split(",");
+
+                if (columns.length < 1) {
+                    Log.d(TAG + "AppDatabase", "Skipping bad row");
+                }
+
+                String userId = columns[0];
+                String deviceId = columns[1];
+                String recipientUserId = columns[2];
+                String message = columns[3];
+                String messageType = columns[4];
+
+                P2PDBApiImpl.getInstance(context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
+            }
+
+            db.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
         private final AppDatabase mDb;

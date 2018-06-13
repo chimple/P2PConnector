@@ -81,7 +81,7 @@ public class P2PDBApiImpl implements P2PDBApi {
 
         maxSequence++;
         P2PSyncInfo info = new P2PSyncInfo(userId, deviceId, maxSequence, recepientUserId, message, messageType);
-        db.p2pSyncDao().insertP2PSyncInfo(info);
+        this.persistP2PSyncMessage(info);
         Log.i(TAG, "inserted data" + info);
     }
 
@@ -95,7 +95,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "inserted data" + message);
 
         List found = db.p2pSyncDao().fetchByUserAndDeviceAndSequence(message.getUserId(), message.getDeviceId(), message.sequence);
-        if(found == null) {
+        if(found == null || found.size() == 0) {
             db.p2pSyncDao().insertP2PSyncInfo(message);
             Log.i(TAG, "inserted data" + message);
         } else {

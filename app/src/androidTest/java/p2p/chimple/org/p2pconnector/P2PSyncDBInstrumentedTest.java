@@ -21,12 +21,16 @@ import java.util.UUID;
 
 import kotlin.jvm.JvmField;
 import p2p.chimple.org.p2pconnector.db.AppDatabase;
+import p2p.chimple.org.p2pconnector.db.DBSyncManager;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.db.dao.P2PSyncInfoDao;
 import p2p.chimple.org.p2pconnector.db.entity.P2PSyncInfo;
+import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdDeviceIdAndMessage;
 import p2p.chimple.org.p2pconnector.db.entity.P2PUserIdMessage;
+import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager;
 
 import static org.junit.Assert.assertEquals;
+import static p2p.chimple.org.p2pconnector.db.AppDatabase.DATABASE_NAME;
 import static p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager.P2P_SHARED_PREF;
 
 @RunWith(AndroidJUnit4.class)
@@ -43,9 +47,14 @@ public class P2PSyncDBInstrumentedTest {
     public void setUp() {
         context = InstrumentationRegistry.getTargetContext();
         try {
-            database = Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
+            database = Room
+                    .databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
                     .allowMainThreadQueries()
                     .build();
+//
+//            database = Room.inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
+//                    .allowMainThreadQueries()
+//                    .build();
 
         } catch (Exception ex) {
             Log.i("test", ex.getMessage());
@@ -149,71 +158,82 @@ public class P2PSyncDBInstrumentedTest {
     @Test
     public void testAddingAndRetrievingData() {
         P2PSyncInfo info = new P2PSyncInfo();
-        info.setDeviceId("A");
-        info.setUserId("1");
+        info.setDeviceId("N");
+        info.setUserId("P");
         info.setRecipientUserId("2");
         info.setMessageType("Chat");
         info.setMessage("Good Morning");
         info.setSequence(1L);
-        p2PSyncInfoDao.insertP2PSyncInfo(info);
+        p2pDBAPI.persistP2PSyncMessage(info);
 
-        List<P2PUserIdMessage> messages = p2PSyncInfoDao.fetchLatestMessagesByMessageType("Chat");
-        assertEquals(messages.size(), 1);
+        P2PSyncInfo info1 = new P2PSyncInfo();
+        info1.setDeviceId("N");
+        info1.setUserId("P");
+        info1.setRecipientUserId("2");
+        info1.setMessageType("Chat");
+        info1.setMessage("Good Morning");
+        info1.setSequence(1L);
+        p2pDBAPI.persistP2PSyncMessage(info);
+
+
+        List messages = p2PSyncInfoDao.fetchByUserAndDeviceAndSequence(info.getUserId(), info.getDeviceId(), 1L);
+        assertEquals(messages.size(), 0);
     }
 
 
-//    @Test
-//    public void getUsersTest() {
-//        P2PSyncInfo info = new P2PSyncInfo();
-//        info.setDeviceId("A");
-//        info.setUserId("1");
-//        info.setRecipientUserId("2");
-//        info.setMessageType("Photo");
-//        info.setMessage("Good Morning");
-//        info.setSequence(1L);
-//        p2PSyncInfoDao.insertP2PSyncInfo(info);
-//
-//        P2PSyncInfo info1 = new P2PSyncInfo();
-//        info1.setDeviceId("B");
-//        info1.setUserId("2");
-//        info1.setRecipientUserId("1");
-//        info1.setMessageType("Photo");
-//        info1.setMessage("Good Morning");
-//        info1.setSequence(2L);
-//        p2PSyncInfoDao.insertP2PSyncInfo(info1);
-//
-//
-//        List<P2PUserIdDeviceIdAndMessage> users = p2pDBAPI.getUsers();
-//        assertEquals(users.size(), 2);
-//    }
-//
-//
-//    @Test
-//    public void upsertProfileTest() {
-//        p2pDBAPI.upsertProfile();
-//        SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
-//        String fileName = pref.getString("PROFILE_PHOTO", null); // getting String
-//        String userId = pref.getString("USER_ID", null); // getting String
-//        String deviceId = pref.getString("DEVICE_ID", null); // getting String
-//
-//        P2PSyncInfo userInfo = p2PSyncInfoDao.getProfileByUserId(userId, P2PSyncManager.MessageTypes.PHOTO.type());
-//        assertEquals(userInfo.getUserId(), userId);
-//        assertEquals(userInfo.getMessage(), fileName);
-//        assertEquals(userInfo.getDeviceId(), deviceId);
-//        assertEquals(userInfo.getSequence().longValue(), 1);
-//
-//        pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
-//        SharedPreferences.Editor editor = pref.edit();
-//        editor.putString("PROFILE_PHOTO", "photo2.jpg");
-//        editor.commit(); // commit changes
-//
-//        p2pDBAPI.upsertProfile();
-//        userInfo = p2PSyncInfoDao.getProfileByUserId(userId, P2PSyncManager.MessageTypes.PHOTO.type());
-//        assertEquals(userInfo.getUserId(), userId);
-//        assertEquals(userInfo.getMessage(), "photo2.jpg");
-//        assertEquals(userInfo.getDeviceId(), deviceId);
-//        assertEquals(userInfo.getSequence().longValue(), 1);
-//    }
+    @Test
+    public void getUsersTest() {
+        P2PSyncInfo info = new P2PSyncInfo();
+        info.setDeviceId("A");
+        info.setUserId("1");
+        info.setRecipientUserId("2");
+        info.setMessageType("Photo");
+        info.setMessage("Good Morning");
+        info.setSequence(1L);
+        p2PSyncInfoDao.insertP2PSyncInfo(info);
+
+        P2PSyncInfo info1 = new P2PSyncInfo();
+        info1.setDeviceId("B");
+        info1.setUserId("2");
+        info1.setRecipientUserId("1");
+        info1.setMessageType("Photo");
+        info1.setMessage("Good Morning");
+        info1.setSequence(2L);
+        p2PSyncInfoDao.insertP2PSyncInfo(info1);
+
+
+
+        List<P2PUserIdDeviceIdAndMessage> users = p2pDBAPI.getUsers();
+        assertEquals(users.size(), 2);
+    }
+
+
+    @Test
+    public void upsertProfileTest() {
+        p2pDBAPI.upsertProfile();
+        SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+        String fileName = pref.getString("PROFILE_PHOTO", null); // getting String
+        String userId = pref.getString("USER_ID", null); // getting String
+        String deviceId = pref.getString("DEVICE_ID", null); // getting String
+
+        P2PSyncInfo userInfo = p2PSyncInfoDao.getProfileByUserId(userId, DBSyncManager.MessageTypes.PHOTO.type());
+        assertEquals(userInfo.getUserId(), userId);
+        assertEquals(userInfo.getMessage(), fileName);
+        assertEquals(userInfo.getDeviceId(), deviceId);
+        assertEquals(userInfo.getSequence().longValue(), 1);
+
+        pref = context.getSharedPreferences(P2P_SHARED_PREF, 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("PROFILE_PHOTO", "photo2.jpg");
+        editor.commit(); // commit changes
+
+        p2pDBAPI.upsertProfile();
+        userInfo = p2PSyncInfoDao.getProfileByUserId(userId, DBSyncManager.MessageTypes.PHOTO.type());
+        assertEquals(userInfo.getUserId(), userId);
+        assertEquals(userInfo.getMessage(), "photo2.jpg");
+        assertEquals(userInfo.getDeviceId(), deviceId);
+        assertEquals(userInfo.getSequence().longValue(), 1);
+    }
 
     @After
     public void tearDown() {
