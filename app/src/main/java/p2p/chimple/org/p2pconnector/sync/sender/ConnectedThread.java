@@ -66,32 +66,6 @@ public class ConnectedThread extends Thread {
         }
     }
 
-//    public void run() {
-//        Log.i(TAG, "BTConnectedThread started");
-//        byte[] buffer = new byte[1048576];
-//        int bytes;
-//
-//        while (mRunning) {
-//            try {
-//                bytes = mmInStream.read(buffer);
-//                if(bytes > 0) {
-//                    //  Log.d(TAG, "TestConnectedThread read data: " + bytes + " bytes");
-//                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-//                }else{
-//                    Stop();
-//                    mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1,-1 ,"Disconnected").sendToTarget();
-//                }
-//            } catch (IOException e) {
-//                // Log.e(TAG, "ConnectedThread disconnected: ", e);
-//                Stop();
-//                mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1,-1 ,e ).sendToTarget();
-//                break;
-//            }
-//        }
-//
-//        Log.i(TAG, "BTConnectedThread exit now !");
-//    }
-
     private void readExchangeMessages(StringBuffer sBuffer, byte[] buffer) {
         try {
             int bytes = -1;

@@ -33,9 +33,8 @@ import java.util.Map;
 import p2p.chimple.org.p2pconnector.db.DBSyncManager;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
-import p2p.chimple.org.p2pconnector.sync.P2PStateFlow;
-import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager;
 import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncService;
+import p2p.chimple.org.p2pconnector.sync.P2PStateFlow;
 import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 import p2p.chimple.org.p2pconnector.sync.sender.CommunicationCallBack;
 import p2p.chimple.org.p2pconnector.sync.sender.CommunicationThread;
@@ -83,7 +82,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     public static NSDSyncManager getInstance(Context context) {
         if (instance == null) {
-            synchronized (P2PSyncManager.class) {
+            synchronized (NSDSyncManager.class) {
                 instance = new NSDSyncManager(context);
             }
         }
@@ -142,31 +141,37 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     @Override
     public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case ConnectedThread.MESSAGE_WRITE:
-                byte[] writeBuf = (byte[]) msg.obj;// construct a string from the buffer
-                String writeMessage = new String(writeBuf);
-                updateStatus(TAG, "Wrote: " + writeMessage);
-                break;
-            case ConnectedThread.MESSAGE_READ:
-                synchronized (P2PSyncManager.class) {
-                    byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.i(TAG, "MESSAGE READ:" + readMessage);
-                    if(readMessage != null) {
-                        readMessage = readMessage.replaceAll("START", "");
-                        readMessage = readMessage.replaceAll("END", "");
+        try {
+            switch (msg.what) {
+                case ConnectedThread.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;// construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    updateStatus(TAG, "Wrote: " + writeMessage);
+                    break;
+                case ConnectedThread.MESSAGE_READ:
+                    synchronized (NSDSyncManager.class) {
+                        byte[] readBuf = (byte[]) msg.obj;// construct a string from the valid bytes in the buffer
+                        String readMessage = new String(readBuf, 0, msg.arg1);
+                        Log.i(TAG, "MESSAGE READ:" + readMessage);
+                        if (readMessage != null) {
+                            readMessage = readMessage.replaceAll("START", "");
+                            readMessage = readMessage.replaceAll("END", "");
+                        }
+                        this.p2PStateFlow.processMessages(readMessage);
                     }
-                    this.p2PStateFlow.processMessages(readMessage);
+                    break;
+                case ConnectedThread.SOCKET_DISCONNEDTED: {
+                    updateStatus(TAG + "CHAT", "WE are Stopped now.");
+                    stopConnectedThread();
                 }
                 break;
-            case ConnectedThread.SOCKET_DISCONNEDTED: {
-                updateStatus(TAG + "CHAT", "WE are Stopped now.");
-                stopConnectedThread();
             }
-            break;
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.i(TAG, " handleMessage failed" + ex.getMessage());
+            return true;
         }
-        return true;
     }
 
     public void execute(final JobParameters currentJobParams) {
@@ -392,7 +397,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         canWrite = pathDir.canWrite();
 
         if (canWrite) {
-            fileName = P2PSyncManager.generateUserPhotoFileName(generateUserId);
+            fileName = NSDSyncManager.generateUserPhotoFileName(generateUserId);
             File file = new File(pathDir + "/P2P_IMAGES", fileName);
             try {
                 // Make sure the Pictures directory exists.
@@ -403,7 +408,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                 OutputStream os = new FileOutputStream(file);
                 os.write(contents);
                 os.close();
-                P2PSyncManager.getInstance(context).updateInSharedPreference("PROFILE_PHOTO", generateUserId);
+                NSDSyncManager.getInstance(context).updateInSharedPreference("PROFILE_PHOTO", generateUserId);
             } catch (IOException e) {
                 // Unable to create file, likely because external storage is
                 // not currently mounted.
@@ -488,7 +493,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         try {
             File file = new File(pathDir + "/P2P_IMAGES", fileName);
             Log.i(TAG, " fileSize : " + file.length());
-            result = P2PSyncManager.getStringFile(file);
+            result = NSDSyncManager.getStringFile(file);
             Log.i(TAG, "FinalResult : " + result);
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
@@ -592,7 +597,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
             // Get extra data included in the Intent
             synchronized (this) {
                 P2PDBApi api = P2PDBApiImpl.getInstance(instance.getContext());
-                String deviceId = instance.fetchFromSharedPreference(P2PSyncManager.connectedDevice);
+                String deviceId = instance.fetchFromSharedPreference(NSDSyncManager.connectedDevice);
                 if (deviceId != null) {
                     api.syncCompleted(deviceId);
                 }
