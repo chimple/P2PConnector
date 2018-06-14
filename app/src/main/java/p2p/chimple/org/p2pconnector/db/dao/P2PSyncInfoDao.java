@@ -50,6 +50,10 @@ public interface P2PSyncInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long insertP2PSyncInfo(P2PSyncInfo info);
 
+    @Query("SELECT ps.device_id from (SELECT user_id, max(sequence) as sequence FROM P2PSyncInfo  WHERE message_type = 'Photo' group by user_id) as tmp, P2PSyncInfo ps where ps.user_id = tmp.user_id  and ps.sequence = tmp.sequence and ps.user_id =:userId")
+    public String getDeviceForRecipientUserId(String userId);
+
+
     @Query("SELECT ps.user_id, ps.device_id, ps.message  from (SELECT user_id, max(sequence) as sequence FROM P2PSyncInfo  WHERE message_type = 'Photo' group by user_id) as tmp, P2PSyncInfo ps where ps.user_id = tmp.user_id and ps.sequence = tmp.sequence")
     public P2PUserIdDeviceIdAndMessage[] fetchAllUsers();
 

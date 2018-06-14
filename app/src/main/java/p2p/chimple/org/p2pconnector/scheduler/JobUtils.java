@@ -20,6 +20,7 @@ public class JobUtils {
 
     public synchronized static void scheduledJob(Context context, boolean immediate) {
         if (!isJobRunning()) {
+            isJobRunning = true;
             JobScheduler jobScheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
             boolean isAnyPendingJob = isAnyJobScheduled(context);
             if (isAnyPendingJob) {

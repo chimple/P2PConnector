@@ -12,17 +12,22 @@
     <list default="true" id="daa0f68c-c580-4178-9e40-d4280686f2cd" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/resourceHashesCache.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/resourceHashesCache.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/jarAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/jarAnalysis.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/LoginActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/LoginActivity.java" />
+      <change beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/JobUtils.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/JobUtils.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java" afterPath="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -55,88 +60,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="NSDSyncManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="200" column="40" lean-forward="false" selection-start-line="200" selection-start-column="40" selection-end-line="200" selection-end-column="40" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#21967#22768#0" expanded="true" />
-                <element signature="e#22767#22768#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="P2PHandShakingJobService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="88" column="0" lean-forward="false" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="P2PDBApiImpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="255" column="68" lean-forward="false" selection-start-line="255" selection-start-column="68" selection-end-line="255" selection-end-column="68" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LoginActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/LoginActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-226">
-              <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+            <state relative-caret-position="152">
+              <caret line="653" column="40" lean-forward="true" selection-start-line="653" selection-start-column="40" selection-end-line="653" selection-end-column="40" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#9448#9465#0" expanded="true" />
+                <element signature="e#11342#11359#0" expanded="true" />
+                <element signature="e#14771#14784#0" expanded="true" />
+                <element signature="e#14971#15376#0" expanded="true" />
+                <element signature="e#15375#15376#0" expanded="true" />
+                <element signature="e#15431#15836#0" expanded="true" />
+                <element signature="e#15835#15836#0" expanded="true" />
+                <element signature="e#15918#15935#0" expanded="true" />
+                <element signature="e#16018#16035#0" expanded="true" />
+                <element signature="e#16106#18016#0" expanded="true" />
+                <element signature="e#16356#17982#0" expanded="true" />
+                <element signature="e#17981#17982#0" expanded="true" />
+                <element signature="e#18015#18016#0" expanded="true" />
+                <element signature="e#18227#18634#0" expanded="true" />
+                <element signature="e#18633#18634#0" expanded="true" />
+                <element signature="e#18651#18681#1" expanded="true" />
+                <element signature="e#18870#19849#0" expanded="true" />
+                <element signature="e#19848#19849#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="P2PIntentService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PIntentService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="301">
-              <caret line="110" column="54" lean-forward="false" selection-start-line="110" selection-start-column="54" selection-end-line="110" selection-end-column="54" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TakeProfilePic.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/TakeProfilePic.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="473">
-              <caret line="175" column="14" lean-forward="false" selection-start-line="175" selection-start-column="14" selection-end-line="175" selection-end-column="14" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="P2PAccessPoint.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PAccessPoint.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="125" column="0" lean-forward="false" selection-start-line="123" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="P2PSyncService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-104">
-              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -144,27 +92,92 @@
       <file leaf-file-name="P2PSyncManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="556">
-              <caret line="235" column="61" lean-forward="false" selection-start-line="235" selection-start-column="61" selection-end-line="235" selection-end-column="61" />
+            <state relative-caret-position="227">
+              <caret line="190" column="48" lean-forward="false" selection-start-line="190" selection-start-column="36" selection-end-line="190" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConnectedThread.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="212" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NSDSyncManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="608" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="608" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="P2PHandShakingJobService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="175">
+              <caret line="58" column="12" lean-forward="false" selection-start-line="58" selection-start-column="12" selection-end-line="58" selection-end-column="41" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JobUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/JobUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="20" column="36" lean-forward="false" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#6789#7591#0" expanded="true" />
-                <element signature="e#7590#7591#0" expanded="true" />
+                <element signature="e#3867#3868#0" expanded="true" />
+                <element signature="e#3902#3903#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="P2PStateFlow.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PStateFlow.java">
+      <file leaf-file-name="P2POrchester.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2POrchester.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="132" column="40" lean-forward="false" selection-start-line="132" selection-start-column="40" selection-end-line="132" selection-end-column="40" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2609#2610#0" expanded="true" />
-                <element signature="e#2645#2646#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="371">
+              <caret line="377" column="85" lean-forward="false" selection-start-line="377" selection-start-column="53" selection-end-line="377" selection-end-column="85" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NSDOrchester.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchester.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="209" column="39" lean-forward="false" selection-start-line="209" selection-start-column="24" selection-end-line="209" selection-end-column="39" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DBSyncManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DBSyncManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="636">
+              <caret line="72" column="29" lean-forward="false" selection-start-line="72" selection-start-column="29" selection-end-line="72" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="P2PSyncInfoDao.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="362">
+              <caret line="78" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -181,39 +194,40 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>TestChatPortNumber</find>
-      <find>registerNSDService</find>
-      <find>if(that.discoverServiceRegistrationTimer != null) {</find>
-      <find>NSD GotConnection</find>
-      <find>that.discoverServiceRegistrationTimer</find>
-      <find>exchanged</find>
-      <find>allMessageExchangedForP2P</find>
-      <find>Connected From remote host</find>
-      <find>allMessageExchangedForNSD</find>
-      <find>nsdAllMessageExchangedReceiver</find>
-      <find>p2pAllMessageExchangedReceiver</find>
-      <find>destory</find>
-      <find>mMessageReceiver</find>
-      <find>do actual work</find>
-      <find>JOB_PARAMS</find>
-      <find>WifiDirectIntentBroadcastReceiver</find>
-      <find>new P2PSyncCompletionIntentBroadcastReceiver</find>
-      <find>currentJobParams =</find>
-      <find>Broadcasting message exit for P2P</find>
-      <find>currentJobParams</find>
-      <find>P2PStateFlow.g</find>
-      <find>allMessagesExchanged</find>
-      <find>SHUTTING DOWN CURRENT JOB</find>
-      <find>with P2P</find>
-      <find>getInstanceUsingDoubleLocking</find>
-      <find>sharedP</find>
-      <find>isP2P</find>
-      <find>broadcastExitMessageForP2P</find>
-      <find>.commit</find>
-      <find>P2P_SYNC_RESULT_RECEIVED</find>
+      <find>.fetchByUserAndDeviceAndSequence</find>
+      <find>insertP2PSyncDeviceStatus</find>
+      <find>syncCompleted</find>
+      <find>api.syncCompleted(</find>
+      <find>connectedDevice</find>
+      <find>P2PSyncManager.connectedDevice</find>
+      <find>device</find>
+      <find>P2PSyncManager.getInstance(context).updateInSharedPreference(P2PSyncManager.connectedDevice, deviceUUID);</find>
+      <find>UUID</find>
+      <find>getUsers(</find>
+      <find>getUsers</find>
+      <find>topU</find>
+      <find>processService</find>
+      <find>addDeviceToSync</find>
+      <find>getLatestDeviceToSyncFromDevices</find>
+      <find>processServiceList</find>
+      <find>add</find>
+      <find>addMess</find>
+      <find>\/\/        WifiManager wifiManager\;\n\/\/        wifiManager \= \(WifiManager\)getApplicationContext\(\)\.getSystemService\(Context\.WIFI_SERVICE\)\;\n\/\/        if\(wifiManager\.getWifiState\(\)\=\=WifiManager\.WIFI_STATE_DISABLED\)\{\n\/\/            wifiManager\.setWifiEnabled\(true\)\;\n\/\/        \}\n</find>
+      <find>job is</find>
+      <find>JOButils.sche</find>
+      <find>isJobRunning = true</find>
+      <find>isJobRunning</find>
+      <find>Connected</find>
+      <find>final data to be processed</find>
+      <find>finalMessage got</find>
+      <find>MESSAGE_RE</find>
+      <find>MESSAGE READ</find>
+      <find>addMessage</find>
+      <find>photo</find>
     </findStrings>
     <replaceStrings>
       <replace />
+      <replace>NSDSyncManager</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -2236,18 +2250,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/EditProfile.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/TakeProfilePic.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PAccessPoint.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/ConnectedThread.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/WifiDetector.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/entity/P2PUserIdDeviceIdAndMessage.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApi.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/WifiDirectIntentService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PSyncService.java" />
-        <option value="$PROJECT_DIR$/app/src/androidTest/java/p2p/chimple/org/p2pconnector/P2PSyncDBInstrumentedTest.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDConnectionUtils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2POrchesterCallBack.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDUpdateCallBack.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/WifiConnectionUpdateCallBack.java" />
@@ -2259,31 +2263,44 @@
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SendSyncInfoMessageState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/ReceiveInitialHandShakingMessageState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NoneState.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DBSyncManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PSyncManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDWifiConnectionUpdateCallBack.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakingListenerThread.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDAccessPoint.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchesterCallBack.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakeInitiatorCallBack.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakerThread.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/p2p/chimple/org/p2pconnector/sender/CommunicationThread.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SyncUtils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationCallBack.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationThread.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectToThread.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2POrchesterCallBack.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDServiceFinder.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchester.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PStateFlow.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PIntentService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/LoginActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PServiceFinder.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDConnectionUtils.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationThread.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDServiceFinder.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDAccessPoint.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2POrchester.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PAccessPoint.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncManager.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DBSyncManager.java" />
+        <option value="$PROJECT_DIR$/app/build/generated/source/apt/debug/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao_Impl.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/p2p/chimple/org/p2pconnector/P2PSyncDBInstrumentedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DatabaseInitializer.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/EditProfile.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/TakeProfilePic.java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets/database.csv" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchester.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApi.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/JobUtils.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java" />
       </list>
     </option>
   </component>
@@ -2309,41 +2326,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="scheduler" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="sync" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="Direct" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -2382,6 +2364,41 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="db" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="dao" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="P2PConnector" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="sync" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -2568,11 +2585,99 @@
         <option name="ADVANCED_PROFILING_ENABLED" value="false" />
       </Profilers>
     </configuration>
+    <configuration name="getLatestConversat...()" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
+      <module name="app" />
+      <option name="TESTING_TYPE" value="3" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="getLatestConversations" />
+      <option name="CLASS_NAME" value="p2p.chimple.org.p2pconnector.P2PSyncDBInstrumentedTest" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+      </Profilers>
+    </configuration>
     <configuration name="getUsersTest()" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
       <module name="app" />
       <option name="TESTING_TYPE" value="3" />
       <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
       <option name="METHOD_NAME" value="getUsersTest" />
+      <option name="CLASS_NAME" value="p2p.chimple.org.p2pconnector.P2PSyncDBInstrumentedTest" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+      </Profilers>
+    </configuration>
+    <configuration name="testAddingAndRetri...()" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
+      <module name="app" />
+      <option name="TESTING_TYPE" value="3" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="testAddingAndRetrievingData" />
       <option name="CLASS_NAME" value="p2p.chimple.org.p2pconnector.P2PSyncDBInstrumentedTest" />
       <option name="PACKAGE_NAME" value="" />
       <option name="EXTRA_OPTIONS" value="" />
@@ -2693,17 +2798,21 @@
     <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
     </configuration>
-    <list size="4">
+    <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Android App.app" />
       <item index="1" class="java.lang.String" itemvalue="Android Instrumented Tests.getConversationsTest()" />
-      <item index="2" class="java.lang.String" itemvalue="Android Instrumented Tests.P2PSyncDBInstrumente..." />
-      <item index="3" class="java.lang.String" itemvalue="Android Instrumented Tests.getUsersTest()" />
+      <item index="2" class="java.lang.String" itemvalue="Android Instrumented Tests.testAddingAndRetri...()" />
+      <item index="3" class="java.lang.String" itemvalue="Android Instrumented Tests.getLatestConversat...()" />
+      <item index="4" class="java.lang.String" itemvalue="Android Instrumented Tests.getUsersTest()" />
+      <item index="5" class="java.lang.String" itemvalue="Android Instrumented Tests.P2PSyncDBInstrumente..." />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Android Instrumented Tests.P2PSyncDBInstrumente..." />
-        <item index="1" class="java.lang.String" itemvalue="Android Instrumented Tests.getUsersTest()" />
-        <item index="2" class="java.lang.String" itemvalue="Android Instrumented Tests.getConversationsTest()" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Android Instrumented Tests.testAddingAndRetri...()" />
+        <item index="1" class="java.lang.String" itemvalue="Android Instrumented Tests.P2PSyncDBInstrumente..." />
+        <item index="2" class="java.lang.String" itemvalue="Android Instrumented Tests.getUsersTest()" />
+        <item index="3" class="java.lang.String" itemvalue="Android Instrumented Tests.getLatestConversat...()" />
+        <item index="4" class="java.lang.String" itemvalue="Android Instrumented Tests.getConversationsTest()" />
       </list>
     </recent_temporary>
   </component>
@@ -2724,65 +2833,66 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.08 at 11h 47m 51s.xml">
+    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.13 at 18h 27m 59s.xml">
       <configuration name="P2PSyncDBInstrumente..." configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.08 at 11h 49m 20s.xml">
+    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.13 at 18h 41m 14s.xml">
       <configuration name="P2PSyncDBInstrumente..." configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.08 at 11h 54m 19s.xml">
+    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.13 at 18h 41m 35s.xml">
       <configuration name="P2PSyncDBInstrumente..." configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.08 at 11h 57m 06s.xml">
+    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.13 at 18h 42m 23s.xml">
       <configuration name="P2PSyncDBInstrumente..." configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="P2PSyncDBInstrumente___ - 2018.06.10 at 09h 28m 51s.xml">
-      <configuration name="P2PSyncDBInstrumente..." configurationId="AndroidTestRunConfigurationType" />
+    <history-entry file="testAddingAndRetri___() - 2018.06.13 at 18h 03m 16s.xml">
+      <configuration name="testAddingAndRetri...()" configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="getConversationsTest() - 2018.06.08 at 11h 47m 24s.xml">
-      <configuration name="getConversationsTest()" configurationId="AndroidTestRunConfigurationType" />
+    <history-entry file="testAddingAndRetri___() - 2018.06.13 at 18h 34m 58s.xml">
+      <configuration name="testAddingAndRetri...()" configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="getUsersTest() - 2018.06.08 at 11h 49m 54s.xml">
-      <configuration name="getUsersTest()" configurationId="AndroidTestRunConfigurationType" />
+    <history-entry file="testAddingAndRetri___() - 2018.06.13 at 18h 42m 47s.xml">
+      <configuration name="testAddingAndRetri...()" configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="getUsersTest() - 2018.06.08 at 11h 50m 22s.xml">
-      <configuration name="getUsersTest()" configurationId="AndroidTestRunConfigurationType" />
+    <history-entry file="testAddingAndRetri___() - 2018.06.13 at 18h 43m 14s.xml">
+      <configuration name="testAddingAndRetri...()" configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="getUsersTest() - 2018.06.08 at 11h 51m 22s.xml">
-      <configuration name="getUsersTest()" configurationId="AndroidTestRunConfigurationType" />
+    <history-entry file="testAddingAndRetri___() - 2018.06.13 at 21h 01m 08s.xml">
+      <configuration name="testAddingAndRetri...()" configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
-    <history-entry file="getUsersTest() - 2018.06.08 at 11h 52m 10s.xml">
-      <configuration name="getUsersTest()" configurationId="AndroidTestRunConfigurationType" />
+    <history-entry file="testAddingAndRetri___() - 2018.06.13 at 21h 01m 30s.xml">
+      <configuration name="testAddingAndRetri...()" configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="978" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3127907" sideWeight="0.502442" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Flutter Outline" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44767442" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38255814" sideWeight="0.497558" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Build" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23504274" sideWeight="0.50676984" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3988372" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.50676984" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.49012777" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6034884" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48953488" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5790698" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23137973" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32906976" sideWeight="0.497558" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.49323016" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Flutter Inspector" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Flutter Inspector" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -2799,7 +2909,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Flutter Outline" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4267442" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5046512" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -2814,11 +2924,11 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329849" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.49012777" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48953488" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5790698" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24969475" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23137973" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32906976" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.49323016" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -3085,36 +3195,340 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java</url>
-          <line>170</line>
+          <line>171</line>
           <properties />
           <option name="timeStamp" value="102" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java</url>
+          <line>93</line>
+          <properties />
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java</url>
+          <line>94</line>
+          <properties />
+          <option name="timeStamp" value="105" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java</url>
+          <line>55</line>
+          <properties />
+          <option name="timeStamp" value="109" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/androidTest/java/p2p/chimple/org/p2pconnector/P2PSyncDBInstrumentedTest.java</url>
+          <line>200</line>
+          <properties />
+          <option name="timeStamp" value="114" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/androidTest/java/p2p/chimple/org/p2pconnector/P2PSyncDBInstrumentedTest.java</url>
+          <line>205</line>
+          <properties />
+          <option name="timeStamp" value="115" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/androidTest/java/p2p/chimple/org/p2pconnector/P2PSyncDBInstrumentedTest.java</url>
+          <line>206</line>
+          <properties />
+          <option name="timeStamp" value="116" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/AppDatabase.java</url>
+          <line>39</line>
+          <properties />
+          <option name="timeStamp" value="117" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DatabaseInitializer.java</url>
+          <line>24</line>
+          <properties />
+          <option name="timeStamp" value="118" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DatabaseInitializer.java</url>
+          <line>25</line>
+          <properties />
+          <option name="timeStamp" value="119" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DatabaseInitializer.java</url>
+          <line>131</line>
+          <properties />
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="103" />
+      <option name="time" value="123" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/HandShakeListenerCallBack.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/p2p/chimple/org/p2pconnector/sender/CommunicationThread.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakeInitiatorCallBack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SyncUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="181">
+          <caret line="198" column="16" lean-forward="false" selection-start-line="198" selection-start-column="16" selection-end-line="198" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationCallBack.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="4" column="17" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2POrchesterCallBack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="17" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/android/app/job/JobParameters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="34" column="13" lean-forward="false" selection-start-line="34" selection-start-column="13" selection-end-line="34" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PIntentService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1245">
+          <caret line="110" column="54" lean-forward="false" selection-start-line="110" selection-start-column="54" selection-end-line="110" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/p2p/chimple/org/p2pconnector/sender/ConnectToThread.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchesterCallBack.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="17" column="11" lean-forward="false" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
+        <state relative-caret-position="105">
+          <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PServiceFinder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="116" column="97" lean-forward="false" selection-start-line="116" selection-start-column="97" selection-end-line="116" selection-end-column="97" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/LoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3060">
+          <caret line="241" column="1" lean-forward="false" selection-start-line="241" selection-start-column="1" selection-end-line="241" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDConnectionUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="20" column="42" lean-forward="false" selection-start-line="20" selection-start-column="22" selection-end-line="20" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDServiceFinder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="101">
+          <caret line="230" column="0" lean-forward="false" selection-start-line="230" selection-start-column="0" selection-end-line="230" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/java/util/ArrayList.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDAccessPoint.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="465" column="19" lean-forward="false" selection-start-line="465" selection-start-column="19" selection-end-line="465" selection-end-column="19" />
+        <state relative-caret-position="60">
+          <caret line="12" column="27" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/HandShakeListenerCallBack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="34" lean-forward="false" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/HandShakeListenerThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="870">
+          <caret line="63" column="16" lean-forward="false" selection-start-line="63" selection-start-column="16" selection-end-line="63" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakingListenerThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="64" column="20" lean-forward="false" selection-start-line="64" selection-start-column="16" selection-end-line="64" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PStateFlow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1125">
+          <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PAccessPoint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="123" column="90" lean-forward="false" selection-start-line="123" selection-start-column="75" selection-end-line="123" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SendInitialHandShakingMessageState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="34" column="39" lean-forward="false" selection-start-line="34" selection-start-column="39" selection-end-line="34" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="41" column="46" lean-forward="false" selection-start-line="41" selection-start-column="46" selection-end-line="41" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectToThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="32" column="31" lean-forward="false" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/java/lang/String.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="2214" column="18" lean-forward="false" selection-start-line="2214" selection-start-column="18" selection-end-line="2214" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SendSyncInfoMessageState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="40" column="39" lean-forward="false" selection-start-line="40" selection-start-column="39" selection-end-line="40" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/ReceiveSyncInfoMessageState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="25" column="67" lean-forward="false" selection-start-line="25" selection-start-column="67" selection-end-line="25" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DataBaseReaderTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/entity/HandShakingInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="54" column="16" lean-forward="false" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/android.arch.persistence.room/runtime/1.0.0/f05d316ca9156e03aaeeb14c7b38d5e8963fff52/runtime-1.0.0-sources.jar!/android/arch/persistence/room/Room.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="69" column="67" lean-forward="false" selection-start-line="69" selection-start-column="67" selection-end-line="69" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/application/P2PApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="12" column="25" lean-forward="false" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/p2p/chimple/org/p2pconnector/P2PSyncDBInstrumentedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2685">
+          <caret line="179" column="39" lean-forward="false" selection-start-line="179" selection-start-column="39" selection-end-line="179" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#8666#8667#0" expanded="false" />
+            <element signature="e#8698#8699#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/android/os/AsyncTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8265">
+          <caret line="593" column="53" lean-forward="false" selection-start-line="593" selection-start-column="53" selection-end-line="593" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build/generated/source/apt/debug/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao_Impl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10215">
+          <caret line="698" column="0" lean-forward="false" selection-start-line="698" selection-start-column="0" selection-end-line="698" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/AppDatabase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="39" column="38" lean-forward="false" selection-start-line="39" selection-start-column="38" selection-end-line="39" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DatabaseInitializer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/EditProfile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/TakeProfilePic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1350">
+          <caret line="118" column="0" lean-forward="false" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/assets/database.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -3127,417 +3541,129 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/entity/P2PSyncDeviceStatus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/p2p/chimple/org/p2pconnector/sender/ConnectedThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/ReceiveInitialHandShakingMessageState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SendInitialHandShakingMessageState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <element signature="e#805#806#0" expanded="false" />
-            <element signature="e#868#869#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/ReceiveSyncInfoMessageState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="21" column="64" lean-forward="false" selection-start-line="21" selection-start-column="64" selection-end-line="21" selection-end-column="64" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NoneState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="24" column="64" lean-forward="false" selection-start-line="24" selection-start-column="64" selection-end-line="24" selection-end-column="64" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DBSyncManager.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakerThread.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
-          <caret line="28" column="1" lean-forward="false" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
-          <folding>
-            <element signature="e#489#490#0" expanded="false" />
-            <element signature="e#524#525#0" expanded="false" />
-            <element signature="e#833#834#0" expanded="false" />
-            <element signature="e#871#872#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/p2p/chimple/org/p2pconnector/sender/CommunicationCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="17" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+          <caret line="31" column="50" lean-forward="false" selection-start-line="31" selection-start-column="50" selection-end-line="31" selection-end-column="50" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDConnectionUtils.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApi.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-343">
-          <caret line="11" column="22" lean-forward="false" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+        <state relative-caret-position="120">
+          <caret line="15" column="46" lean-forward="false" selection-start-line="15" selection-start-column="38" selection-end-line="15" selection-end-column="46" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/android/net/nsd/NsdManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="572" column="16" lean-forward="false" selection-start-line="572" selection-start-column="16" selection-end-line="572" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/android/net/nsd/NsdServiceInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="80" column="22" lean-forward="false" selection-start-line="80" selection-start-column="11" selection-end-line="80" selection-end-column="22" />
-          <folding>
-            <element signature="e#2147#2148#0" expanded="false" />
-            <element signature="e#2175#2176#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#955#956#0" expanded="false" />
-            <element signature="e#982#983#0" expanded="false" />
-            <element signature="e#1019#1020#0" expanded="false" />
-            <element signature="e#1051#1052#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/WifiConnectionUpdateCallBack.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PServiceFinder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="55" column="136" lean-forward="false" selection-start-line="55" selection-start-column="108" selection-end-line="55" selection-end-column="136" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDWifiConnectionUpdateCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="23" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PWifiConnector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="153" column="30" lean-forward="false" selection-start-line="153" selection-start-column="30" selection-end-line="153" selection-end-column="30" />
-          <folding>
-            <element signature="e#3836#3837#0" expanded="false" />
-            <element signature="e#3875#3876#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/HandShakeListenerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="17" column="11" lean-forward="false" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchesterCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="9" column="16" lean-forward="false" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/HandShakerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="34" column="32" lean-forward="false" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/HandShakeInitiatorCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakingListenerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="376">
-          <caret line="69" column="76" lean-forward="false" selection-start-line="69" selection-start-column="76" selection-end-line="69" selection-end-column="76" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="40" column="16" lean-forward="false" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/p2p/chimple/org/p2pconnector/sender/CommunicationThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="8" column="32" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDHandShakeInitiatorCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SyncUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="198" column="16" lean-forward="false" selection-start-line="198" selection-start-column="16" selection-end-line="198" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="17" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="48" lean-forward="false" selection-start-line="0" selection-start-column="48" selection-end-line="0" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2POrchesterCallBack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="17" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/CommunicationThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="16" column="11" lean-forward="false" selection-start-line="16" selection-start-column="11" selection-end-line="16" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectToThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="17" column="11" lean-forward="false" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDServiceFinder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="258" column="66" lean-forward="false" selection-start-line="258" selection-start-column="66" selection-end-line="258" selection-end-column="66" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDAccessPoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="63" column="34" lean-forward="false" selection-start-line="63" selection-start-column="30" selection-end-line="63" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/SendSyncInfoMessageState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="40" column="38" lean-forward="false" selection-start-line="40" selection-start-column="38" selection-end-line="40" selection-end-column="38" />
+        <state relative-caret-position="165">
+          <caret line="20" column="34" lean-forward="false" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2POrchester.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="50" column="88" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="88" />
+        <state relative-caret-position="371">
+          <caret line="377" column="85" lean-forward="false" selection-start-line="377" selection-start-column="53" selection-end-line="377" selection-end-column="85" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDOrchester.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="33" column="31" lean-forward="false" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
+        <state relative-caret-position="336">
+          <caret line="209" column="39" lean-forward="false" selection-start-line="209" selection-start-column="24" selection-end-line="209" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-27/android/app/job/JobParameters.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/DBSyncManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="34" column="13" lean-forward="false" selection-start-line="34" selection-start-column="13" selection-end-line="34" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PAccessPoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="125" column="0" lean-forward="false" selection-start-line="123" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-104">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="556">
-          <caret line="235" column="61" lean-forward="false" selection-start-line="235" selection-start-column="61" selection-end-line="235" selection-end-column="61" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#6789#7591#0" expanded="true" />
-            <element signature="e#7590#7591#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="200" column="40" lean-forward="false" selection-start-line="200" selection-start-column="40" selection-end-line="200" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#21967#22768#0" expanded="true" />
-            <element signature="e#22767#22768#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/TakeProfilePic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="473">
-          <caret line="175" column="14" lean-forward="false" selection-start-line="175" selection-start-column="14" selection-end-line="175" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/P2PStateFlow.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="132" column="40" lean-forward="false" selection-start-line="132" selection-start-column="40" selection-end-line="132" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2609#2610#0" expanded="true" />
-            <element signature="e#2645#2646#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PIntentService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="110" column="54" lean-forward="false" selection-start-line="110" selection-start-column="54" selection-end-line="110" selection-end-column="54" />
+        <state relative-caret-position="636">
+          <caret line="72" column="29" lean-forward="false" selection-start-line="72" selection-start-column="29" selection-end-line="72" selection-end-column="29" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/P2PHandShakingJobService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="88" column="0" lean-forward="false" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+        <state relative-caret-position="175">
+          <caret line="58" column="12" lean-forward="false" selection-start-line="58" selection-start-column="12" selection-end-line="58" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/scheduler/JobUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="20" column="36" lean-forward="false" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
+          <folding>
+            <element signature="e#3867#3868#0" expanded="true" />
+            <element signature="e#3902#3903#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/Direct/P2PSyncManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="190" column="48" lean-forward="false" selection-start-line="190" selection-start-column="36" selection-end-line="190" selection-end-column="48" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/P2PDBApiImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="255" column="68" lean-forward="false" selection-start-line="255" selection-start-column="68" selection-end-line="255" selection-end-column="68" />
+        <state relative-caret-position="152">
+          <caret line="653" column="40" lean-forward="true" selection-start-line="653" selection-start-column="40" selection-end-line="653" selection-end-column="40" />
+          <folding>
+            <element signature="e#9448#9465#0" expanded="true" />
+            <element signature="e#11342#11359#0" expanded="true" />
+            <element signature="e#14771#14784#0" expanded="true" />
+            <element signature="e#14971#15376#0" expanded="true" />
+            <element signature="e#15375#15376#0" expanded="true" />
+            <element signature="e#15431#15836#0" expanded="true" />
+            <element signature="e#15835#15836#0" expanded="true" />
+            <element signature="e#15918#15935#0" expanded="true" />
+            <element signature="e#16018#16035#0" expanded="true" />
+            <element signature="e#16106#18016#0" expanded="true" />
+            <element signature="e#16356#17982#0" expanded="true" />
+            <element signature="e#17981#17982#0" expanded="true" />
+            <element signature="e#18015#18016#0" expanded="true" />
+            <element signature="e#18227#18634#0" expanded="true" />
+            <element signature="e#18633#18634#0" expanded="true" />
+            <element signature="e#18651#18681#1" expanded="true" />
+            <element signature="e#18870#19849#0" expanded="true" />
+            <element signature="e#19848#19849#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/db/dao/P2PSyncInfoDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="78" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/P2PActivity/LoginActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/NSD/NSDSyncManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-226">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="391">
+          <caret line="608" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="608" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/p2p/chimple/org/p2pconnector/sync/sender/ConnectedThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="212" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
