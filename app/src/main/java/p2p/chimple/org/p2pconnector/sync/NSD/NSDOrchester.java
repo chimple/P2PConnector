@@ -212,33 +212,38 @@ public class NSDOrchester implements NSDHandShakeInitiatorCallBack, NSDWifiConne
                     nsdServiceList.put(deviceUUID, service);
                 }
 
-                Log.i(TAG, "Selecting from deviceIds: " + deviceIds);
-                P2PSyncDeviceStatus status = api.getLatestDeviceToSyncFromDevices(deviceIds);
-                NSDSyncService selItem = null;
-                if (status != null) {
-                    Log.i(TAG, "Selected device: " + status.print());
-                    selItem = nsdServiceList.get(status.deviceId);
-                    if (selItem != null) {
-                        Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
-                        String[] separated = selItem.getInstanceName().split(":");
-                        String userUUID = separated[0];
-                        String deviceUUID = separated[1];
-                        Log.i(TAG + " SS:", "found User UUID:" + userUUID);
-                        Log.i(TAG + " SS:", "found Device UUID:" + deviceUUID);
+                String deviceId = NSDSyncManager.getInstance(context).fetchFromSharedPreference(NSDSyncManager.connectedDevice);
+                if (deviceId != null) {
+                    Log.i(TAG, "Already connecting !!!");
+                } else {
+                    Log.i(TAG, "Selecting from deviceIds: " + deviceIds);
+                    P2PSyncDeviceStatus status = api.getLatestDeviceToSyncFromDevices(deviceIds);
+                    NSDSyncService selItem = null;
+                    if (status != null) {
+                        Log.i(TAG, "Selected device: " + status.print());
+                        selItem = nsdServiceList.get(status.deviceId);
+                        if (selItem != null) {
+                            Log.i(TAG, "Selected device address: " + selItem.getInstanceName());
+                            String[] separated = selItem.getInstanceName().split(":");
+                            String userUUID = separated[0];
+                            String deviceUUID = separated[1];
+                            Log.i(TAG + " SS:", "found User UUID:" + userUUID);
+                            Log.i(TAG + " SS:", "found Device UUID:" + deviceUUID);
 
-                        stopServiceSearcher();
-                        setConnectionState(SyncUtils.ConnectionState.Connecting);
+                            stopServiceSearcher();
+                            setConnectionState(SyncUtils.ConnectionState.Connecting);
 
-                        NSDSyncManager.getInstance(context).updateInSharedPreference(NSDSyncManager.connectedDevice, deviceUUID);
-                        String host = selItem.getDeviceAddress().getHostAddress();
-                        int port = selItem.getPort();
-                        Log.i(TAG, "Starting to connect now to host:" + host + "and port:" + port);
+                            NSDSyncManager.getInstance(context).updateInSharedPreference(NSDSyncManager.connectedDevice, deviceUUID);
+                            String host = selItem.getDeviceAddress().getHostAddress();
+                            int port = selItem.getPort();
+                            Log.i(TAG, "Starting to connect now to host:" + host + "and port:" + port);
 
-                        setConnectionState(SyncUtils.ConnectionState.HandShaking);
-                        startNSDHandShakerThread(host, port, 0);
+                            setConnectionState(SyncUtils.ConnectionState.HandShaking);
+                            startNSDHandShakerThread(host, port, 0);
 
-                    } else {
-                        Log.i(TAG, "No Device found to Connect");
+                        } else {
+                            Log.i(TAG, "No Device found to Connect");
+                        }
                     }
                 }
             } else {

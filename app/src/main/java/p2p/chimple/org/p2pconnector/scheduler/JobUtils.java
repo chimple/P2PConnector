@@ -20,7 +20,6 @@ public class JobUtils {
 
     public synchronized static void scheduledJob(Context context, boolean immediate) {
         if (!isJobRunning()) {
-            isJobRunning = true;
             JobScheduler jobScheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
             boolean isAnyPendingJob = isAnyJobScheduled(context);
             if (isAnyPendingJob) {
@@ -65,7 +64,6 @@ public class JobUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder = new JobInfo.Builder(0, serviceComponent)
                     .setMinimumLatency(IMMEDIATE_JOB_TIMINGS)
-//                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPersisted(false);
         } else {
             builder = new JobInfo.Builder(0, serviceComponent)

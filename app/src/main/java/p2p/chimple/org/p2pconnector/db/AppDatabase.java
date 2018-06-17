@@ -27,6 +27,8 @@ public abstract class AppDatabase extends RoomDatabase {
      */
     private static AppDatabase sInstance;
 
+    private Context context;
+
     public abstract P2PSyncInfoDao p2pSyncDao();
 
     public abstract P2PSyncDeviceStatusDao p2pSyncDeviceStatusDao();
@@ -38,7 +40,16 @@ public abstract class AppDatabase extends RoomDatabase {
                     .allowMainThreadQueries()
                     .build();
             DatabaseInitializer.populateAsync(sInstance, context, P2PDBApiImpl.getInstance(context));
+            sInstance.context = context;
         }
+        return sInstance;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public static AppDatabase getInitializedInstance() {
         return sInstance;
     }
 
@@ -52,6 +63,7 @@ public abstract class AppDatabase extends RoomDatabase {
         sInstance = Room.inMemoryDatabaseBuilder(context.getApplicationContext(),
                 AppDatabase.class).build();
     }
+
 
     public static void destroyInstance() {
         sInstance = null;

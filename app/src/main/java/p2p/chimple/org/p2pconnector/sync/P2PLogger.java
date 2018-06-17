@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class P2PLogger {
 
-    private static final String LOG_TAG = "MyRockingApp";
+    private static final String LOG_TAG = "P2PLogger";
 
     /**
      * @see <a href="http://stackoverflow.com/a/8899735" />

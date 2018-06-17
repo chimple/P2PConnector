@@ -11,4 +11,5 @@ public interface CommunicationCallBack {
 
     public void ListeningFailed(String reason);
 
+    public void ListeningSocketFailed(String reason);
 }

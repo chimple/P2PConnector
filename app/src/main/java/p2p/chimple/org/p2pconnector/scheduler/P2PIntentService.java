@@ -2,8 +2,11 @@ package p2p.chimple.org.p2pconnector.scheduler;
 
 import android.app.Service;
 import android.app.job.JobParameters;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -13,6 +16,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.List;
 import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.sync.NSD.NSDSyncManager;
@@ -100,6 +104,7 @@ public class P2PIntentService extends Service {
         // Auto-generated method stub
         return null;
     }
+
 
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.i(TAG, "do actual work");

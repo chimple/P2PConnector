@@ -151,11 +151,9 @@ public class P2PServiceFinder {
 
             public void onFinish() {
                 stopDiscovery();
-//                startPeerDiscovery();
                 startServiceDiscovery();
             }
         };
-
         long millisInFuture = 3000 + (new Random(System.currentTimeMillis()).nextInt(1000));
         Log.i(TAG, "peerDiscoveryTimer timeout value:" + millisInFuture);
         this.peerDiscoveryTimer = new CountDownTimer(millisInFuture, 1000) {
@@ -168,7 +166,6 @@ public class P2PServiceFinder {
                 if (that.callBack != null) {
                     stopDiscovery();
                     that.callBack.processServiceList(serviceList);
-//                    that.callBack.gotServicesList(serviceList);
                     that.callBack.foundNeighboursList(serviceList);
                 } else {
                     startPeerDiscovery();

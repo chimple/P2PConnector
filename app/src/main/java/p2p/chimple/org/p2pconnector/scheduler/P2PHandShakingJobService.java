@@ -61,7 +61,6 @@ public class P2PHandShakingJobService extends JobService {
         } else {
             Log.i(TAG, "Job is already running");
         }
-
         return true;
     }
 
@@ -69,8 +68,6 @@ public class P2PHandShakingJobService extends JobService {
     public boolean onStopJob(JobParameters params) {
         // Stop tracking these job parameters, as we've 'finished' executing.
         Log.i(TAG, "on stop job: " + params.getJobId());
-        JobUtils.setJobRunning(false);
-        // Return false to drop the job.
         return false;
     }
 

@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE" />
 
     <uses-feature android:name="android.hardware.camera2" />
 
@@ -29,8 +29,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name=".scheduler.P2PIntentService"/>
+        <service android:name=".scheduler.P2PIntentService" />
         <service
             android:name=".scheduler.P2PHandShakingJobService"
             android:exported="true"
@@ -48,6 +47,13 @@
         <activity android:name=".P2PActivity.LoginActivity" />
         <activity android:name=".P2PActivity.NeighbourList" />
         <activity android:name=".P2PActivity.EditProfile"></activity>
+
+        <receiver android:name=".sync.NetworkReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

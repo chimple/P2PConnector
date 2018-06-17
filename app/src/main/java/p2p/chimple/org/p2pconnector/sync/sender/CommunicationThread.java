@@ -13,7 +13,6 @@ public class CommunicationThread extends Thread {
     private CommunicationCallBack callBack;
     private final ServerSocket mSocket;
     boolean mStopped = false;
-    private int listenerErrorSoFarTimes = 0;
 
     public CommunicationThread(CommunicationCallBack callback, int port) {
         this.callBack = callback;
@@ -24,7 +23,6 @@ public class CommunicationThread extends Thread {
             tmp.setReuseAddress(true);
             tmp.bind(new InetSocketAddress(port));
 
-//            tmp = new ServerSocket(port);
             Log.i(TAG, "CommunicationThread ServerSocket created....");
         } catch (IOException e) {
             Log.i(TAG, "new ServerSocket failed: " + e.toString());

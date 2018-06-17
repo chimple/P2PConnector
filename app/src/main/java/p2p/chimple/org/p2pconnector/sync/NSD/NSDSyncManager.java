@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.DBSyncManager;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
@@ -76,6 +78,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public static final String profileFileExtension = ".jpg";
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
+    public static final String nsdConnectionChangedEvent = "nsd-connection-changed-event";
     public static final String connectedDevice = "CONNECTED_DEVICE";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
     public static final int EXIT_CURRENT_JOB_TIME = 4 * 60; // 4 mins
@@ -100,6 +103,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
         LocalBroadcastManager.getInstance(this.context).registerReceiver(mMessageReceiver, new IntentFilter(neighboursUpdateEvent));
         LocalBroadcastManager.getInstance(this.context).registerReceiver(nsdAllMessageExchangedReceiver, new IntentFilter(allMessageExchangedForNSD));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(networkConnectionChangedReceiver, new IntentFilter(nsdConnectionChangedEvent));
 
         this.initStatusChecker();
     }
@@ -196,7 +200,65 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         StartNSDConnector();
     }
 
+
     public void startExitTimer() {
+        synchronized (this) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    shutDownJobTimer = new CountDownTimer(10000, 2000) {
+                        public void onTick(long millisUntilFinished) {
+                            Log.i(TAG, "shutDownJobTimer ticking.....");
+                        }
+
+                        public void onFinish() {
+                            Log.i(TAG, "SHUTTING DOWN CURRENT JOB for P2P");
+                            StopNSDConnector();
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                //Lets give others chance on creating new group before we come back online
+                                public void run() {
+                                    StartNSDConnector();
+                                }
+                            }, 10000);
+
+                            // Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+                            // result.putExtra(JOB_PARAMS, currentJobParams);
+                            // LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
+                        }
+                    };
+
+                    Log.i(TAG, "...... checking if exitTimerStarted ....." + exitTimerStarted);
+                    if (!exitTimerStarted) {
+                        exitTimerStarted = true;
+                        Log.i(TAG, "...... exitTimerStarted .....");
+                        shutDownJobTimer.start();
+                        Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
+                    }
+                }
+            });
+
+
+        }
+    }
+
+    public void shutDownP2PSyncJob() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            //Lets give others chance on creating new group before we come back online
+            public void run() {
+                StopNSDConnector();
+                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+                result.putExtra(JOB_PARAMS, currentJobParams);
+                AppDatabase instance = AppDatabase.getInitializedInstance();
+                if (instance != null) {
+                    LocalBroadcastManager.getInstance(instance.getContext()).sendBroadcast(result);
+                }
+            }
+        }, 1000);
+    }
+//    public void startExitTimer() {
 //        synchronized (this) {
 //            shutDownJobTimer = new CountDownTimer(5000, 1000) {
 //                public void onTick(long millisUntilFinished) {
@@ -219,19 +281,19 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 //                Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
 //            }
 //        }
-
-        synchronized (this) {
-            if (!exitTimerStarted) {
-                exitTimerStarted = true;
-                Log.i(TAG, "...... exitTimerStarted .....");
-                Log.i(TAG, "SHUTTING DOWN CURRENT JOB with parameters" + instance.currentJobParams.toString());
-                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
-                result.putExtra(JOB_PARAMS, instance.currentJobParams);
-                LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
-                Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
-            }
-        }
-    }
+//
+//        synchronized (this) {
+//            if (!exitTimerStarted) {
+//                exitTimerStarted = true;
+//                Log.i(TAG, "...... exitTimerStarted .....");
+//                Log.i(TAG, "SHUTTING DOWN CURRENT JOB with parameters" + instance.currentJobParams.toString());
+//                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+//                result.putExtra(JOB_PARAMS, instance.currentJobParams);
+//                LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
+//                Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
+//            }
+//        }
+//    }
 
     public void StartNSDConnector() {
         updateStatus(TAG, "starting NSD listener now, and connector");
@@ -239,7 +301,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         mNSDConnector = new NSDOrchester(this.context, this, this.mHandler);
     }
 
-    public void stopNSDConnector() {
+    public void StopNSDConnector() {
         this.stopListenerThread();
         this.stopConnectedThread();
         this.stopConnectToThread();
@@ -375,7 +437,8 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         }
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(nsdAllMessageExchangedReceiver);
-        this.stopNSDConnector();
+        LocalBroadcastManager.getInstance(this.context).unregisterReceiver(networkConnectionChangedReceiver);
+        this.StopNSDConnector();
         this.mStatusChecker = null;
         NSDSyncManager.instance = null;
         updateStatus(TAG, "onDestroy");
@@ -531,6 +594,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     public void removeClientIPAddressToConnect() {
         this.clientIPAddressToConnect = null;
+        NSDSyncManager.getInstance(context).updateInSharedPreference(NSDSyncManager.connectedDevice, null);
     }
 
     public void resetExitTimer() {
@@ -587,6 +651,18 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         }
     };
 
+    private BroadcastReceiver networkConnectionChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "networkConnectionChangedReceiver intent");
+            boolean isConnected = intent.getBooleanExtra("isConnected", false);
+            if (!isConnected) {
+                Log.i(TAG, "Wifi Not connected");
+                instance.shutDownP2PSyncJob();
+            }
+        }
+    };
+
     private BroadcastReceiver nsdAllMessageExchangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -599,10 +675,24 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                 }
                 Log.i(TAG, ".... calling removeClientIPAddressToConnect ....");
                 instance.removeClientIPAddressToConnect();
-                Log.i(TAG, ".... calling startExitTimer....");
-                instance.resetExitTimer();
-                instance.startExitTimer();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    //There are supposedly a possible race-condition bug with the service discovery
+                    // thus to avoid it, we are delaying the service discovery start here
+                    public void run() {
+                        Log.i(TAG, ".... calling start connect to next client ....");
+                        instance.connectToClient();
+                    }
+                }, 1000);
             }
         }
     };
+
+    @Override
+    public void ListeningSocketFailed(String reason) {
+        if(instance != null) {
+            instance.resetExitTimer();
+            instance.startExitTimer();
+        }
+    }
 }

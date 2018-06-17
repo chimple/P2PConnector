@@ -21,9 +21,6 @@ public class NSDServiceFinder {
 
     public static final String TAG = NSDServiceFinder.class.getSimpleName();
     private NSDServiceFinder that;
-
-    public static final String NSD_SERVICE_FOUND_FOR_CONNECTION = "NSDBroadcastServiceFound";
-
     Context mContext;
     NsdManager mNsdManager;
     NsdManager.ResolveListener mResolveListener;
@@ -118,88 +115,95 @@ public class NSDServiceFinder {
         }, 1000);
 
         if (this.discoverServiceTimeOutTimer != null) {
+            this.discoverServiceTimeOutTimer.cancel();
             this.discoverServiceTimeOutTimer.start();
         }
     }
 
 
     public void initializeDiscoveryListener() {
-        mDiscoveryListener = new NsdManager.DiscoveryListener() {
-            @Override
-            public void onDiscoveryStarted(String regType) {
-                Log.d(TAG, "Service discovery started");
-            }
-
-            @Override
-            public void onServiceFound(NsdServiceInfo service) {
-                Log.d(TAG, "Service discovery success" + service);
-                discoveryState = SyncUtils.DiscoveryState.NSDServiceFound;
-                that.callBack.serviceUpdateStatus(discoveryState);
-
-                String serviceType = service.getServiceType();
-                Log.d(TAG, "Service discovery success: " + service.getServiceName());
-
-                // For some reason the service type received has an extra dot with it, hence
-                // handling that case
-
-                boolean isOurService = serviceType.equals(SERVICE_TYPE) || serviceType.equals
-                        (SERVICE_TYPE_PLUS_DOT);
-
-                if (!isOurService) {
-                    Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                    discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundNotServiceType;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                } else if (service.getServiceName().equals(mServiceName)) {
-                    Log.d(TAG, "Same machine: " + mServiceName);
-                    discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundSameMachine;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                } else if (!service.getServiceName().equals(mServiceName)) {
-                    Log.d(TAG, "different machines. (" + service.getServiceName() + "-" +
-                            mServiceName + ")");
-                    discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundDifferentMachine;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                    mNsdManager.resolveService(service, mResolveListener);
+        try {
+            mDiscoveryListener = new NsdManager.DiscoveryListener() {
+                @Override
+                public void onDiscoveryStarted(String regType) {
+                    Log.d(TAG, "Service discovery started");
                 }
-            }
 
-            @Override
-            public void onServiceLost(NsdServiceInfo service) {
-                Log.e(TAG, "service lost" + service);
-                if (mService == service) {
-                    mService = null;
+                @Override
+                public void onServiceFound(NsdServiceInfo service) {
+                    Log.d(TAG, "Service discovery success" + service);
+                    discoveryState = SyncUtils.DiscoveryState.NSDServiceFound;
+                    that.callBack.serviceUpdateStatus(discoveryState);
+
+                    String serviceType = service.getServiceType();
+                    Log.d(TAG, "Service discovery success: " + service.getServiceName());
+
+                    // For some reason the service type received has an extra dot with it, hence
+                    // handling that case
+
+                    boolean isOurService = serviceType.equals(SERVICE_TYPE) || serviceType.equals
+                            (SERVICE_TYPE_PLUS_DOT);
+
+                    if (!isOurService) {
+                        Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
+                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundNotServiceType;
+                        that.callBack.serviceUpdateStatus(discoveryState);
+                    } else if (service.getServiceName().equals(mServiceName)) {
+                        Log.d(TAG, "Same machine: " + mServiceName);
+                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundSameMachine;
+                        that.callBack.serviceUpdateStatus(discoveryState);
+                    } else if (!service.getServiceName().equals(mServiceName)) {
+                        Log.d(TAG, "different machines. (" + service.getServiceName() + "-" +
+                                mServiceName + ")");
+                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundDifferentMachine;
+                        that.callBack.serviceUpdateStatus(discoveryState);
+                        if(mResolveListener != null) {
+                            mNsdManager.resolveService(service, mResolveListener);
+                        }
+                    }
                 }
-                discoveryState = SyncUtils.DiscoveryState.NSDServiceLost;
-                that.callBack.serviceUpdateStatus(discoveryState);
-                that.discoverServiceTimeOutTimer.start();
-            }
 
-            @Override
-            public void onDiscoveryStopped(String serviceType) {
-                Log.i(TAG, "Discovery stopped: " + serviceType);
-                discoveryState = SyncUtils.DiscoveryState.NSDDiscoveryServiceStopped;
-                that.callBack.serviceUpdateStatus(discoveryState);
-                if (that.discoverServiceTimeOutTimer != null) {
-                    that.discoverServiceTimeOutTimer.cancel();
-                }
-            }
-
-            @Override
-            public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                discoveryState = SyncUtils.DiscoveryState.NSDStartDiscoveryFailed;
-                that.callBack.serviceUpdateStatus(discoveryState);
-                if (that.discoverServiceTimeOutTimer != null) {
+                @Override
+                public void onServiceLost(NsdServiceInfo service) {
+                    Log.e(TAG, "service lost" + service);
+                    if (mService == service) {
+                        mService = null;
+                    }
+                    discoveryState = SyncUtils.DiscoveryState.NSDServiceLost;
+                    that.callBack.serviceUpdateStatus(discoveryState);
                     that.discoverServiceTimeOutTimer.start();
                 }
-            }
 
-            @Override
-            public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                discoveryState = SyncUtils.DiscoveryState.NSDStopDiscoveryFailed;
-                that.callBack.serviceUpdateStatus(discoveryState);
-            }
-        };
+                @Override
+                public void onDiscoveryStopped(String serviceType) {
+                    Log.i(TAG, "Discovery stopped: " + serviceType);
+                    discoveryState = SyncUtils.DiscoveryState.NSDDiscoveryServiceStopped;
+                    that.callBack.serviceUpdateStatus(discoveryState);
+                }
+
+                @Override
+                public void onStartDiscoveryFailed(String serviceType, int errorCode) {
+                    Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                    discoveryState = SyncUtils.DiscoveryState.NSDStartDiscoveryFailed;
+                    that.callBack.serviceUpdateStatus(discoveryState);
+                    if (that.discoverServiceTimeOutTimer != null) {
+                        that.discoverServiceTimeOutTimer.start();
+                    }
+                }
+
+                @Override
+                public void onStopDiscoveryFailed(String serviceType, int errorCode) {
+                    Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                    discoveryState = SyncUtils.DiscoveryState.NSDStopDiscoveryFailed;
+                    that.callBack.serviceUpdateStatus(discoveryState);
+                }
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.i(TAG, e.getLocalizedMessage());
+
+        }
+
     }
 
     public void unInitializeResolveListener() {
@@ -334,9 +338,20 @@ public class NSDServiceFinder {
         this.stopDiscovery();
         this.unInitializeResolveListener();
         this.unregisterRegistrationListener();
-        this.discoverServiceTimeOutTimer.cancel();
-        this.discoverServiceRegistrationTimer.cancel();
-        this.discoverServiceTimeOutTimer = null;
-        this.discoverServiceRegistrationTimer = null;
+        if(discoverServiceTimeOutTimer != null) {
+            this.discoverServiceTimeOutTimer.cancel();
+        }
+
+        if(discoverServiceRegistrationTimer != null) {
+            this.discoverServiceRegistrationTimer.cancel();
+        }
+
+        if(this.discoverServiceTimeOutTimer != null) {
+            this.discoverServiceTimeOutTimer = null;
+        }
+
+        if(this.discoverServiceRegistrationTimer != null) {
+            this.discoverServiceRegistrationTimer = null;
+        }
     }
 }

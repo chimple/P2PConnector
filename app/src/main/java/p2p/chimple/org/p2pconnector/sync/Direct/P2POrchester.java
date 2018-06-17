@@ -57,7 +57,7 @@ public class P2POrchester implements HandShakeInitiatorCallBack, WifiConnectionU
         this.connectionState = SyncUtils.ConnectionState.NotInitialized;
         this.reportingState = SyncUtils.ReportingState.NotInitialized;
 
-        this.serviceFoundTimeOutTimer = new CountDownTimer(600000, 1000) {
+        this.serviceFoundTimeOutTimer = new CountDownTimer(4 * 60 * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 // not using
             }
