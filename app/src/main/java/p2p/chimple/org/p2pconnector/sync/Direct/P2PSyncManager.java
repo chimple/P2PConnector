@@ -425,14 +425,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     @Override
-    public void ListeningSocketFailed(String reason) {
-        if(instance != null) {
-            instance.resetExitTimer();
-            instance.startExitTimer();
-        }
-    }
-
-    @Override
     public void Connected(String address, boolean isGroupOwner) {
         if (isGroupOwner) {
             clientIPAddressToConnect = address;

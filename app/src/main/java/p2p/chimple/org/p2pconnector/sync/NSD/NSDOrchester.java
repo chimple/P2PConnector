@@ -139,6 +139,7 @@ public class NSDOrchester implements NSDHandShakeInitiatorCallBack, NSDWifiConne
     @Override
     public void NSDConnectionFailed(String reason, int trialCount) {
         Log.i(TAG, "NSDConnectionFailed:" + reason);
+        this.callBack.ListeningSocketFailed(reason);
     }
 
     @Override
