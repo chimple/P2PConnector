@@ -244,7 +244,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
                         public void onFinish() {
                             Log.i(TAG, "shuting down Sync Job");
-                            
+
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 //Lets give others chance on creating new group before we come back online

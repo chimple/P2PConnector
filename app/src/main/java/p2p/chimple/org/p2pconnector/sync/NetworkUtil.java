@@ -6,30 +6,20 @@ import android.net.NetworkInfo;
 
 public class NetworkUtil {
 
-    public static int TYPE_WIFI = 1;
-    public static int TYPE_NOT_CONNECTED = 0;
-
-
-    public static int getConnectivityStatus(Context context) {
+    public static boolean getConnectivityStatus(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (null != activeNetwork) {
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
-                return TYPE_WIFI;
-        }
-        return TYPE_NOT_CONNECTED;
-    }
+        NetworkInfo wifiCheck = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if(wifiCheck != null) {
+            if (wifiCheck.isConnected()) {
+                return true;
+            } else {
+                return false;
+            }
 
-    public static boolean getConnectivityStatusString(Context context) {
-        int conn = NetworkUtil.getConnectivityStatus(context);
-        boolean status = false;
-        if (conn == NetworkUtil.TYPE_WIFI) {
-            status = true;
-        } else if (conn == NetworkUtil.TYPE_NOT_CONNECTED) {
-            status = false;
+        } else {
+            return false;
         }
-        return status;
     }
 }

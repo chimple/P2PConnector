@@ -19,7 +19,7 @@ public class NetworkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
-        boolean IsConnected = NetworkUtil.getConnectivityStatusString(context);
+        boolean IsConnected = NetworkUtil.getConnectivityStatus(context);
         Log.i(TAG, "Is Connected:" + IsConnected);
 
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);

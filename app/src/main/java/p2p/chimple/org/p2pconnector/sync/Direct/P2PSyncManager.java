@@ -263,7 +263,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                         public void onFinish() {
                             Log.i(TAG, "Restart Connectors");
                             StopConnector();
-
+                            resetWifi();
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 //Lets give others chance on creating new group before we come back online
@@ -653,7 +653,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                         isShutDownJobStarted = true;
                         Log.i(TAG, "...... shutDownSyncJobTimer .....");
                         shutDownSyncJobTimer.start();
-                        Log.i(TAG, "Exit time reached ... starting reStartJobTimer");
                     }
                 }
             });
