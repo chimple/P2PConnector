@@ -101,17 +101,21 @@ public class NSDServiceFinder {
     }
 
 
-    private void startServiceDiscovery() {
+    private synchronized void startServiceDiscovery() {
         try {
-            initializeDiscoveryListener();
             discoveryState = SyncUtils.DiscoveryState.DiscoverService;
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 //There are supposedly a possible race-condition bug with the service discovery
                 // thus to avoid it, we are delaying the service discovery start here
                 public void run() {
-                    mNsdManager.discoverServices(
-                            SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+                    initializeDiscoveryListener();
+                    Log.i(TAG, "startServiceDiscovery:" + (mDiscoveryListener != null));
+                    if (mDiscoveryListener != null) {
+                        Log.i(TAG, "discoverServices");
+                        mNsdManager.discoverServices(
+                                SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+                    }
                 }
             }, 1000);
 
@@ -126,87 +130,91 @@ public class NSDServiceFinder {
     }
 
 
-    public void initializeDiscoveryListener() {
+    public synchronized void initializeDiscoveryListener() {
         try {
-            mDiscoveryListener = new NsdManager.DiscoveryListener() {
-                @Override
-                public void onDiscoveryStarted(String regType) {
-                    Log.d(TAG, "Service discovery started");
-                }
+            if (mDiscoveryListener == null) {
+                mDiscoveryListener = new NsdManager.DiscoveryListener() {
+                    @Override
+                    public void onDiscoveryStarted(String regType) {
+                        Log.d(TAG, "Service discovery started");
+                    }
 
-                @Override
-                public void onServiceFound(NsdServiceInfo service) {
-                    Log.d(TAG, "Service discovery success" + service);
-                    discoveryState = SyncUtils.DiscoveryState.NSDServiceFound;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-
-                    String serviceType = service.getServiceType();
-                    Log.d(TAG, "Service discovery success: " + service.getServiceName());
-
-                    // For some reason the service type received has an extra dot with it, hence
-                    // handling that case
-
-                    boolean isOurService = serviceType.equals(SERVICE_TYPE) || serviceType.equals
-                            (SERVICE_TYPE_PLUS_DOT);
-
-                    if (!isOurService) {
-                        Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundNotServiceType;
-                        that.callBack.serviceUpdateStatus(discoveryState);
-                    } else if (service.getServiceName().equals(mServiceName)) {
-                        Log.d(TAG, "Same machine: " + mServiceName);
-                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundSameMachine;
-                        that.callBack.serviceUpdateStatus(discoveryState);
-                    } else if (!service.getServiceName().equals(mServiceName)) {
-                        Log.d(TAG, "different machines. (" + service.getServiceName() + "-" +
-                                mServiceName + ")");
-                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundDifferentMachine;
+                    @Override
+                    public void onServiceFound(NsdServiceInfo service) {
+                        Log.d(TAG, "Service discovery success" + service);
+                        discoveryState = SyncUtils.DiscoveryState.NSDServiceFound;
                         that.callBack.serviceUpdateStatus(discoveryState);
 
-                        try {
-                            mNsdManager.resolveService(service, mResolveListener);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            NSDSyncManager.getInstance(that.mContext).startConnectorsTimer();
+                        String serviceType = service.getServiceType();
+                        Log.d(TAG, "Service discovery success: " + service.getServiceName());
+
+                        // For some reason the service type received has an extra dot with it, hence
+                        // handling that case
+
+                        boolean isOurService = serviceType.equals(SERVICE_TYPE) || serviceType.equals
+                                (SERVICE_TYPE_PLUS_DOT);
+
+                        if (!isOurService) {
+                            Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
+                            discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundNotServiceType;
+                            that.callBack.serviceUpdateStatus(discoveryState);
+                        } else if (service.getServiceName().equals(mServiceName)) {
+                            Log.d(TAG, "Same machine: " + mServiceName);
+                            discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundSameMachine;
+                            that.callBack.serviceUpdateStatus(discoveryState);
+                        } else if (!service.getServiceName().equals(mServiceName)) {
+                            Log.d(TAG, "different machines. (" + service.getServiceName() + "-" +
+                                    mServiceName + ")");
+                            discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundDifferentMachine;
+                            that.callBack.serviceUpdateStatus(discoveryState);
+
+                            try {
+                                mNsdManager.resolveService(service, mResolveListener);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                NSDSyncManager.getInstance(that.mContext).startConnectorsTimer();
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onServiceLost(NsdServiceInfo service) {
-                    Log.e(TAG, "service lost" + service);
-                    if (mService == service) {
-                        mService = null;
+                    @Override
+                    public void onServiceLost(NsdServiceInfo service) {
+                        Log.e(TAG, "service lost" + service);
+                        if (mService == service) {
+                            mService = null;
+                        }
+                        discoveryState = SyncUtils.DiscoveryState.NSDServiceLost;
+                        that.callBack.serviceUpdateStatus(discoveryState);
+                        if (that.discoverServiceTimeOutTimer != null) {
+                            that.discoverServiceTimeOutTimer.start();
+                        }
                     }
-                    discoveryState = SyncUtils.DiscoveryState.NSDServiceLost;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                    that.discoverServiceTimeOutTimer.start();
-                }
 
-                @Override
-                public void onDiscoveryStopped(String serviceType) {
-                    Log.i(TAG, "Discovery stopped: " + serviceType);
-                    discoveryState = SyncUtils.DiscoveryState.NSDDiscoveryServiceStopped;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                }
-
-                @Override
-                public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                    Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                    discoveryState = SyncUtils.DiscoveryState.NSDStartDiscoveryFailed;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                    if (that.discoverServiceTimeOutTimer != null) {
-                        that.discoverServiceTimeOutTimer.start();
+                    @Override
+                    public void onDiscoveryStopped(String serviceType) {
+                        Log.i(TAG, "Discovery stopped: " + serviceType);
+                        discoveryState = SyncUtils.DiscoveryState.NSDDiscoveryServiceStopped;
+                        that.callBack.serviceUpdateStatus(discoveryState);
                     }
-                }
 
-                @Override
-                public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                    Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                    discoveryState = SyncUtils.DiscoveryState.NSDStopDiscoveryFailed;
-                    that.callBack.serviceUpdateStatus(discoveryState);
-                }
-            };
+                    @Override
+                    public void onStartDiscoveryFailed(String serviceType, int errorCode) {
+                        Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                        discoveryState = SyncUtils.DiscoveryState.NSDStartDiscoveryFailed;
+                        that.callBack.serviceUpdateStatus(discoveryState);
+                        if (that.discoverServiceTimeOutTimer != null) {
+                            that.discoverServiceTimeOutTimer.start();
+                        }
+                    }
+
+                    @Override
+                    public void onStopDiscoveryFailed(String serviceType, int errorCode) {
+                        Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                        discoveryState = SyncUtils.DiscoveryState.NSDStopDiscoveryFailed;
+                        that.callBack.serviceUpdateStatus(discoveryState);
+                    }
+                };
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Log.i(TAG, e.getLocalizedMessage());

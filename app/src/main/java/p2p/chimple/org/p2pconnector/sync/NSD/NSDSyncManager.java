@@ -203,22 +203,31 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public void startConnectorsTimer() {
         synchronized (this) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
+                boolean shouldStart = false;
                 @Override
                 public void run() {
-                    reStartJobTimer = new CountDownTimer(10000, 2000) {
+                    reStartJobTimer = new CountDownTimer(5000, 1000) {
                         public void onTick(long millisUntilFinished) {
-                            Log.i(TAG, "reStartJobTimer ticking.....");
                         }
 
                         public void onFinish() {
-                            Log.i(TAG, "Restart Connectors");
+                            Log.i(TAG, "Stop Connectors");
                             StopNSDConnector();
 
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 //Lets give others chance on creating new group before we come back online
                                 public void run() {
-                                    StartNSDConnector();
+                                    if(EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted > 20) {
+                                        shouldStart = true;
+                                    } else {
+                                        shouldStart = false;
+                                    }
+                                    Log.i(TAG, "Should we start timer " + shouldStart);
+                                    if(shouldStart) {
+                                        Log.i(TAG, "reStartJobTimer start connectors.....");
+                                        StartNSDConnector();
+                                    }
                                 }
                             }, 10000);
                         }
@@ -274,7 +283,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     public void StartNSDConnector() {
         updateStatus(TAG, "starting NSD listener now, and connector");
-        startListenerThread();
+        startListenerThread(0);
         mNSDConnector = new NSDOrchester(this.context, this, this.mHandler);
     }
 
@@ -295,9 +304,9 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         return this.context;
     }
 
-    private void startListenerThread() {
+    private void startListenerThread(int count) {
         stopListenerThread();
-        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber, 0);
+        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber, count);
         mTestListenerThread.start();
     }
 
@@ -372,7 +381,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public void GotConnection(Socket socket) {
         Log.i(TAG, "We got incoming connection");
         final Socket socketTmp = socket;
-        startListenerThread();
+        startListenerThread(0);
         mTestConnectToThread = null;
         this.p2PStateFlow.resetAllStates();
         startTestConnection(socketTmp, false);
@@ -387,7 +396,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public void ListeningFailed(String reason, int count) {
         count++;
         if (count <= 2) {
-            startListenerThread();
+            startListenerThread(count);
         } else {
             Log.i(TAG, "Communication listener failed 2 times, starting exit timer");
             NSDSyncManager.getInstance(this.context).startConnectorsTimer();
