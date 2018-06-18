@@ -124,7 +124,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
                 Log.i(TAG, "Will start shutdown job in: " + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
 
-                if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME) {
+                if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !isShutDownJobStarted && instance != null) {
                     instance.startShutDownTimer();
                 }
             }
