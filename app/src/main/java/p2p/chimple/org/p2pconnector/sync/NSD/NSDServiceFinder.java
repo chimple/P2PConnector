@@ -157,8 +157,13 @@ public class NSDServiceFinder {
                                 mServiceName + ")");
                         discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundDifferentMachine;
                         that.callBack.serviceUpdateStatus(discoveryState);
-                        if(mResolveListener != null) {
-                            mNsdManager.resolveService(service, mResolveListener);
+                        if (mResolveListener != null) {
+                            try {
+                                mNsdManager.resolveService(service, mResolveListener);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                NSDSyncManager.getInstance(that.mContext).startConnectorsTimer();
+                            }
                         }
                     }
                 }
@@ -261,7 +266,7 @@ public class NSDServiceFinder {
                 Log.d(TAG, "Service registered: " + NsdServiceInfo);
                 discoveryState = SyncUtils.DiscoveryState.NSDServiceRegistrationSucceed;
                 that.callBack.serviceUpdateStatus(discoveryState);
-                if(that.discoverServiceRegistrationTimer != null) {
+                if (that.discoverServiceRegistrationTimer != null) {
                     that.discoverServiceRegistrationTimer.cancel();
                 }
             }
@@ -271,7 +276,7 @@ public class NSDServiceFinder {
                 Log.d(TAG, "Service registration failed: " + arg1);
                 discoveryState = SyncUtils.DiscoveryState.NSDServiceRegistrationFailed;
                 that.callBack.serviceUpdateStatus(discoveryState);
-                if(that.discoverServiceRegistrationTimer != null) {
+                if (that.discoverServiceRegistrationTimer != null) {
                     that.discoverServiceRegistrationTimer.start();
                 }
             }
@@ -338,19 +343,19 @@ public class NSDServiceFinder {
         this.stopDiscovery();
         this.unInitializeResolveListener();
         this.unregisterRegistrationListener();
-        if(discoverServiceTimeOutTimer != null) {
+        if (discoverServiceTimeOutTimer != null) {
             this.discoverServiceTimeOutTimer.cancel();
         }
 
-        if(discoverServiceRegistrationTimer != null) {
+        if (discoverServiceRegistrationTimer != null) {
             this.discoverServiceRegistrationTimer.cancel();
         }
 
-        if(this.discoverServiceTimeOutTimer != null) {
+        if (this.discoverServiceTimeOutTimer != null) {
             this.discoverServiceTimeOutTimer = null;
         }
 
-        if(this.discoverServiceRegistrationTimer != null) {
+        if (this.discoverServiceRegistrationTimer != null) {
             this.discoverServiceRegistrationTimer = null;
         }
     }

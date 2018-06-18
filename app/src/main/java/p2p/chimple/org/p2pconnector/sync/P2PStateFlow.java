@@ -148,7 +148,7 @@ public class P2PStateFlow {
         Transition transitionTo = this.getState().process(command);
         P2PState currentState = this.getState();
         Transition currentStateTransition = currentState.getTransition();
-
+        Log.i(TAG, "transition to state " + transitionTo);
         if (transitionTo != currentStateTransition) {
             currentState.onExit(transitionTo);
             if (allPossibleStates.containsKey(transitionTo)) {
