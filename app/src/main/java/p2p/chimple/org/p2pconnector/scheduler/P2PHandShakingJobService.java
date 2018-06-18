@@ -68,7 +68,7 @@ public class P2PHandShakingJobService extends JobService {
     public boolean onStopJob(JobParameters params) {
         // Stop tracking these job parameters, as we've 'finished' executing.
         Log.i(TAG, "on stop job: " + params.getJobId());
-        return false;
+        return true;
     }
 
     private void unregisterP2PSyncCompletionIntentBroadcastReceiver() {
