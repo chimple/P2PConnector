@@ -317,7 +317,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     private void startListenerThread() {
         stopListenerThread();
-        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber);
+        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber, 0);
         mTestListenerThread.start();
     }
 
@@ -404,8 +404,15 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     }
 
     @Override
-    public void ListeningFailed(String reason) {
-        startListenerThread();
+    public void ListeningFailed(String reason, int count) {
+        count++;
+        if (count <= 2) {
+            startListenerThread();
+        } else {
+            Log.i(TAG, "Communication listener failed 2 times, starting exit timer");
+            P2PSyncManager.getInstance(this.context).startConnectorsTimer();
+        }
+
     }
 
     @Override

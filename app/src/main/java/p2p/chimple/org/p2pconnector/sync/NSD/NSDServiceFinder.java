@@ -102,21 +102,26 @@ public class NSDServiceFinder {
 
 
     private void startServiceDiscovery() {
-        initializeDiscoveryListener();
-        discoveryState = SyncUtils.DiscoveryState.DiscoverService;
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            //There are supposedly a possible race-condition bug with the service discovery
-            // thus to avoid it, we are delaying the service discovery start here
-            public void run() {
-                mNsdManager.discoverServices(
-                        SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
-            }
-        }, 1000);
+        try {
+            initializeDiscoveryListener();
+            discoveryState = SyncUtils.DiscoveryState.DiscoverService;
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                //There are supposedly a possible race-condition bug with the service discovery
+                // thus to avoid it, we are delaying the service discovery start here
+                public void run() {
+                    mNsdManager.discoverServices(
+                            SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+                }
+            }, 1000);
 
-        if (this.discoverServiceTimeOutTimer != null) {
-            this.discoverServiceTimeOutTimer.cancel();
-            this.discoverServiceTimeOutTimer.start();
+            if (this.discoverServiceTimeOutTimer != null) {
+                this.discoverServiceTimeOutTimer.cancel();
+                this.discoverServiceTimeOutTimer.start();
+            }
+        } catch (Exception ex) {
+            Log.i(TAG, ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -157,13 +162,12 @@ public class NSDServiceFinder {
                                 mServiceName + ")");
                         discoveryState = SyncUtils.DiscoveryState.NSDServiceFoundDifferentMachine;
                         that.callBack.serviceUpdateStatus(discoveryState);
-                        if (mResolveListener != null) {
-                            try {
-                                mNsdManager.resolveService(service, mResolveListener);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                NSDSyncManager.getInstance(that.mContext).startConnectorsTimer();
-                            }
+
+                        try {
+                            mNsdManager.resolveService(service, mResolveListener);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            NSDSyncManager.getInstance(that.mContext).startConnectorsTimer();
                         }
                     }
                 }
@@ -240,8 +244,6 @@ public class NSDServiceFinder {
                 that.processResolvedServiceInfo(mService);
                 Log.i(TAG, "onServiceResolved mService host:" + mService.getHost());
                 Log.i(TAG, "onServiceResolved mService port: " + mService.getPort());
-//                Intent intent = new Intent(NSD_SERVICE_FOUND_FOR_CONNECTION);
-//                LocalBroadcastManager.getInstance(that.mContext).sendBroadcast(intent);
                 discoveryState = SyncUtils.DiscoveryState.NSDServiceResolved;
                 that.callBack.serviceUpdateStatus(discoveryState);
             }

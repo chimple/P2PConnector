@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.DBSyncManager;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
@@ -298,7 +297,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     private void startListenerThread() {
         stopListenerThread();
-        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber);
+        mTestListenerThread = new CommunicationThread(this, TestChatPortNumber, 0);
         mTestListenerThread.start();
     }
 
@@ -385,8 +384,14 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     }
 
     @Override
-    public void ListeningFailed(String reason) {
-        startListenerThread();
+    public void ListeningFailed(String reason, int count) {
+        count++;
+        if (count <= 2) {
+            startListenerThread();
+        } else {
+            Log.i(TAG, "Communication listener failed 2 times, starting exit timer");
+            NSDSyncManager.getInstance(this.context).startConnectorsTimer();
+        }
     }
 
 
