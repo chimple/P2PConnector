@@ -244,8 +244,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
                         public void onFinish() {
                             Log.i(TAG, "shuting down Sync Job");
-
-
+                            
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 //Lets give others chance on creating new group before we come back online
@@ -627,7 +626,8 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
             Log.i(TAG, "networkConnectionChangedReceiver intent");
             boolean isConnected = intent.getBooleanExtra("isConnected", false);
             if (!isConnected) {
-                Log.i(TAG, "Wifi Not connected");
+                Log.i(TAG, "Wifi Not connected - need to shut down sync job");
+                instance.startShutDownTimer();
             }
         }
     };

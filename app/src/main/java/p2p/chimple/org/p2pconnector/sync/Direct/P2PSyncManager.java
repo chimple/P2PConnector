@@ -158,26 +158,11 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             Log.i(TAG, "networkConnectionChangedReceiver intent");
             boolean isConnected = intent.getBooleanExtra("isConnected", false);
             if (isConnected) {
-                Log.i(TAG, "Wifi connected");
-                instance.shutDownP2PSyncJob();
+                Log.i(TAG, "Wifi connected - need to shut down job");
+                instance.startShutDownTimer();
             }
         }
     };
-
-
-    public void shutDownP2PSyncJob() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            //Lets give others chance on creating new group before we come back online
-            public void run() {
-                StopConnector();
-                Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
-                result.putExtra(JOB_PARAMS, currentJobParams);
-                LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
-            }
-        }, 1000);
-    }
-
 
     private BroadcastReceiver p2pAllMessageExchangedReceiver = new BroadcastReceiver() {
         @Override
@@ -238,7 +223,11 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.currentJobParams = currentJobParams;
         mStatusChecker.run();
 
-        resetWifi();
+        WifiManager wifiManager = (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(false);
+        }
+
         StartConnector();
     }
 
@@ -282,10 +271,6 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                                     StartConnector();
                                 }
                             }, 10000);
-
-                            // Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
-                            // result.putExtra(JOB_PARAMS, currentJobParams);
-                            // LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
                         }
                     };
 
@@ -654,6 +639,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                                 //Lets give others chance on creating new group before we come back online
                                 public void run() {
                                     StopConnector();
+                                    resetWifi();
                                     Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
                                     result.putExtra(JOB_PARAMS, currentJobParams);
                                     LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
