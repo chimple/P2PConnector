@@ -46,13 +46,12 @@ import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.JO
 import static p2p.chimple.org.p2pconnector.scheduler.P2PHandShakingJobService.P2P_SYNC_RESULT_RECEIVED;
 import static p2p.chimple.org.p2pconnector.sync.Direct.P2POrchester.allMessageExchangedForP2P;
 import static p2p.chimple.org.p2pconnector.sync.Direct.P2POrchester.neighboursUpdateEvent;
-import static p2p.chimple.org.p2pconnector.sync.NSD.NSDSyncManager.nsdConnectionChangedEvent;
 
 public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBack, Handler.Callback {
     private static final String TAG = P2PSyncManager.class.getSimpleName();
     private Context context;
     private static P2PSyncManager instance;
-    private CountDownTimer shutDownJobTimer;
+    private CountDownTimer reStartJobTimer;
     private String clientIPAddressToConnect = null;
     private P2POrchester mWDConnector = null;
     private CommunicationThread mTestListenerThread = null;
@@ -82,7 +81,11 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public static final String p2pConnectionChangedEvent = "p2p-connection-changed-event";
     public static final String connectedDevice = "CONNECTED_DEVICE";
     public static final String P2P_SHARED_PREF = "p2pShardPref";
-    public static final int EXIT_CURRENT_JOB_TIME = 4 * 60; // 4 mins
+    public static final int EXIT_CURRENT_JOB_TIME = 10 * 60; // 4 mins
+
+    private boolean isShutDownJobStarted = false;
+    private CountDownTimer shutDownSyncJobTimer;
+
 
     public static P2PSyncManager getInstance(Context context) {
         if (instance == null) {
@@ -116,16 +119,12 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 // call function to update timer
                 timeCounter = timeCounter + 1;
                 totalTimeTillJobStarted = totalTimeTillJobStarted + 1;
-//                Log.i(TAG, "totalTimeTillJobStarted" + totalTimeTillJobStarted + " Time left:" + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
-                if (!exitTimerStarted) {
-                    if (instance != null) {
-                        instance.broadcastCustomTimerStatusUpdateEvent();
-                        instance.mHandler.postDelayed(mStatusChecker, mInterval);
-                    }
+                if (instance != null) {
+                    instance.broadcastCustomTimerStatusUpdateEvent();
+                    instance.mHandler.postDelayed(mStatusChecker, mInterval);
                 }
-
-                if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !exitTimerStarted) {
-                    instance.startExitTimer();
+                if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !isShutDownJobStarted) {
+                    instance.startShutDownTimer();
                 }
             }
 
@@ -134,8 +133,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
 
     private void broadcastCustomTimerStatusUpdateEvent() {
         Intent intent = new Intent(customTimerStatusUpdateEvent);
-//        Log.i(TAG, "totalTimeTillJobStarted" + totalTimeTillJobStarted + " Time left:" + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
-        intent.putExtra("timeCounter", "T:" + this.timeCounter + " Exit In :" + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
+        intent.putExtra("timeCounter", "T:" + this.timeCounter);
         LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
     }
 
@@ -172,7 +170,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         handler.postDelayed(new Runnable() {
             //Lets give others chance on creating new group before we come back online
             public void run() {
-                stopConnector();
+                StopConnector();
                 Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
                 result.putExtra(JOB_PARAMS, currentJobParams);
                 LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
@@ -193,9 +191,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                 }
                 Log.i(TAG, ".... calling removeClientIPAddressToConnect ....");
                 instance.removeClientIPAddressToConnect();
-                Log.i(TAG, ".... calling startExitTimer....");
-                instance.resetExitTimer();
-                instance.startExitTimer();
+                Log.i(TAG, ".... calling startConnectorsTimer....");
+                instance.startConnectorsTimer();
 
             }
         }
@@ -264,19 +261,19 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         }
     }
 
-    public void startExitTimer() {
+    public void startConnectorsTimer() {
         synchronized (this) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    shutDownJobTimer = new CountDownTimer(10000, 2000) {
+                    reStartJobTimer = new CountDownTimer(10000, 2000) {
                         public void onTick(long millisUntilFinished) {
-                            Log.i(TAG, "shutDownJobTimer ticking.....");
+                            Log.i(TAG, "reStartJobTimer ticking.....");
                         }
 
                         public void onFinish() {
-                            Log.i(TAG, "SHUTTING DOWN CURRENT JOB for P2P");
-                            stopConnector();
+                            Log.i(TAG, "Restart Connectors");
+                            StopConnector();
 
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
@@ -296,8 +293,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
                     if (!exitTimerStarted) {
                         exitTimerStarted = true;
                         Log.i(TAG, "...... exitTimerStarted .....");
-                        shutDownJobTimer.start();
-                        Log.i(TAG, "Exit time reached ... starting shutDownJobTimer");
+                        reStartJobTimer.start();
+                        Log.i(TAG, "Exit time reached ... starting reStartJobTimer");
                     }
                 }
             });
@@ -313,7 +310,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         mWDConnector = new P2POrchester(this.context, this, this.mHandler);
     }
 
-    public void stopConnector() {
+    public void StopConnector() {
         stopConnectedThread();
         stopConnectToThread();
         stopListenerThread();
@@ -362,8 +359,8 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
     public void connectToClient() {
         stopConnectedThread();
         stopConnectToThread();
-        if (instance.shutDownJobTimer != null) {
-            instance.shutDownJobTimer.cancel();
+        if (instance.reStartJobTimer != null) {
+            instance.reStartJobTimer.cancel();
         }
 
         if (clientIPAddressToConnect != null) {
@@ -378,8 +375,7 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
             updateStatus("Data state", "All addresses connected, will start exit timer now.");
             // lets just see if we get more connections coming in before the timeout comes
             Log.i(TAG, "Data state" + "All addresses connected, will start exit timer now.");
-            this.resetExitTimer();
-            this.startExitTimer();
+            this.startConnectorsTimer();
         }
     }
 
@@ -478,10 +474,10 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(p2pAllMessageExchangedReceiver);
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(networkConnectionChangedReceiver);
-        if (this.shutDownJobTimer != null) {
-            this.shutDownJobTimer.cancel();
+        if (this.reStartJobTimer != null) {
+            this.reStartJobTimer.cancel();
         }
-        this.stopConnector();
+        this.StopConnector();
         this.mStatusChecker = null;
         P2PSyncManager.instance = null;
         updateStatus(TAG, "onDestroy");
@@ -639,10 +635,44 @@ public class P2PSyncManager implements P2POrchesterCallBack, CommunicationCallBa
         this.clientIPAddressToConnect = null;
     }
 
-    public void resetExitTimer() {
-        if (exitTimerStarted == true) {
-            this.exitTimerStarted = false;
+    public void startShutDownTimer() {
+        synchronized (this) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    shutDownSyncJobTimer = new CountDownTimer(10000, 2000) {
+                        public void onTick(long millisUntilFinished) {
+                            Log.i(TAG, "start shut down timer ticking.....");
+                        }
+
+                        public void onFinish() {
+                            Log.i(TAG, "shuting down Sync Job");
+
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                //Lets give others chance on creating new group before we come back online
+                                public void run() {
+                                    StopConnector();
+                                    Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
+                                    result.putExtra(JOB_PARAMS, currentJobParams);
+                                    LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
+                                }
+                            }, 1000);
+                        }
+                    };
+
+                    Log.i(TAG, "...... checking if shutDownSyncJobTimer ....." + isShutDownJobStarted);
+                    if (!isShutDownJobStarted) {
+                        isShutDownJobStarted = true;
+                        Log.i(TAG, "...... shutDownSyncJobTimer .....");
+                        shutDownSyncJobTimer.start();
+                        Log.i(TAG, "Exit time reached ... starting reStartJobTimer");
+                    }
+                }
+            });
+
+
         }
     }
-
 }
