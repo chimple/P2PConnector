@@ -12,7 +12,7 @@ import p2p.chimple.org.p2pconnector.sync.SyncUtils;
 
 public class NSDAccessPoint implements HandShakeListenerCallBack {
 
-    private static final String TAG = P2PAccessPoint.class.getSimpleName();
+    private static final String TAG = NSDAccessPoint.class.getSimpleName();
     private NSDAccessPoint that = this;
 
     private Context context;

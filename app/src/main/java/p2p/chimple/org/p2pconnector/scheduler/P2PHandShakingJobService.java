@@ -77,12 +77,6 @@ public class P2PHandShakingJobService extends JobService {
             receiver = null;
             Log.i(TAG, "p2p Sync Completion Receiver unregistered");
         }
-
-//        WifiManager wifiManager;
-//        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//        if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
-//            wifiManager.setWifiEnabled(false);
-//        }
     }
 
     private void registerP2PSyncCompletionIntentBroadcastReceiver() {
@@ -108,12 +102,13 @@ public class P2PHandShakingJobService extends JobService {
         @Override
         public void onReceive(Context context, Intent intent) {
             JobParameters params = intent.getExtras().getParcelable(JOB_PARAMS);
+            Log.i(TAG, "P2PSyncCompletionIntentBroadcastReceiver ...." + params);
             if (params != null) {
                 Log.i(TAG, "on finished job: " + params.getJobId());
                 JobUtils.setJobRunning(false);
                 JobUtils.cancelAllJobs(context);
                 JobUtils.scheduledJob(context, true);
-                getApplicationContext().stopService(p2pSyncService);
+                getApplicationContext().stopService(new Intent(p2pSyncService));
                 jobFinished(params, false);
             }
         }

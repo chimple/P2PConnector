@@ -10,7 +10,7 @@ import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.RECEIVE_
 import static p2p.chimple.org.p2pconnector.sync.P2PStateFlow.Transition.SEND_DB_SYNC_INFORMATION;
 
 public class SendSyncInfoMessageState implements P2PState {
-    private static final String TAG = SendInitialHandShakingMessageState.class.getSimpleName();
+    private static final String TAG = SendSyncInfoMessageState.class.getSimpleName();
 
     private P2PStateFlow.Transition cTransition;
 
@@ -33,7 +33,7 @@ public class SendSyncInfoMessageState implements P2PState {
             final String updatedSyncInformation = "START" + syncInformation + "END";
             if (p2PStateFlow.getThread() != null && updatedSyncInformation != null && !updatedSyncInformation.isEmpty()) {
                 p2PStateFlow.getThread().write(updatedSyncInformation.getBytes(), 0, updatedSyncInformation.length());
-                Log.i(TAG, "syncInformation message sent" + syncInformation);
+                Log.i(TAG, "syncInformation message sent" + updatedSyncInformation);
             }
             p2PStateFlow.setAllSyncInformationSent(true);
             if(p2PStateFlow.isAllSyncInformationReceived()) {

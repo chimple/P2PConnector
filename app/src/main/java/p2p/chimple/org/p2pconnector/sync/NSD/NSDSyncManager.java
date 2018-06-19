@@ -79,7 +79,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public static final String customStatusUpdateEvent = "custom-status-update-event";
     public static final String customTimerStatusUpdateEvent = "custom-timer-status-update-event";
     public static final String nsdConnectionChangedEvent = "nsd-connection-changed-event";
-    public static final String connectedDevice = "CONNECTED_DEVICE";
+    public static String CURRENT_CONNECTED_DEVICE = null;
     public static final String P2P_SHARED_PREF = "p2pShardPref";
     public static final int EXIT_CURRENT_JOB_TIME = 2 * 60; // 2 mins
 
@@ -206,7 +206,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                 boolean shouldStart = false;
                 @Override
                 public void run() {
-                    reStartJobTimer = new CountDownTimer(5000, 1000) {
+                    reStartJobTimer = new CountDownTimer(1000, 1000) {
                         public void onTick(long millisUntilFinished) {
                         }
 
@@ -223,13 +223,13 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                                     } else {
                                         shouldStart = false;
                                     }
-                                    Log.i(TAG, "Should we start timer " + shouldStart);
+                                    Log.i(TAG, "Should we start NSD Connector " + shouldStart);
                                     if(shouldStart) {
                                         Log.i(TAG, "reStartJobTimer start connectors.....");
                                         StartNSDConnector();
                                     }
                                 }
-                            }, 10000);
+                            }, 1);
                         }
                     };
 
@@ -259,6 +259,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                                 //Lets give others chance on creating new group before we come back online
                                 public void run() {
                                     StopNSDConnector();
+                                    Log.i(TAG, "Sending Broadcast for P2P_SYNC_RESULT_RECEIVED Intent");
                                     Intent result = new Intent(P2P_SYNC_RESULT_RECEIVED);
                                     result.putExtra(JOB_PARAMS, currentJobParams);
                                     LocalBroadcastManager.getInstance(instance.context).sendBroadcast(result);
@@ -336,7 +337,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public void connectToClient() {
         stopConnectedThread();
         stopConnectToThread();
-        if (instance.reStartJobTimer != null) {
+        if (instance != null && instance.reStartJobTimer != null) {
             instance.reStartJobTimer.cancel();
         }
 
@@ -585,7 +586,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
 
     public void removeClientIPAddressToConnect() {
         this.clientIPAddressToConnect = null;
-        NSDSyncManager.getInstance(context).updateInSharedPreference(NSDSyncManager.connectedDevice, null);
+        NSDSyncManager.CURRENT_CONNECTED_DEVICE = null;
     }
 
     @Override
@@ -656,7 +657,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
             // Get extra data included in the Intent
             synchronized (this) {
                 P2PDBApi api = P2PDBApiImpl.getInstance(instance.getContext());
-                String deviceId = instance.fetchFromSharedPreference(NSDSyncManager.connectedDevice);
+                String deviceId = NSDSyncManager.CURRENT_CONNECTED_DEVICE;
                 if (deviceId != null) {
                     api.syncCompleted(deviceId);
                 }
@@ -670,7 +671,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                         Log.i(TAG, ".... calling start connect to next client ....");
                         instance.connectToClient();
                     }
-                }, 1000);
+                }, 1);
             }
         }
     };
