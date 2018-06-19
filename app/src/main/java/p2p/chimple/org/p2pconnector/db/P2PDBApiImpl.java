@@ -96,7 +96,7 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "inserted data" + message);
 
         List found = db.p2pSyncDao().fetchByUserAndDeviceAndSequence(message.getUserId(), message.getDeviceId(), message.sequence);
-        if(found == null || found.size() == 0) {
+        if (found == null || found.size() == 0) {
             db.p2pSyncDao().insertP2PSyncInfo(message);
             Log.i(TAG, "inserted data" + message);
         } else {
@@ -122,7 +122,7 @@ public class P2PDBApiImpl implements P2PDBApi {
             } finally {
                 db.endTransaction();
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -505,7 +505,7 @@ public class P2PDBApiImpl implements P2PDBApi {
     public void addDeviceToSyncAndStartJobIfNotRunning(String recipientId) {
         String deviceId = db.p2pSyncDao().getDeviceForRecipientUserId(recipientId);
         addDeviceToSync(deviceId, true);
-        JobUtils.scheduledJob(this.context, true);
+        // JobUtils.scheduledJob(this.context, true);
     }
 
     public boolean addMessage(String userId, String recipientId, String messageType, String message) {
