@@ -1,9 +1,8 @@
 3,S,1,morning,text
-3,S,6,morning,text
-7,U,10,morning,text
-7,W,3,good,text
-11,A,1,bad,text
-11,A,4,bad,text
+7,U,10,morning,text U+1F623
+7,W,3,good,text 🤐
+11,A,1,bad,text 🤢
+11,A,4,bad,text 👺
 12,L,1,bad,text
-14,C,1,bad,text
-18,F,1,bad,text
+14,C,1,bad,text U+1F910
+18,F,1,bad,text 👺

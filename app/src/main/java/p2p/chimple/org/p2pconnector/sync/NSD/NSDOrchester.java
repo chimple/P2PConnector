@@ -247,7 +247,7 @@ public class NSDOrchester implements NSDHandShakeInitiatorCallBack, NSDWifiConne
             }
         }
     }
-    
+
     @Override
     public void serviceUpdateStatus(SyncUtils.DiscoveryState newState) {
         this.callBack.NSDDiscovertyStateChanged(newState);
