@@ -1,9 +1,11 @@
 package p2p.chimple.org.p2pconnector.db;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -33,9 +35,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfo;
 import p2p.chimple.org.p2pconnector.db.entity.HandShakingInfoDeserializer;
@@ -95,10 +100,35 @@ public class P2PDBApiImpl implements P2PDBApi {
         Log.i(TAG, "got Sync info:" + message.recipientUserId);
         Log.i(TAG, "inserted data" + message);
 
+        SharedPreferences pref = this.context.getSharedPreferences(P2P_SHARED_PREF, 0);
+        String userId = pref.getString("USER_ID", null); // getting String
+
         List found = db.p2pSyncDao().fetchByUserAndDeviceAndSequence(message.getUserId(), message.getDeviceId(), message.sequence);
         if (found == null || found.size() == 0) {
             db.p2pSyncDao().insertP2PSyncInfo(message);
             Log.i(TAG, "inserted data" + message);
+            try {
+                if (message.userId != null && message.recipientUserId != null && message.userId.equals(message.getRecipientUserId())) {
+                    Log.i(TAG, "messageReceived intent constructing for user" + message.userId);
+                    Intent intent = new Intent("org.chimple.flores.FloresPlugin$MessageReceivedActivity");
+                    intent.putExtra("userId", message.userId);
+                    intent.putExtra("deviceId", message.deviceId);
+                    intent.putExtra("message", message.message);
+                    intent.putExtra("sequence", message.sequence);
+                    intent.putExtra("recipientUserId", message.recipientUserId);
+                    intent.putExtra("status", message.status);
+                    intent.putExtra("loggedAt", message.loggedAt.getTime());
+                    intent.putExtra("messageType", message.messageType);
+                    intent.putExtra("sessionId", message.sessionId);
+                    intent.putExtra("step", message.step);
+                    LocalBroadcastManager.getInstance(this.context).sendBroadcast(intent);
+                    Log.i(TAG, "messageReceived intent sent successfully");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Log.i(TAG, "messageReceived intent failed");
+            }
+
         } else {
             Log.i(TAG, "existing data" + message);
         }
@@ -202,7 +232,9 @@ public class P2PDBApiImpl implements P2PDBApi {
             List<HandShakingInfo> handShakingInfos = new ArrayList<HandShakingInfo>();
             P2PLatestInfoByUserAndDevice[] infos = db.p2pSyncDao().getLatestInfoAvailableByUserIdAndDeviceId();
             for (P2PLatestInfoByUserAndDevice info : infos) {
-                handShakingInfos.add(new HandShakingInfo(info.userId, info.deviceId, info.sequence));
+                if (info.userId != null && info.deviceId != null) {
+                    handShakingInfos.add(new HandShakingInfo(info.userId, info.deviceId, info.sequence));
+                }
             }
 
             Gson gson = this.registerHandShakingMessageBuilder();
@@ -235,6 +267,15 @@ public class P2PDBApiImpl implements P2PDBApi {
 
     public String buildAllSyncMessages(String handShakeJson) {
         List<HandShakingInfo> infos = deSerializeHandShakingInformationFromJson(handShakeJson);
+        if (infos != null) {
+            Iterator<HandShakingInfo> itInfos = infos.iterator();
+            while (itInfos.hasNext()) {
+                HandShakingInfo i = (HandShakingInfo) itInfos.next();
+                if (i.getDeviceId() == null || i.getUserId() == null) {
+                    itInfos.remove();
+                }
+            }
+        }
         List<P2PSyncInfo> output = this.buildSyncInformation(infos);
         String json = this.convertP2PSyncInfoToJson(output);
         Log.i(TAG, "SYNC JSON:" + json);
@@ -352,50 +393,18 @@ public class P2PDBApiImpl implements P2PDBApi {
                 }
             });
 
-            final List<HandShakingInfo> validElementsFromOther = new ArrayList<HandShakingInfo>();
-            final List<HandShakingInfo> removeElementsFromInput = new ArrayList<HandShakingInfo>();
+            Set<HandShakingInfo> temp = new HashSet<>(latestInfoFromCurrentDevice);
+            latestInfoFromCurrentDevice.removeAll(otherHandShakeInfos);
+            otherHandShakeInfos.removeAll(temp);
+            temp.clear();
 
-            CollectionUtils.forAllDo(latestInfoFromCurrentDevice, new Closure<HandShakingInfo>() {
-                @Override
-                public void execute(final HandShakingInfo input) {
-                    Log.i(TAG, "processing element" + input);
-                    CollectionUtils.find(otherHandShakeInfos, new Predicate<HandShakingInfo>() {
-                        @Override
-                        public boolean evaluate(HandShakingInfo other) {
-                            // if element exists in both list for same device
-                            if (input.getDeviceId() != null &&
-                                    other.getDeviceId() != null &&
-                                    input.getDeviceId().equals(other.getDeviceId())) {
-                                if (input.getUserId() != null &&
-                                        other.getUserId() != null && input.getUserId().equals(other.getUserId())) {
-                                    if (input.getSequence() > other.getSequence()) {
-                                        validElementsFromOther.add(other);
-                                    } else {
-                                        removeElementsFromInput.add(input);
-                                    }
-                                }
-                            } else {
-                                validElementsFromOther.add(other);
-                            }
-//                        if (input.getUserId().equals(other.getUserId())) {
-//                            if (input.getSequence() > other.getSequence()) {
-//                                validElementsFromOther.add(other);
-//                            } else {
-//                                removeElementsFromInput.add(input);
-//                            }
-//                        } else {
-//
-//                        }
-                            return false;
-                        }
-                    });
-                }
-            });
+            Set<HandShakingInfo> finalSetToProcess = new LinkedHashSet<HandShakingInfo>();
+            finalSetToProcess.addAll(latestInfoFromCurrentDevice);
+            finalSetToProcess.addAll(otherHandShakeInfos);
 
-            latestInfoFromCurrentDevice.addAll(validElementsFromOther);
-            latestInfoFromCurrentDevice.removeAll(removeElementsFromInput);
+            final List finalList = new ArrayList(finalSetToProcess);
 
-            Collections.sort(latestInfoFromCurrentDevice, new Comparator<HandShakingInfo>() {
+            Collections.sort(finalList, new Comparator<HandShakingInfo>() {
                 @Override
                 public int compare(HandShakingInfo o1, HandShakingInfo o2) {
                     if (o1.getUserId() != null && o2.getUserId() != null) {
@@ -410,7 +419,7 @@ public class P2PDBApiImpl implements P2PDBApi {
             @SuppressWarnings("unchecked")
             Map<String, HandShakingInfo> map = new HashMap<String, HandShakingInfo>() {
                 {
-                    IteratorUtils.forEach(latestInfoFromCurrentDevice.iterator(), new Closure() {
+                    IteratorUtils.forEach(finalList.iterator(), new Closure() {
                         @Override
                         public void execute(Object input) {
                             HandShakingInfo item = (HandShakingInfo) input;
@@ -517,7 +526,7 @@ public class P2PDBApiImpl implements P2PDBApi {
             }
             maxSequence++;
 
-            Long step = db.p2pSyncDao().getLatestStepForUserIdAndSessionId(userId, sessionId);
+            Long step = db.p2pSyncDao().getLatestStepSessionId(sessionId);
             if (step == null) {
                 step = 0L;
             }
