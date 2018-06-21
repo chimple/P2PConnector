@@ -81,7 +81,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     public static final String nsdConnectionChangedEvent = "nsd-connection-changed-event";
     public static String CURRENT_CONNECTED_DEVICE = null;
     public static final String P2P_SHARED_PREF = "p2pShardPref";
-    public static final int EXIT_CURRENT_JOB_TIME = 2 * 60; // 2 mins
+    public static final int EXIT_CURRENT_JOB_TIME = 3 * 60; // 3 mins
 
     public static NSDSyncManager getInstance(Context context) {
         if (instance == null) {
@@ -206,7 +206,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                 boolean shouldStart = false;
                 @Override
                 public void run() {
-                    reStartJobTimer = new CountDownTimer(1000, 1000) {
+                    reStartJobTimer = new CountDownTimer(20000, 1000) {
                         public void onTick(long millisUntilFinished) {
                         }
 
@@ -218,7 +218,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                             handler.postDelayed(new Runnable() {
                                 //Lets give others chance on creating new group before we come back online
                                 public void run() {
-                                    if(EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted > 20) {
+                                    if(EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted > 30) {
                                         shouldStart = true;
                                     } else {
                                         shouldStart = false;
