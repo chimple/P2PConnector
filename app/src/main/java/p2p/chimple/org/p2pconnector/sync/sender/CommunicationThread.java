@@ -16,6 +16,7 @@ public class CommunicationThread extends Thread {
     private int listenerErrorSoFarTimes = 0;
 
     public CommunicationThread(CommunicationCallBack callback, int port, int number) {
+        setName("CommunicationThread");
         this.callBack = callback;
         ServerSocket tmp = null;
         listenerErrorSoFarTimes = number;
@@ -32,11 +33,12 @@ public class CommunicationThread extends Thread {
     }
 
     public void run() {
+        try {
 
-        if (this.callBack != null) {
-            Log.i(TAG, "starting to listen");
-            Socket socket = null;
-            try {
+            if (this.callBack != null) {
+                Log.i(TAG, "starting to listen");
+                Socket socket = null;
+
                 if (mSocket != null) {
                     socket = mSocket.accept();
                 }
@@ -47,12 +49,14 @@ public class CommunicationThread extends Thread {
                     this.callBack.ListeningFailed("Socket is null", this.listenerErrorSoFarTimes);
                 }
 
-            } catch (Exception e) {
-                if (!mStopped) {
-                    //return failure
-                    Log.i(TAG, "accept socket failed: " + e.toString());
-                    this.callBack.ListeningFailed(e.toString(), this.listenerErrorSoFarTimes);
-                }
+            }
+
+        } catch (Exception e) {
+            interrupted();
+            if (!mStopped) {
+                //return failure
+                Log.i(TAG, "accept socket failed: " + e.toString());
+                this.callBack.ListeningFailed(e.toString(), this.listenerErrorSoFarTimes);
             }
         }
     }
@@ -68,5 +72,6 @@ public class CommunicationThread extends Thread {
         } catch (IOException e) {
             Log.i(TAG, "closing socket failed: " + e.toString());
         }
+
     }
 }

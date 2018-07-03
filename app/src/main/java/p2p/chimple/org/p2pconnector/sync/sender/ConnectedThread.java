@@ -27,6 +27,7 @@ public class ConnectedThread extends Thread {
     private int maxWaitLoopnBlockedStatus = 1000; // 1000 loops
 
     public ConnectedThread(Socket socket, Handler handler, Context context) {
+        setName("ConnectedThread");
         Log.d(TAG, "Creating ConnectedThread");
         mHandler = handler;
         mmSocket = socket;
@@ -70,7 +71,7 @@ public class ConnectedThread extends Thread {
     private void readExchangeMessages(StringBuffer sBuffer, byte[] buffer, int count) {
         try {
             int bytes = -1;
-            if(count > maxWaitLoopnBlockedStatus) {
+            if (count > maxWaitLoopnBlockedStatus) {
                 Log.i(TAG, "in readExchangeMessages reached max blocking read...");
                 Stop();
                 mHandler.obtainMessage(SOCKET_DISCONNEDTED, -1, -1, "disconnected may be due to blocked").sendToTarget();

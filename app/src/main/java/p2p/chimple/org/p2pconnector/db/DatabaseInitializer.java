@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.UUID;
 
 import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncManager;
 
@@ -26,7 +27,7 @@ public class DatabaseInitializer {
         task.execute();
     }
 
-    public static void populateWithTestData(AppDatabase db, Context context,byte[] imagedata) {
+    public static void populateWithTestData(AppDatabase db, Context context, byte[] imagedata) {
         SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
         String generateUserId = pref.getString("USER_ID", null); // getting String
         Log.i(TAG, "generateUserId :" + generateUserId);
@@ -73,37 +74,18 @@ public class DatabaseInitializer {
     }
 
 
+    public static void populateWithRandomData(AppDatabase db) {
 
-    public static void populateWithTestData(AppDatabase db, Context context) {
-        SharedPreferences pref = context.getSharedPreferences(P2P_SHARED_PREF, 0);
-        AssetManager assetManager = context.getAssets();
-        InputStream inputStream = null;
-        try {
-            inputStream = assetManager.open("database.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-        // message contains userId, deviceId, recipientUserId, message, messageType
-
-        String line = "";
         db.beginTransaction();
         try {
-            while ((line = bufferedReader.readLine()) != null) {
-                String[] columns = line.split(",");
+            for (int i = 0; i < 100; i++) {
 
-                if (columns.length < 1) {
-                    Log.d(TAG + "AppDatabase", "Skipping bad row");
-                }
-
-                String userId = columns[0];
-                String deviceId = columns[1];
-                String recipientUserId = columns[2];
-                String message = columns[3];
-                String messageType = columns[4];
-
-                P2PDBApiImpl.getInstance(context).persistMessage(userId, deviceId, recipientUserId, message, messageType);
+                String userId = UUID.randomUUID().toString();
+                String deviceId = UUID.randomUUID().toString();
+                String recipientUserId = UUID.randomUUID().toString();
+                String message = UUID.randomUUID().toString() + " message";
+                String messageType = "Chat";
+                P2PDBApiImpl.getInstance(db.getContext()).persistMessage(userId, deviceId, recipientUserId, message, messageType);
             }
 
             db.setTransactionSuccessful();

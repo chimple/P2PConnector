@@ -31,7 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import p2p.chimple.org.p2pconnector.db.AppDatabase;
 import p2p.chimple.org.p2pconnector.db.DBSyncManager;
+import p2p.chimple.org.p2pconnector.db.DatabaseInitializer;
 import p2p.chimple.org.p2pconnector.db.P2PDBApi;
 import p2p.chimple.org.p2pconnector.db.P2PDBApiImpl;
 import p2p.chimple.org.p2pconnector.sync.Direct.P2PSyncService;
@@ -94,16 +96,19 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
     }
 
     private NSDSyncManager(Context context) {
+        Log.i(TAG, "IN NSDSync Manager....................................");
         this.context = context;
         this.handlerThread = new HandlerThread("NSDSyncManager");
         this.handlerThread.start();
         this.mHandler = new Handler(this.handlerThread.getLooper(), this);
-        dbSyncManager = DBSyncManager.getInstance(this.context);
+        this.dbSyncManager = DBSyncManager.getInstance(this.context);
         this.p2PStateFlow = P2PStateFlow.getInstanceUsingDoubleLocking(dbSyncManager);
 
         LocalBroadcastManager.getInstance(this.context).registerReceiver(mMessageReceiver, new IntentFilter(neighboursUpdateEvent));
         LocalBroadcastManager.getInstance(this.context).registerReceiver(nsdAllMessageExchangedReceiver, new IntentFilter(allMessageExchangedForNSD));
         LocalBroadcastManager.getInstance(this.context).registerReceiver(networkConnectionChangedReceiver, new IntentFilter(nsdConnectionChangedEvent));
+        Log.i(TAG, "POPULATE RANDOM DATA .....................................................................");
+        DatabaseInitializer.populateWithRandomData(AppDatabase.getInstance(context));
 
         this.initStatusChecker();
     }
@@ -121,7 +126,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                     instance.mHandler.postDelayed(mStatusChecker, mInterval);
                 }
 
-                Log.i(TAG, "Will start shutdown job in: " + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
+//                Log.i(TAG, "Will start shutdown job in: " + (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted));
 
                 if (totalTimeTillJobStarted > EXIT_CURRENT_JOB_TIME && !isShutDownJobStarted && instance != null) {
                     instance.startShutDownTimer();
@@ -204,6 +209,7 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         synchronized (this) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 boolean shouldStart = false;
+
                 @Override
                 public void run() {
                     reStartJobTimer = new CountDownTimer(20000, 1000) {
@@ -218,13 +224,13 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                             handler.postDelayed(new Runnable() {
                                 //Lets give others chance on creating new group before we come back online
                                 public void run() {
-                                    if(EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted > 30) {
+                                    if (EXIT_CURRENT_JOB_TIME - totalTimeTillJobStarted > 30) {
                                         shouldStart = true;
                                     } else {
                                         shouldStart = false;
                                     }
                                     Log.i(TAG, "Should we start NSD Connector " + shouldStart);
-                                    if(shouldStart) {
+                                    if (shouldStart) {
                                         Log.i(TAG, "reStartJobTimer start connectors.....");
                                         StartNSDConnector();
                                     }
@@ -432,6 +438,8 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(networkConnectionChangedReceiver);
         this.StopNSDConnector();
         this.mStatusChecker = null;
+        NSDSyncManager.instance.dbSyncManager = null;
+        NSDSyncManager.instance.p2PStateFlow = null;
         NSDSyncManager.instance = null;
         updateStatus(TAG, "onDestroy");
     }
@@ -669,7 +677,9 @@ public class NSDSyncManager implements NSDOrchesterCallBack, CommunicationCallBa
                     // thus to avoid it, we are delaying the service discovery start here
                     public void run() {
                         Log.i(TAG, ".... calling start connect to next client ....");
-                        instance.connectToClient();
+                        if(instance != null) {
+                            instance.connectToClient();
+                        }
                     }
                 }, 1);
             }

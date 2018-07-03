@@ -17,6 +17,7 @@ public class HandShakerThread extends Thread {
     private int triedSoFarTimes = 0;
 
     public HandShakerThread(HandShakeInitiatorCallBack callBack, String address, int port, int trialnum) {
+        setName("HandShakerThread");
         this.mAddress = address;
         this.mPort = port;
         this.callBack = callBack;
@@ -25,27 +26,27 @@ public class HandShakerThread extends Thread {
     }
 
     public void run() {
-        Log.i(TAG, "Starting to connect in HandShakerThread");
-        if (mSocket != null && callBack != null) {
-            try {
+        try {
+            Log.i(TAG, "Starting to connect in HandShakerThread");
+            if (mSocket != null && callBack != null) {
                 mSocket.bind(null);
                 mSocket.connect(new InetSocketAddress(mAddress, mPort), 5000);
                 Log.i(TAG, "called connect on HandShakerThread socket");
                 //return success
                 callBack.Connected(mSocket.getInetAddress(), mSocket.getLocalAddress());
                 Log.i(TAG, "called connected on HandShakerThread callback");
-            } catch (IOException e) {
-                Log.i(TAG, "socket connect failed: " + e.toString());
-                try {
-                    if (mSocket != null) {
-                        mSocket.close();
-                    }
-                } catch (IOException ee) {
-                    Log.i(TAG, "closing socket 2 failed: " + ee.toString());
+            }
+        } catch (IOException e) {
+            Log.i(TAG, "socket connect failed: " + e.toString());
+            try {
+                if (mSocket != null) {
+                    mSocket.close();
                 }
-                if (!mStopped) {
-                    callBack.ConnectionFailed(e.toString(), triedSoFarTimes);
-                }
+            } catch (IOException ee) {
+                Log.i(TAG, "closing socket 2 failed: " + ee.toString());
+            }
+            if (!mStopped) {
+                callBack.ConnectionFailed(e.toString(), triedSoFarTimes);
             }
         }
     }
